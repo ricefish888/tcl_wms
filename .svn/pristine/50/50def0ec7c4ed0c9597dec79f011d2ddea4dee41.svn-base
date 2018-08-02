@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 创建配送单输入页面模板 -->
+<RFFormPage id="tclFirstQuickShippingPage1" title="tclFirstQuickShippingPage1">
+	<RFDisplay id="bolDisplay" load="tclRfBolManager.showquickWorkDocInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			单号：{quickWorkDocCode}
+			备注：{remark}
+			{quickWorkDocItemInfos}
+		  
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>
+			单号：{quickWorkDocCode}
+			备注：{remark}
+			{quickWorkDocItemInfos}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<buttons>
+			<RFButton id="addWorkDocCommitBt" title="addWorkDocCommitBt" action="tclRfBolManager.addQuickWorkDoc" validate="" onFoucs="false"/>
+			<!-- <RFButton id="addVMIBolCommitBt" title="addVMIBolCommitBt" action="tclRfBolManager.addQuickWorkDoc" validate="" onFoucs="false"/> -->
+			<RFButton id="comfirmShipBol" title="comfirmShipBol" action="tclRfBolManager.quickWorkDocShipCommit" validate="" onFoucs="false"/> 
+			<RFButton id="deleteWorkDocCommitBt" title="deleteWorkDocCommitBt" action="tclRfDeliveryManager.deleteWorkDoc" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

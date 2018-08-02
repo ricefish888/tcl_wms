@@ -1,0 +1,40 @@
+package com.vtradex.wms.server.helper;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * tcl 条码解析类
+ */
+public class WmsBarCodeParse {
+
+	/** 物料编码*/
+	public static final String KEY_ITEMCODE = "KEY_ITEMCODE";
+	/** 批次*/
+	public static final String KEY_LOTNO = "KEY_LOTNO";
+	/**ASN_DETIAL_ID*/
+	public static final String KEY_ASN_DETAIL_ID = "KEY_ASN_DETAIL_ID";
+	
+	
+	public static final String KEY_SPLIT="_";
+	 
+	/**
+	 * @Description:  编码规则  ：   物料编码_批号_asnDetailID_占位符1_占位符2
+	 * @return
+	 */
+	public static Map parse(String barcode) {
+		
+		String[] infos = barcode.split(KEY_SPLIT);
+		
+		Map result = new HashMap(); 
+		result.put(WmsBarCodeParse.KEY_ITEMCODE, infos[0]); 
+		result.put(WmsBarCodeParse.KEY_LOTNO, infos[1]);
+		result.put(WmsBarCodeParse.KEY_ASN_DETAIL_ID, infos[2]);
+		return result;
+	}
+
+	 
+
+	 
+
+}

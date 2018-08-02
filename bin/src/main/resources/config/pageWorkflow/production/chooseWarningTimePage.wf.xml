@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="chooseWarningTimePage">
+    <main>
+        <process id="productionOrderProcess">
+            <formCommit id="onTimeWarning" title="onTimeWarning" process="productionOrderProcess.onTimeWarning" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="new">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="choseTime" className="date">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                	<action managerName="productionOrderManager" methodName="onTimeWarning" parameter="choseTime"/>
+                </actions>            
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="true" editEnabled="false"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

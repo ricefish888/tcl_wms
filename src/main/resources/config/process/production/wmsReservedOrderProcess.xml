@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="wmsReservedOrderProcess" control="status">
+
+	<state id="OPEN" title="打开"/>
+
+	<state id="FINISHED" title="完成"/>
+
+	<state id="CANCELED" title="取消"/>
+
+	<state id="ACTIVE" title="生效"/>
+
+	<task id="new" title="新建">
+		<to id="OPEN" type="state"/>
+	</task>
+
+	<task id="edit" title="修改">
+		<from id="OPEN" type="state"/>
+	</task>
+
+	<task id="view" title="查看">
+	</task>
+
+	<task id="active" title="生效">
+		<from id="OPEN" type="state"/>
+		<to id="ACTIVE" type="state"/>
+	</task>
+
+	<task id="unActive" title="失效">
+		<from id="ACTIVE" type="state"/>
+		<to id="OPEN" type="state"/>
+	</task>
+
+	<task id="import" title="导入">
+	</task>
+
+	<task id="save" title="保存">
+	</task>
+
+</process>

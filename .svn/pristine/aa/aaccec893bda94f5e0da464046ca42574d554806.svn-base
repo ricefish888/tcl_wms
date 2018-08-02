@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.order.WmsCheckOrder" table="WMS_CHECK_ORDER">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">TSEQ_CHECK_ORDER</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        <discriminator column="DISCRIMINATOR" type="string"/>
+		
+		<many-to-one name="supplier" class="com.vtradex.wms.server.model.entity.base.WmsSupplier">
+			<column name="SUPPLIER_ID" not-null="true" />
+		</many-to-one>	
+		
+		<property name="code" column="CODE" type="string" length="50"/>
+		<property name="xmlb" column="XMLB" type="string" length="10"/>
+		<property name="filename" column="FILE_NAME" type="string" length="255"/>
+		<property name="filepath" column="FILE_PATH" type="string" length="100"/>
+		<property name="confrimTime" column="CONFRIM_TIME" type="timestamp"/>
+		<property name="status" type="string" column="STATUS" length="50"/>
+		<property name="confirmor" type="string" column="CONFIRMOR"  length="50"/>
+		<property name="receiver" type="string" column="RECEIVER" length="50" />
+		<property name="receiveTime" type="timestamp" column="RECEIVE_TIME"/>
+		
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+	</class>
+</hibernate-mapping>

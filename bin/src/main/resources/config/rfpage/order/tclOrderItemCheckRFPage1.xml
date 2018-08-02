@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 生产订单货物校验 -->
+<RFFormPage id="tclOrderItemCheckRFPage1" title="tclOrderItemCheckRFPage1">
+	<RFForm>
+		<inputs> 
+			<RFText id="orderCodeInput" title="orderCodeInput" tip="orderCodeInput" onFoucs="true">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="orderCodeScanBt" title="orderCodeScanBt" action="tclRfOrderManager.orderCodeInputCommit" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

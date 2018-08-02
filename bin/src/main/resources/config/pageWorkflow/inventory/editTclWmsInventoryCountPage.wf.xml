@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editTclWmsInventoryCountPage">
+    <main>      
+        <process id="tclWmsInventoryCountProcess">
+            <formCommit id="again" title="again" process="tclWmsInventoryCountProcess.again" enableType="none" download="false">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="tclMessageManager" methodName="createDailyInventory"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+</page>

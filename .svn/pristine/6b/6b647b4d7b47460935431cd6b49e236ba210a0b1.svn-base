@@ -1,0 +1,206 @@
+package com.vtradex.wms.rfserver.service.move.pojo;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.vtradex.rf.common.RfConstant;
+import com.vtradex.rf.common.exception.RfBusinessException;
+import com.vtradex.thorn.client.utils.StringUtils;
+import com.vtradex.thorn.server.exception.BusinessException;
+import com.vtradex.thorn.server.service.pojo.DefaultBaseManager;
+import com.vtradex.thorn.server.web.security.BaseOrganizationHolder;
+import com.vtradex.wms.rfserver.service.move.TclRfNPMoveBySkuManager;
+import com.vtradex.wms.server.helper.WmsBarCodeParse;
+import com.vtradex.wms.server.model.entity.inventory.WmsInventory;
+import com.vtradex.wms.server.model.entity.item.WmsCompany;
+import com.vtradex.wms.server.model.entity.item.WmsItem;
+import com.vtradex.wms.server.model.entity.item.WmsItemKey;
+import com.vtradex.wms.server.model.entity.item.WmsPackageUnit;
+import com.vtradex.wms.server.model.entity.warehouse.WmsLocation;
+import com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse;
+import com.vtradex.wms.server.model.enums.BaseStatus;
+import com.vtradex.wms.server.model.enums.WmsLocationType;
+import com.vtradex.wms.server.service.inventory.WmsInventoryManageManager;
+
+public class DefaultTclRfNPMoveBySkuManager extends DefaultBaseManager
+		implements TclRfNPMoveBySkuManager {
+
+	private WmsInventoryManageManager wmsInventoryManageManager;
+
+	public DefaultTclRfNPMoveBySkuManager(WmsInventoryManageManager wmsInventoryManageManager) {
+		this.wmsInventoryManageManager = wmsInventoryManageManager;
+	}
+
+	/** 库位扫描 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map<String, Object> tclMoveBySkuLocationCommit(
+			Map<String, Object> params) {
+		String locCode = params.get("tclMoveNPBySkuLocationInput") == null ? null: params.get("tclMoveNPBySkuLocationInput").toString().trim();
+		// 库位必填
+		if (StringUtils.isEmpty(locCode)) {
+			throw new RfBusinessException("库位编码不能为空!!");
+		}
+		String hql = "from WmsWarehouse warehouse where warehouse.baseOrganization.id = :baseOrganizationId";
+		// 查询当前仓库
+		WmsWarehouse warehouse = (WmsWarehouse) this.commonDao
+				.findByQueryUniqueResult(hql, "baseOrganizationId",
+						BaseOrganizationHolder.getThornBaseOrganization()
+								.getId());
+		// 校验库位是否存在
+		hql = "from WmsLocation loc where loc.warehouse.id =:warehouseId and loc.code =:locCode ";
+		List<WmsLocation> locs = this.commonDao.findByQuery(hql, new String[] {
+				"warehouseId", "locCode" }, new Object[] { warehouse.getId(),
+				locCode });
+		if (locs.isEmpty() || locs.size() <= 0) {
+			throw new RfBusinessException("找不到对应的库位!!");
+		}
+		WmsLocation location = this.commonDao.load(WmsLocation.class,locs.get(0).getId());
+		if (!WmsLocationType.STORAGE.equals(location.getType())
+				&& !WmsLocationType.SHIP.equals(location.getType())) {
+			throw new RfBusinessException("该库位不能移位!!");
+		}
+		if (location.getCountLock()) {
+			throw new RfBusinessException("库位被锁!!");
+		}
+		try {
+			wmsInventoryManageManager.verifyLocationInOut(BaseStatus.LOCK_OUT,location.getId());
+		} catch (Exception e) {
+			throw new RfBusinessException(e.getMessage());
+		}
+		params.put("warehouseId", warehouse.getId());
+		params.put(RfConstant.FORWARD_VALUE, RfConstant.FORWARD_SUCCESS);
+		return params;
+	}
+
+	/**库位信息*/
+	@Override
+	public Map<String, Object> loctionInfo(Map<String, Object> params) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		String locCode = params.get("tclMoveNPBySkuLocationInput") == null?null:params.get("tclMoveNPBySkuLocationInput").toString().trim();
+		result.put("locCode",locCode);
+		return result;
+	}
+
+	/**货品扫描*/
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Map<String, Object> tclMoveBySkuItemCommit(Map<String, Object> params) {
+		String barCode = params.get("moveNoPlanBySkuItemInput") == null?null:params.get("moveNoPlanBySkuItemInput").toString().trim();
+		if(StringUtils.isEmpty(barCode)){
+			throw new RfBusinessException("条码不能为空");
+		}
+		if(-1==barCode.indexOf("_")){
+			throw new RfBusinessException("条码格式不正确");
+		}
+		Map map = WmsBarCodeParse.parse(barCode);
+		String itemCode = (String)map.get(WmsBarCodeParse.KEY_ITEMCODE);
+		//查询货品编码对应货品是否存在
+		WmsItem item = (WmsItem)commonDao.findByQueryUniqueResult("from WmsItem item where 1=1 and item.code=:ic", "ic",itemCode);
+		if(null==item){
+			throw new RfBusinessException("该物料不存在!!");
+		}
+		params.put("itemCode", item.getCode());
+		params.put(RfConstant.FORWARD_VALUE, RfConstant.FORWARD_SUCCESS);
+		return params;
+	}
+
+	@Override
+	public Map<String, Object> inventoryInfo(Map<String, Object> params) {
+		Long inventoryId = params.get(RfConstant.ENTITY_ID) == null?null:Long.valueOf(params.get(RfConstant.ENTITY_ID).toString().trim());
+		WmsInventory inventory = this.commonDao.load(WmsInventory.class, inventoryId);
+		Map<String, Object> result = new HashMap<String, Object>();
+		WmsItem item = this.commonDao.load(WmsItem.class, inventory.getItem().getId());
+		WmsLocation location = this.commonDao.load(WmsLocation.class, inventory.getLocation().getId());
+		WmsPackageUnit pagUnit = this.commonDao.load(WmsPackageUnit.class, inventory.getPackageUnit().getId());
+		WmsItemKey itemKey = this.commonDao.load(WmsItemKey.class, inventory.getItemKey().getId());
+		WmsCompany company = this.commonDao.load(WmsCompany.class, inventory.getCompany().getId());
+		result.put("locCode", location.getCode());
+		result.put("itemCode", item.getCode());
+		result.put("itemName", item.getName());
+		result.put("unit", pagUnit.getUnit());
+		result.put("packQty", inventory.getPackQty());
+		result.put("qty", inventory.getQty());
+		result.put("productDate", itemKey.getLotInfo()!=null?itemKey.getLotInfo().getProductDate():"");
+		result.put("inventoryStatus", inventory.getStatus());
+		result.put("company", company.getName());
+		return result;
+	}
+
+	@Override
+	public Map<String, Object> moveBySkuComfirmCommit(Map<String, Object> params) {
+			Long inventoryId = params.get(RfConstant.ENTITY_ID) == null?null:Long.valueOf(params.get(RfConstant.ENTITY_ID).toString());
+			Long toLocationId = params.get("toLocationId") == null?null:Long.valueOf(params.get("toLocationId").toString());
+			Double movePackQty = params.get("moveNoPlanBySkuQtyInput") == null?null:Double.valueOf(params.get("moveNoPlanBySkuQtyInput").toString());
+			WmsInventory inventory = this.commonDao.load(WmsInventory.class, inventoryId);
+			//调用移位确认方法
+			try{
+				wmsInventoryManageManager.moveInventory(inventory,toLocationId,movePackQty,"RF按货品移位");
+			}catch(BusinessException e){
+				throw new RfBusinessException("移位异常!!");
+			}
+			Map<String, Object> result = new HashMap<String, Object>();
+			result.put(RfConstant.CLEAR_VALUE, "true");
+			result.put(RfConstant.FORWARD_VALUE, RfConstant.FORWARD_SUCCESS);
+			return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map<String, Object> moveBySkuComfirmCommitValidate(Map<String, Object> params) {
+		Long inventoryId = params.get(RfConstant.ENTITY_ID) == null?null:Long.valueOf(params.get(RfConstant.ENTITY_ID).toString());
+		String toLocationCode = params.get("moveNoPlanBySkuToLocInput") == null?null:params.get("moveNoPlanBySkuToLocInput").toString();
+		Long warehouseId = params.get("warehouseId") == null?null:Long.valueOf(params.get("warehouseId").toString());
+		String movePackQtyStr = params.get("moveNoPlanBySkuQtyInput").toString();
+		//移位数量不能为0
+		Double movePackQty = 0D;
+		if(null==movePackQtyStr||StringUtils.isEmpty(movePackQtyStr)){
+			throw new RfBusinessException("移位数量不能为空!!");
+		}else{
+			//移位数量只能为数字
+			try{
+				movePackQty = Double.valueOf(movePackQtyStr.toString());
+			}catch(Exception e){
+				throw new RfBusinessException("移位数量只能为数字!!");
+			}
+			if(movePackQty<=0D){
+				throw new RfBusinessException("移位数量要大于0!!");
+			}
+		}
+		//目标库位不能为空
+		if(null==toLocationCode||StringUtils.isEmpty(toLocationCode)){
+			throw new RfBusinessException("目标库位不能为空!!");
+		}
+		WmsInventory inventory = this.commonDao.load(WmsInventory.class, inventoryId);
+		WmsLocation fromLocation = this.commonDao.load(WmsLocation.class, inventory.getLocation().getId());
+		//校验移位包装数量是否库存包装数量
+		if(movePackQty>inventory.getPackQty()){
+			throw new RfBusinessException("包装数量异常!!");
+		}
+		//检验目标库位跟移出库位是否一致
+		if(fromLocation.getCode().equals(toLocationCode)){
+			throw new RfBusinessException("移出库位与目标库位不能一致!!!");
+		}
+		//校验库位是否存在
+		String hql = "from WmsLocation loc where loc.warehouse.id =:warehouseId AND loc.type in ('STORAGE') AND loc.code <>:lc";
+		List<WmsLocation> locs = this.commonDao.findByQuery(hql, new String[]{"warehouseId","lc"}, new Object[]{warehouseId,fromLocation.getCode()});
+		if(locs.isEmpty()||locs.size()<=0){
+			throw new RfBusinessException("仓库不存在该库位!!!");
+		}
+		WmsLocation toLocation = this.commonDao.load(WmsLocation.class, locs.get(0).getId());
+		//校验库位盘点锁
+		if(toLocation.getCountLock()){
+			throw new RfBusinessException("库位被锁!!");
+		}
+		
+		try{
+			//校验库位出入锁
+		    wmsInventoryManageManager.verifyLocationInOut(BaseStatus.LOCK_IN, toLocation.getId());
+		}catch(Exception e){
+			throw new RfBusinessException(e.getMessage());
+		}
+		params.put("toLocationId", toLocation.getId());
+		return params;
+	}
+}

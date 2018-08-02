@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsReservedOrderPage">
+    <main>
+        <process id="wmsReservedOrderProcess">
+            <tablePopup id="view" title="view" process="wmsReservedOrderProcess.view" enableType="single" containId="true" pageId="viewWmsReservedOrderPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="new" title="new" process="wmsReservedOrderProcess.new" enableType="none" containId="false" pageId="modifyWmsReservedOrderPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="edit" title="edit" process="wmsReservedOrderProcess.edit" enableType="single" containId="true" pageId="modifyWmsReservedOrderPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="active" title="active" process="wmsReservedOrderProcess.active" enableType="multi" multiMapping="false" download="false" confirmMessage="是否确认生效此条记录？">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                	<action managerName="wmsReservedOrderManager" methodName="activeReserveOrder" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <!-- <tableCommit id="unActive" title="unActive" process="wmsReservedOrderProcess.unActive" enableType="multi" multiMapping="false" download="false" >
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit> -->
+            <tableCommit id="unActive" title="unActive" process="wmsReservedOrderProcess.unActive" enableType="multi" multiMapping="false" download="false" confirmMessage="是否确认失效此条记录？">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

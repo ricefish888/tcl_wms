@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsItemMinPackageQtyPage" title="maintainWmsItemMinPackageQtyPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.item.WmsMinPackageQty" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT wmpq.id,
+sur.code,
+sur.name,
+item.code,
+item.name,
+wmpq.minUnit
+ from WmsMinPackageQty wmpq
+ left join wmpq.supplier sur
+ left join wmpq.item item
+where 1=1 order by wmpq.id desc]]></datasource>
+        <columns>
+            <column id="wmpq.id" title="wmpq.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="sur.code" title="sur.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="sur.name" title="sur.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wmpq.minUnit" title="wmpq.minUnit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+        </columns>
+    </maintainPage>
+</pages>

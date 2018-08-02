@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.base.WmsSupplier" table="WMS_SUPPLIER">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_WMS_SUPPLIER</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+ 
+        <property name="code" type="string" column="CODE" length="50" not-null="true" unique-key="UK_WMS_SUPPLIER" />
+        <property name="name" type="string" column="NAME" length="100" not-null="true" />
+        <property name="remark" type="string" column="REMARK" length="255" />   
+        <property name="status" type="string" column="STATUS" length="25"/>
+ 
+        <component name="contact" class="com.vtradex.wms.server.model.component.Contact">
+            <property name="country" type="string">
+                <column name="C_COUNTRY" length="100"/>
+            </property>
+             <property name="province" type="string">
+                <column name="C_PROVINCE" length="100"/>
+            </property>
+            <property name="city" type="string">
+                <column name="C_CITY" length="50"/>
+            </property>
+            <property name="address" type="string">
+                <column name="C_ADDRESS" length="255"/>
+            </property>
+            <property name="postCode" type="string">
+                <column name="C_POSTCODE" length="10"/>
+            </property>
+            <property name="contactName" type="string">
+                <column name="C_CONTACT_NAME" length="50"/>
+            </property>
+            <property name="mobile" type="string">
+                <column name="C_MOBILE" length="100"/>
+            </property>
+            <property name="telephone" type="string">
+                <column name="C_TELEPHONE" length="50"/>
+            </property>
+            <property name="fax" type="string">
+                <column name="C_FAX" length="50"/>
+            </property>
+            <property name="email" type="string">
+                <column name="C_EMAIL" length="100"/>
+            </property>
+        </component>
+        <component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+		<property name="accountGroup" type="string" column="ACCOUNT_GAOUP" length="100" />
+        <property name="searchStr" type="string" column="SEARCH_STR" length="100" />
+        <property name="email1" type="string" column="EMAIL1" length="100" />
+        <property name="email2" type="string" column="EMAIL2" length="100" />
+        <property name="email3" type="string" column="EMAIL3" length="100" />
+	 </class>
+</hibernate-mapping>

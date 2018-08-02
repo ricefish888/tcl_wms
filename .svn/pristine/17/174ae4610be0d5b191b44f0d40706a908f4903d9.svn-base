@@ -1,0 +1,14 @@
+pod.packageUnit.unit=\u5305\u88C5\u5355\u4F4D
+pod.remark=\u5907\u6CE8
+po.code=\u751F\u4EA7\u8BA2\u5355\u7F16\u7801
+pod.planQuantityBu=\u8BA1\u5212\u6570\u91CF
+pod.id=\u5E8F\u53F7
+item.name=\u8D27\u54C1\u540D\u79F0
+item.code=\u8D27\u54C1\u7F16\u7801
+pod.shippedQuantityBu=\u5DF2\u53D1\u8FD0\u6570\u91CFBU
+pod.pickedQuantityBu=\u5DF2\u62E3\u8D27\u6570\u91CFBU
+pod.dealDlanQuantityBu=\u5904\u7406\u540E\u8BA1\u5212\u6570\u91CFBU
+addDetail=\u4FDD\u5B58\u660E\u7EC6
+pod.allocatedQuantityBu=\u5DF2\u5206\u914D\u6570\u91CFBU
+maintainPopupOrderPage=\u751F\u4EA7\u8BA2\u5355\u660E\u7EC6\u7BA1\u7406
+allocatedQty=\u5206\u914D\u6570\u91CF

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--取消收货输入页面模板 -->
+<RFFormPage id="tclCancelReceiveRFPage" title="tclCancelReceiveRFPage">
+	<RFForm>
+		<inputs>
+			<RFText id="cancelReceiveCodeInput" title="cancelReceiveCodeInput" tip="cancelReceiveCodeInput" onFoucs="false">
+			</RFText>
+			<RFText id="cancelReceiveItemInput" title="cancelReceiveItemInput" tip="cancelReceiveItemInput" onFoucs="false">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="cancelReceiveScan" title="cancelReceiveScan" action="tclRfAsnManager.checkInfo" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

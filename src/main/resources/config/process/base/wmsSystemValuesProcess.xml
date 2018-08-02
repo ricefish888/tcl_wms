@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="wmsSystemValuesProcess" control="-">
+
+	<task id="edit" title="修改">
+	</task>
+</process>

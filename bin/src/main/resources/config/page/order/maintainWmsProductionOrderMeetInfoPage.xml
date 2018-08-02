@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsProductionOrderMeetInfoPage" title="maintainWmsProductionOrderMeetInfoPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.order.WmsProductionOrderMeetInfo" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT 
+meetInfo.id,
+meetInfo.checkDate,
+meetInfo.beMeet,
+meetInfo.productionOrderDetail.productionOrder.code,
+meetInfo.productionOrderDetail.productionOrder.factory.code,
+meetInfo.productionOrderDetail.productionOrder.factory.name,
+meetInfo.productionOrderDetail.productionOrder.beginDate,
+meetInfo.productionOrderDetail.productionOrder.endDate,
+meetInfo.productionOrderDetail.id,
+meetInfo.productionOrderDetail.item.code,
+meetInfo.productionOrderDetail.item.name,
+meetInfo.productionOrderDetail.planQuantityBu,
+meetInfo.productionOrderDetail.packageUnit.unit
+FROM WmsProductionOrderMeetInfo meetInfo
+LEFT JOIN meetInfo.productionOrderDetail
+LEFT JOIN meetInfo.productionOrderDetail.item
+LEFT JOIN meetInfo.productionOrderDetail.packageUnit
+LEFT JOIN meetInfo.productionOrderDetail.productionOrder
+LEFT JOIN meetInfo.productionOrderDetail.productionOrder.factory
+ WHERE 1=1 
+ ORDER BY meetInfo.id DESC
+ ]]></datasource>
+        <columns>
+            <column id="meetInfo.id" title="meetInfo.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="meetInfo.checkDate" title="meetInfo.checkDate" visible="true"  sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="meetInfo.beMeet" title="meetInfo.beMeet" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="booleanFormat"/>
+            <column id="meetInfo.productionOrderDetail.productionOrder.code" title="meetInfo.productionOrderDetail.productionOrder.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="meetInfo.productionOrderDetail.productionOrder.factory.code" title="meetInfo.productionOrderDetail.productionOrder.factory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="meetInfo.productionOrderDetail.productionOrder.factory.name" title="meetInfo.productionOrderDetail.productionOrder.factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="meetInfo.productionOrderDetail.productionOrder.beginDate" title="meetInfo.productionOrderDetail.productionOrder.beginDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="meetInfo.productionOrderDetail.productionOrder.endDate" title="meetInfo.productionOrderDetail.productionOrder.endDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="meetInfo.productionOrderDetail.id" title="meetInfo.productionOrderDetail.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="meetInfo.productionOrderDetail.item.code" title="meetInfo.productionOrderDetail.item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="meetInfo.productionOrderDetail.item.name" title="meetInfo.productionOrderDetail.item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="meetInfo.productionOrderDetail.planQuantityBu" title="meetInfo.productionOrderDetail.planQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="meetInfo.productionOrderDetail.packageUnit.unit" title="meetInfo.productionOrderDetail.packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+        </columns>
+    </maintainPage>
+</pages>

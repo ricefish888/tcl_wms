@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="modifyWmsReservedOrderPage">
+    <main>
+        <process id="wmsReservedOrderProcess">
+        
+            <formCommit id="new" title="new" process="wmsReservedOrderProcess.new" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="new">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsReservedOrderManager" methodName="saveReservedOrder" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+            
+            <formCommit id="edit" title="edit" process="wmsReservedOrderProcess.edit" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="edit">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsReservedOrderManager" methodName="saveReservedOrder" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+    <detail>
+        <process id="wmsReservedOrderDetailProcess">
+            <tablePopup id="new" title="addDetail" process="wmsReservedOrderDetailProcess.new" enableType="none" containId="false" pageId="addWmsReservedOrderDetailPage">
+                <enableExpression><![CDATA[(${reservedOrder.status}=='OPEN')]]></enableExpression> 
+            </tablePopup>
+            <tablePopup id="edit" title="editDetail" process="wmsReservedOrderDetailProcess.edit" enableType="single" containId="true" pageId="addWmsReservedOrderDetailPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="delete" title="deleteDetail" process="wmsReservedOrderDetailProcess.delete" enableType="multi" multiMapping="false" download="false" closeTransactional="false" confirmMessage="是否确认删除此条记录">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsReservedOrderManager" methodName="deleteOrderDetail" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+        </process>
+    </detail>
+</page>

@@ -1,0 +1,146 @@
+package com.vtradex.wms.server.service.base.po;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import com.vtradex.thorn.server.exception.BusinessException;
+import com.vtradex.thorn.server.model.security.ThornUser;
+import com.vtradex.thorn.server.service.pojo.DefaultBaseManager;
+import com.vtradex.thorn.server.web.security.BaseOrganizationHolder;
+
+import com.vtradex.wms.server.model.entity.base.WmsItemKeeper;
+import com.vtradex.wms.server.model.entity.base.WmsSapFactory;
+import com.vtradex.wms.server.model.entity.base.WmsSapWarehouseStatus;
+import com.vtradex.wms.server.model.entity.item.WmsItem;
+import com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse;
+import com.vtradex.wms.server.service.base.WmsItemKeeperManager;
+import com.vtradex.wms.server.utils.StringHelper;
+import com.vtradex.wms.webservice.utils.ExcelHelper;
+
+/**
+ * 成本中心
+ */
+public class DefaultWmsItemKeeperManager extends DefaultBaseManager implements
+		WmsItemKeeperManager {
+
+	// 保存
+	public void store(WmsItemKeeper itemKeeper) {
+
+		WmsSapFactory factory = itemKeeper.getFactory();// 工厂
+		WmsItem item = itemKeeper.getItem();// 物料
+		WmsWarehouse warehouse = itemKeeper.getWarehouse();// 仓库
+		
+		String hql = "select keep FROM WmsItemKeeper keep "
+				+ "LEFT JOIN keep.factory "
+				+ "WHERE keep.item.id =:itemId AND keep.warehouse.id =:warehouseId ";
+		if (factory == null) {
+			hql += "AND keep.factory.id is null";
+		} else {
+			hql += "AND keep.factory.id =" + factory.getId();
+		}
+		if(!itemKeeper.isNew()) {
+			hql += " and keep.id<>"+itemKeeper.getId();
+		}
+		WmsItemKeeper wmsItemKeeper = (WmsItemKeeper) commonDao.findByQueryUniqueResult(hql,
+				                                      new String[] { "itemId","warehouseId" },
+				                                      new Object[] { item.getId(), warehouse.getId() });
+
+		if (itemKeeper.isNew()) {//新建
+			if(wmsItemKeeper != null) {
+				throw new BusinessException("物料保管员信息已存在，请重新维护");
+			}
+		}else{//修改
+			if(wmsItemKeeper != null){
+				throw new BusinessException("物料保管员信息已存在，请重新维护");
+			}
+		}
+		
+		itemKeeper.setItem(item);
+		itemKeeper.setWarehouse(warehouse);
+		itemKeeper.setFactory(factory);
+		itemKeeper.setKeeper(itemKeeper.getKeeper());
+		itemKeeper.setStatus(WmsSapWarehouseStatus.ENABLED);
+		commonDao.store(itemKeeper);
+
+	}
+
+	// 导入
+	public void importWmsItemKeeperFile(File file) {
+		List<WmsItemKeeper> list = new ArrayList<WmsItemKeeper>();
+		List<Map<String, Object>> infos = ExcelHelper.parseExcel2List(file);
+		for (Map<String, Object> info : infos) {
+			String itemCode = (String) info.get("物料编码");
+			StringHelper.assertNullOrEmpty(itemCode, "物料编码不能为空，请维护物料编码");
+
+			WmsItem item = (WmsItem) commonDao.findByQueryUniqueResult(
+					"FROM WmsItem w WHERE w.code =:code", "code", itemCode);
+			if (item == null) {
+				throw new BusinessException("根据物料编码【" + itemCode + "】，未找到物料!!!");
+			}
+
+			// 仓库
+			String warehouseHql = "FROM WmsWarehouse w WHERE w.baseOrganization.id =:Id";
+			WmsWarehouse warehouse = (WmsWarehouse) commonDao
+					.findByQueryUniqueResult(warehouseHql, "Id",
+							BaseOrganizationHolder.getThornBaseOrganization()
+									.getId());
+
+			String factoryCode = (String) info.get("工厂编码");
+			WmsSapFactory factory;
+			if (factoryCode == null || "".equals(factoryCode)) {
+				factory = null;
+			} else {
+				factory = (WmsSapFactory) commonDao.findByQueryUniqueResult(
+						"FROM WmsSapFactory w WHERE w.code =:code", "code",
+						factoryCode);
+				if (factory == null) {
+					throw new BusinessException("根据工厂编码【" + factoryCode
+							+ "】，未找到工厂!!!");
+				}
+			}
+
+			String keeperCode = (String) info.get("保管员");
+			if (keeperCode == null || "".equals(keeperCode)) {
+				throw new BusinessException("保管员不能为空，请维护保管员");
+			}
+			
+			
+			String keeperHql = " FROM ThornUser keeper  WHERE "
+				             + " keeper.loginName =:code " 
+				             + " AND keeper.id in "
+					         + " ( SELECT u.id FROM ThornUser u,ThornGroup g "
+					         + " where u.id in elements(g.users) AND g.code in "
+					         + " ('VMICKBGY_GRP','CKBGY_GRP'))";
+			ThornUser keeper = (ThornUser) commonDao.findByQueryUniqueResult(keeperHql, "code",keeperCode);
+			if (keeper == null) {
+				throw new BusinessException("根据保管员登录名【" + keeperCode
+						+ "】，未找到保管员!!!");
+			}
+
+			String hql = "select keep FROM WmsItemKeeper keep "
+					+ "LEFT JOIN keep.factory "
+					+ "WHERE keep.item.id =:itemId AND keep.warehouse.id =:warehouseId ";
+			if (factory == null) {
+				hql += "AND keep.factory.id is null";
+			} else {
+				hql += "AND keep.factory.id =" + factory.getId();
+			}
+			WmsItemKeeper wmsItemKeeper = (WmsItemKeeper) commonDao
+					.findByQueryUniqueResult(hql, new String[] { "itemId",
+							"warehouseId" }, new Object[] { item.getId(),
+							warehouse.getId() });
+			if (wmsItemKeeper == null) {// 不存在,新建
+				wmsItemKeeper = new WmsItemKeeper();
+
+			}
+			wmsItemKeeper.setItem(item);
+			wmsItemKeeper.setWarehouse(warehouse);
+			wmsItemKeeper.setFactory(factory);
+			wmsItemKeeper.setKeeper(keeper);
+			wmsItemKeeper.setStatus(WmsSapWarehouseStatus.ENABLED);
+			commonDao.store(wmsItemKeeper);
+		}
+	}
+}

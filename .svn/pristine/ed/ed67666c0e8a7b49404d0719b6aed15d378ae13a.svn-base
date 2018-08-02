@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainInterfaceLogPage">
+    <main>      
+        <process id="interfaceProcess">
+            <tablePopup id="view" title="view" process="interfaceProcess.view" enableType="single" containId="true" pageId="viewInterfaceLogPage">
+                <enableExpression/>
+            </tablePopup>
+        </process>
+    </main>
+</page>

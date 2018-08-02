@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsReservedOrderDetailPage" title="maintainWmsReservedOrderDetailPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.production.WmsReservedOrderDetail" mainEntrance="true" displayRowCount="100">
+        <workflow/>
+        <datasource><![CDATA[SELECT rod.id,
+reservedOrder.code,
+rod.project,
+rod.groupNo,
+rod.isCreatePick,
+rod.isCreateASN,
+rod.item.code,
+rod.item.name,
+reservedOrder.receiveWorker,
+rod.quantity,
+rod.allocatedQuantityBu,
+rod.pickedQuantityBu,
+rod.shippedQuantityBu,
+(rod.quantity-rod.allocatedQuantityBu) as dealQty,
+reservedOrder.ydlx,
+rod.factory.code,
+rod.factory.name,
+rod.thQty,
+rod.shipLoc,
+rod.requestDate,
+rod.deleteFlag,
+rod.zhfh,
+rod.jdFlag,
+reservedOrder.kcd,
+rod.unit.unit,
+reservedOrder.status,
+reservedOrder.jzrq,
+reservedOrder.yhmc,
+reservedOrder.cbzx,
+reservedOrder.cbzxRemark 
+ FROM WmsReservedOrderDetail rod
+            LEFT JOIN rod.item
+            LEFT JOIN rod.unit
+            LEFT JOIN rod.factory
+            LEFT JOIN rod.reservedOrder reservedOrder
+            LEFT JOIN reservedOrder.factory factory
+  WHERE 1=1
+ ORDER BY reservedOrder.id DESC]]></datasource>
+        <columns>
+            <column id="rod.id" title="rod.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="reservedOrder.code" title="reservedOrder.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="rod.project" title="rod.project" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="rod.groupNo" title="rod.groupNo" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+            <column id="rod.isCreatePick" title="rod.isCreatePick" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="booleanFormat" formatParam="Boolean" />
+            <column id="rod.isCreateASN" title="rod.isCreateASN" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="booleanFormat" formatParam="Boolean" />
+            <column id="rod.item.code" title="rod.item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="rod.item.name" title="rod.item.name" width="250" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+         	<column id="reservedOrder.receiveWorker" title="reservedOrder.receiveWorker" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+         	<column id="rod.quantity" title="rod.quantity" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="rod.allocatedQuantityBu" title="rod.allocatedQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="rod.pickedQuantityBu" title="rod.pickedQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="rod.shippedQuantityBu" title="rod.shippedQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>    
+           	<column id="dealQty" title="dealQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+           	<column id="reservedOrder.ydlx" title="reservedOrder.ydlx" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="rod.factory.code" title="rod.factory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="rod.factory.name" title="rod.factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="rod.thQty" title="rod.thQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="rod.shipLoc" title="rod.shipLoc" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="rod.requestDate" title="rod.requestDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="rod.deleteFlag" title="rod.deleteFlag" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="rod.zhfh" title="rod.zhfh" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="rod.jdFlag" title="rod.jdFlag" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="reservedOrder.kcd" title="reservedOrder.kcd" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="rod.unit.unit" title="rod.unit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="reservedOrder.status" title="reservedOrder.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="ProductionOrderStatus"/>
+            <column id="reservedOrder.jzrq" title="reservedOrder.jzrq" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="reservedOrder.yhmc" title="reservedOrder.yhmc" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="reservedOrder.cbzx" title="reservedOrder.cbzx" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="reservedOrder.cbzxRemark" title="reservedOrder.cbzxRemark" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+        </columns>
+    </maintainPage>
+</pages>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editKeeperPage">
+    <main>
+        <process id="wmsTclASNProcess">
+            <formCommit id="save" title="save" process="wmsTclASNProcess.modifyKeeper" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="none">
+                <enableExpression/>
+                <mappings>
+                </mappings>
+                <actions>
+                    <action managerName="wmsTclASNManager" methodName="modifyKeeper" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="closeWindow" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

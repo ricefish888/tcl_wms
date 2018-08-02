@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC
+        "-//SPRING//DTD BEAN//EN"
+        "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+<description>TCL EDI JOB Setting</description>
+
+	<bean id="ediSchedulerBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+			    <!-- edi标准任务 -->
+				<ref bean="ediTaskHandleTrigger" />
+				
+				<!-- email任务 -->
+				<!-- <ref bean="ediEmailTaskHandleTrigger" /> -->
+				
+				<!-- 处理wms2sap任务 -->
+				<ref bean="ediTWms2SAPTaskHandleTrigger" />
+				
+				<!-- 自动处理台账信息传SAP-->
+				<ref bean="ediGenLedgerXmlTaskHandleTrigger" />
+				
+				
+				<!-- 自动处理工单拣配 -->
+				<!-- -->
+				<ref bean="doProductionOrderJPImportHandleTrigger" /> 
+				<!-- 定点自动插入工单拣配的异步任务 -->
+				<!-- -->
+				<ref bean="insertAllWarehouseAutoImportProTrigger"/>	
+				
+				<!-- 
+				<ref bean="deleteInvalidInventoryTrigger"/>	
+				-->
+				<ref bean="createDailyInventoryTrigger"/>	
+			 	
+				
+			 	<ref bean="doEveryDayBeforeZeroTask"/>
+			 
+			</list>
+		</property>
+		<property name="quartzProperties">
+			<props>
+				<prop key="org.quartz.threadPool.threadCount">200</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- 标准的edi任务 -->
+	<bean id="ediTaskHandleJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="tclSimpleTaskHelper" />
+		<property name="targetMethod" value="doHandle" />
+	</bean>
+	<bean id="ediTaskHandleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="ediTaskHandleJob" />
+		<property name="startDelay" value="20000" />
+		<property name="repeatInterval" value="1000" />
+		<property name="repeatCount" value="0" />
+	</bean>
+	<!-- email标准的edi任务 -->
+	<bean id="ediEmailTaskHandleJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="tclSimpleTaskHelper" />
+		<property name="targetMethod" value="doHandleEmail" />
+	</bean>
+	<bean id="ediEmailTaskHandleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="ediEmailTaskHandleJob" />
+		<property name="startDelay" value="20000" />
+		<property name="repeatInterval" value="1000" />
+		<property name="repeatCount" value="0" />
+	</bean>
+	<!-- 处理wms2sap任务 -->
+	<bean id="ediTWms2SAPTaskHandleJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="tclSimpleTaskHelper" />
+		<property name="targetMethod" value="doWms2SAPHandle" />
+	</bean>
+	<bean id="ediTWms2SAPTaskHandleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="ediTWms2SAPTaskHandleJob" />
+		<property name="startDelay" value="20000" />
+		<property name="repeatInterval" value="1000" />
+		<property name="repeatCount" value="0" />
+	</bean>
+	
+	<!-- 接口台账生成xml报文-->
+	<bean id="ediGenLedgerXmlTaskHandleJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="tclSimpleTaskHelper" />
+		<property name="targetMethod" value="doGenLedgerXmlHandle" />
+	</bean>
+	<bean id="ediGenLedgerXmlTaskHandleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="ediGenLedgerXmlTaskHandleJob" />
+		<property name="startDelay" value="20000" />
+		<property name="repeatInterval" value="1000" />
+		<property name="repeatCount" value="0" />
+	</bean>
+	
+	<!-- 处理工单导入-->
+	<bean id="doProductionOrderJPImportHandleJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="tclSimpleTaskHelper" />
+		<property name="targetMethod" value="doProductionOrderJPImportHandle" />
+	</bean>
+	<bean id="doProductionOrderJPImportHandleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="doProductionOrderJPImportHandleJob" />
+		<property name="startDelay" value="20000" />
+		<property name="repeatInterval" value="1000" />
+		<property name="repeatCount" value="0" />
+	</bean>
+	
+	 
+	 <!-- 每天凌晨三点定时删除无效库存记录 -->
+	<bean id="deleteInvalidInventoryJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="wmsInventoryManager"/>
+        </property>
+        <property name="targetMethod">
+            <value>deleteInvalidInventory</value>
+        </property>
+    </bean>	
+	<bean id="deleteInvalidInventoryTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref local="deleteInvalidInventoryJob"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 0 3 * * ?</value>
+        </property>
+    </bean> 
+	<!-- 日结 -->
+	<bean id="createDailyInventoryJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="tclMessageManager"/>
+        </property>
+        <property name="targetMethod">
+            <value>createDailyInventory</value>
+        </property>
+    </bean>	
+	<bean id="createDailyInventoryTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref local="createDailyInventoryJob"/>
+        </property>
+        <property name="cronExpression">
+             <value>0 0 3 * * ?</value> 
+        </property>
+    </bean> 
+	<!-- 定时插入工单自动导入任务-->
+	<bean id="insertAllWarehouseAutoImportProJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="tclMessageManager"/>
+        </property>
+        <property name="targetMethod">
+            <value>insertAllWarehouseAutoImportPro</value>
+        </property>
+    </bean>	
+	<bean id="insertAllWarehouseAutoImportProTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref local="insertAllWarehouseAutoImportProJob"/>
+        </property>
+        <property name="cronExpression">
+             <value>0 30 10,12,14,16,18,20 * * ?</value> 
+        </property>
+    </bean>
+    <!-- 每天0点前的定时任务1 -->
+	<bean id="everyDayBeforeZeroTask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="crontabManager" />
+		<property name="targetMethod" value="everyDayBeforeZeroTask" />
+		<property name="concurrent" value="false"/>
+	</bean>
+	<bean id="doEveryDayBeforeZeroTask" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="everyDayBeforeZeroTask" />
+		<property name="cronExpression">
+			<value>0 00 23 * * ?</value>
+		</property>
+	</bean>
+	
+
+</beans>
+
+
+
+ 

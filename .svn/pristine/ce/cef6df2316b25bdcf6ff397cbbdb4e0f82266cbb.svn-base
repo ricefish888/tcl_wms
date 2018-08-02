@@ -1,0 +1,605 @@
+package com.vtradex.wms.server.model.entity.workdoc;
+
+import java.util.Date;
+
+import com.vtradex.thorn.server.model.VersionalEntity;
+import com.vtradex.wms.server.model.entity.base.WmsWorker;
+import com.vtradex.wms.server.model.entity.item.WmsCompany;
+import com.vtradex.wms.server.model.entity.item.WmsItem;
+import com.vtradex.wms.server.model.entity.item.WmsItemKey;
+import com.vtradex.wms.server.model.entity.item.WmsPackageUnit;
+import com.vtradex.wms.server.model.entity.warehouse.WmsLocation;
+import com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse;
+import com.vtradex.wms.server.model.entity.warehouse.WmsWorkArea;
+import com.vtradex.wms.server.model.enums.WmsBillOfType;
+import com.vtradex.wms.server.model.enums.WmsTaskStatus;
+import com.vtradex.wms.server.model.enums.WmsTaskType;
+import com.vtradex.wms.server.model.enums.WmsWcsStatus;
+import com.vtradex.wms.server.utils.DoubleUtils;
+import com.vtradex.wms.server.utils.WmsPackageUnitUtils;
+import com.vtradex.wms.webservice.utils.CommonHelper;
+
+/**
+ * 作业任务
+ * 
+ * @author <a href="mailto:brofe@163.com">潘宁波</a>
+ * @since Dec 10, 2015
+ */
+public class WmsTask extends VersionalEntity {
+	
+	private static final long serialVersionUID = 1L;
+	
+	/** 仓库 */
+	private WmsWarehouse warehouse;
+	
+	/** 货主 */
+	private WmsCompany company;
+
+	/** 
+	 * 状态
+	 * 
+	 * {@link WmsTaskStatus}
+	 */
+	private String status;
+	
+	/** 
+	 * 任务类型
+	 * 
+	 * {@link WmsTaskType}
+	 */
+	private String type;
+	
+	/** 作业单 */
+	private WmsWorkDoc workDoc;
+	
+	/** 任务组 */
+	private WmsTaskGroup taskGroup;
+	
+	/** 相关业务对象单据类型 */
+	private String relatedObjBillType;
+	
+	/** 相关业务对象 */
+	private Long relatedObjId;
+	
+	/** 相关单号 */
+	private String relatedBillCode;
+	
+	/** 作业区 */
+	private WmsWorkArea workArea;
+	
+	/** 移出库位 */
+	private WmsLocation fromLocation;
+	
+	/** 
+	 * 系统建议移入库位
+	 * add :2017-04-17
+	 *     wms5.0表结构说明文档V2.2.2
+	 */
+	private WmsLocation oldToLocation;
+	
+	/** 移入库位 */
+	private WmsLocation toLocation;
+	
+	/** 托盘 */
+	private String pallet;
+	
+	/** 周转箱号 */
+	private String carton;
+	
+	/** 货品 */
+	private WmsItem item;
+	
+	/** 批次属性 */
+	private WmsItemKey itemKey;
+	
+	/** 库存状态 */
+	private String inventoryStatus;
+	
+	/** 包装单位 */
+	private WmsPackageUnit packageUnit;
+	
+	/** 计划移位包装数量 */
+	private Double planPackQty = 0D;
+	
+	/** 计划移位数量 */
+	private Double planQty = 0D;
+	
+	/** 已拣数量 */
+	private Double pickedQty = 0D;
+	
+	/** 已上架数量 */
+	private Double putawayQty = 0D;
+	
+	/**已分拣数量*/
+	private Double sortedQty = 0D;
+	
+	/** 计划重量 */
+	private Double planWeight = 0D;
+	
+	/** 计划体积 */
+	private Double planVolume = 0D;
+	
+	/** 作业开始时间 */
+	private Date startTime;
+	
+	/** 作业完成时间 */
+	private Date endTime;
+	
+	/**
+	 * 作业人员
+	 */
+	private WmsWorker worker;
+	
+	/**
+	 * 日志记录用（临时字段 ）
+	 * @WmsInventoryLogType
+	 */
+	private String operationType;
+	
+	/**
+	 * ASN/PT（临时字段 ）
+	 * 枚举值，判断相关单据类型是收货还是拣货
+	 *  {@link WmsBillOfType}
+	 */
+	private String invRelatedBillType;
+	
+	/**
+	 * ASN 或 PT 单号（临时字段 ）
+	 */
+	private String invRelatedBillCode;
+	/**
+	 * 托盘号(临时字段)
+	 * 用于在拣货单作业单单一确认时边拣货边包装使用
+	 */
+	private String palletCode;
+	/**
+	 * 箱号(临时字段)
+	 * 用于在拣货单作业单单一确认时边拣货边包装使用
+	 */
+	private String containerCode;
+	/**
+	 * 二次分拣显示任务组序号
+	 */
+	private String sortDisplaygroupSeq;
+	
+	/**
+	 * 搬送状态
+	 */
+	private String transferStatus;
+	
+	/**
+	 * 进/出作业口
+	 */
+	private String station;
+	
+	/**
+	 * WCS交互状态
+	 *  {@link WmsWcsStatus}
+	 */
+	private String wcsStatus = WmsWcsStatus.NULL;
+	
+	/**
+	 * 锁定状态(临时字段)
+	 */
+	private Boolean lockStatus = Boolean.FALSE;
+	
+	/**工单明细ID*/
+	private Long productionDetailId;
+	
+	/**交接人*/
+	private String jjUserLoginName;
+
+	/**交接时间*/
+	private Date jjTime;
+	
+	public String getJjUserLoginName() {
+		return jjUserLoginName;
+	}
+
+	public void setJjUserLoginName(String jjUserLoginName) {
+		this.jjUserLoginName = jjUserLoginName;
+	}
+
+	public Date getJjTime() {
+		return jjTime;
+	}
+
+	public void setJjTime(Date jjTime) {
+		this.jjTime = jjTime;
+	}
+
+	public Long getProductionDetailId() {
+		return productionDetailId;
+	}
+
+	public void setProductionDetailId(Long productionDetailId) {
+		this.productionDetailId = productionDetailId;
+	}
+
+	public WmsLocation getOldToLocation() {
+		return oldToLocation;
+	}
+
+	public void setOldToLocation(WmsLocation oldToLocation) {
+		this.oldToLocation = oldToLocation;
+	}
+
+	public String getWcsStatus() {
+		return wcsStatus;
+	}
+
+	public void setWcsStatus(String wcsStatus) {
+		this.wcsStatus = wcsStatus;
+	}
+
+	public String getStation() {
+		return station;
+	}
+
+	public void setStation(String station) {
+		this.station = station;
+	}
+
+	public String getTransferStatus() {
+		return transferStatus;
+	}
+
+	public void setTransferStatus(String transferStatus) {
+		this.transferStatus = transferStatus;
+	}
+
+	public String getSortDisplaygroupSeq() {
+		return sortDisplaygroupSeq;
+	}
+
+	public void setSortDisplaygroupSeq(String sortDisplaygroupSeq) {
+		this.sortDisplaygroupSeq = sortDisplaygroupSeq;
+	}
+
+	public WmsTask() {
+	}
+
+	public WmsWarehouse getWarehouse() {
+		return warehouse;
+	}
+
+	public void setWarehouse(WmsWarehouse warehouse) {
+		this.warehouse = warehouse;
+	}
+
+	public WmsCompany getCompany() {
+		return company;
+	}
+
+	public void setCompany(WmsCompany company) {
+		this.company = company;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+//		String keyInfo = "跟踪TASK:ID="+this.getId()+":status"+this.status;
+//		CommonHelper.printStackTrace(keyInfo);
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public WmsWorkDoc getWorkDoc() {
+		return workDoc;
+	}
+
+	public void setWorkDoc(WmsWorkDoc workDoc) {
+		this.workDoc = workDoc;
+	}
+
+	public WmsTaskGroup getTaskGroup() {
+		return taskGroup;
+	}
+
+	public void setTaskGroup(WmsTaskGroup taskGroup) {
+		this.taskGroup = taskGroup;
+	}
+
+	public String getRelatedObjBillType() {
+		return relatedObjBillType;
+	}
+
+	public void setRelatedObjBillType(String relatedObjBillType) {
+		this.relatedObjBillType = relatedObjBillType;
+	}
+
+	public Long getRelatedObjId() {
+		return relatedObjId;
+	}
+
+	public void setRelatedObjId(Long relatedObjId) {
+		this.relatedObjId = relatedObjId;
+	}
+
+	public String getRelatedBillCode() {
+		return relatedBillCode;
+	}
+
+	public void setRelatedBillCode(String relatedBillCode) {
+		this.relatedBillCode = relatedBillCode;
+	}
+
+	public WmsWorkArea getWorkArea() {
+		return workArea;
+	}
+
+	public void setWorkArea(WmsWorkArea workArea) {
+		this.workArea = workArea;
+	}
+
+	public WmsLocation getFromLocation() {
+		return fromLocation;
+	}
+
+	public void setFromLocation(WmsLocation fromLocation) {
+		this.fromLocation = fromLocation;
+	}
+
+	public WmsLocation getToLocation() {
+		return toLocation;
+	}
+
+	public void setToLocation(WmsLocation toLocation) {
+		this.toLocation = toLocation;
+	}
+
+	public String getPallet() {
+		return pallet;
+	}
+
+	public void setPallet(String pallet) {
+		this.pallet = pallet;
+	}
+
+	public String getCarton() {
+		return carton;
+	}
+
+	public void setCarton(String carton) {
+		this.carton = carton;
+	}
+
+	public WmsItem getItem() {
+		return item;
+	}
+
+	public void setItem(WmsItem item) {
+		this.item = item;
+	}
+
+	public WmsItemKey getItemKey() {
+		return itemKey;
+	}
+
+	public void setItemKey(WmsItemKey itemKey) {
+		this.itemKey = itemKey;
+	}
+
+	public String getInventoryStatus() {
+		return inventoryStatus;
+	}
+
+	public void setInventoryStatus(String inventoryStatus) {
+		this.inventoryStatus = inventoryStatus;
+	}
+
+	public WmsPackageUnit getPackageUnit() {
+		return packageUnit;
+	}
+
+	public void setPackageUnit(WmsPackageUnit packageUnit) {
+		this.packageUnit = packageUnit;
+	}
+
+	public Double getPlanPackQty() {
+		return planPackQty;
+	}
+
+	public void setPlanPackQty(Double planPackQty) {
+		this.planPackQty = planPackQty;
+	}
+
+	public Double getPlanQty() {
+		return CommonHelper.dealDoubleError(planQty);
+	}
+
+	public void setPlanQty(Double planQty) {
+		this.planQty = planQty;
+	}
+
+	public Double getPickedQty() {
+		return pickedQty;
+	}
+
+	public void setPickedQty(Double pickedQty) {
+		this.pickedQty = pickedQty;
+	}
+
+	public Double getPutawayQty() {
+		return putawayQty;
+	}
+
+	public void setPutawayQty(Double putawayQty) {
+		this.putawayQty = putawayQty;
+	}
+
+	public Double getSortedQty() {
+		return sortedQty;
+	}
+
+	public void setSortedQty(Double sortedQty) {
+		this.sortedQty = sortedQty;
+	}
+
+	public Double getPlanWeight() {
+		return planWeight;
+	}
+
+	public void setPlanWeight(Double planWeight) {
+		this.planWeight = planWeight;
+	}
+
+	public Double getPlanVolume() {
+		return planVolume;
+	}
+
+	public void setPlanVolume(Double planVolume) {
+		this.planVolume = planVolume;
+	}
+
+	public Date getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+
+	public WmsWorker getWorker() {
+		return worker;
+	}
+
+	public void setWorker(WmsWorker worker) {
+		this.worker = worker;
+	}
+	
+	public String getOperationType() {
+		return operationType;
+	}
+
+	public void setOperationType(String operationType) {
+		this.operationType = operationType;
+	}
+	
+	public String getInvRelatedBillType() {
+		return invRelatedBillType;
+	}
+
+	public void setInvRelatedBillType(String invRelatedBillType) {
+		this.invRelatedBillType = invRelatedBillType;
+	}
+
+	public String getInvRelatedBillCode() {
+		return invRelatedBillCode;
+	}
+
+	public void setInvRelatedBillCode(String invRelatedBillCode) {
+		this.invRelatedBillCode = invRelatedBillCode;
+	}
+
+	public String getPalletCode() {
+		return palletCode;
+	}
+
+	public void setPalletCode(String palletCode) {
+		this.palletCode = palletCode;
+	}
+
+	public String getContainerCode() {
+		return containerCode;
+	}
+
+	public void setContainerCode(String containerCode) {
+		this.containerCode = containerCode;
+	}
+
+	public Boolean getLockStatus() {
+		return lockStatus;
+	}
+
+	public void setLockStatus(Boolean lockStatus) {
+		this.lockStatus = lockStatus;
+	}
+
+	/**
+	 * 增加拣货数量BU
+	 * @param quantityBU
+	 */
+	public void pickedQty(Double quantityBU){
+		this.pickedQty = DoubleUtils.add(this.pickedQty, quantityBU,this.item.getBuPrecision());
+		if(DoubleUtils.sub(this.pickedQty, planQty)>=0){
+			this.status = WmsTaskStatus.FINISH;
+		}else{
+			this.status = WmsTaskStatus.IN_OPERATION;
+		}
+		
+		CommonHelper.log("修改TASK状态：ID:"+this.getId()+":pickedqty:"+this.pickedQty+":planqty:"+this.planQty+":pickedqty>=planqty?"+(this.pickedQty.doubleValue() >= planQty.doubleValue())+":status"+this.status);
+		
+		this.workDoc.pickedQty(quantityBU,0D,this.item.getBuPrecision());
+	}
+	
+	/**
+	 * 增加上架数量BU
+	 * @param quantityBU
+	 */
+	public void putawayQty(Double quantityBU){
+		this.putawayQty = DoubleUtils.add(this.putawayQty, quantityBU,this.item.getBuPrecision());
+		if(DoubleUtils.sub(this.putawayQty, planQty)>=0){
+			this.status = WmsTaskStatus.FINISH;
+		}else{
+			this.status = WmsTaskStatus.IN_OPERATION;
+		}
+		CommonHelper.log("修改TASK状态：ID:"+this.getId()+":putawayQty:"+this.putawayQty+":planqty:"+this.planQty+":putawayQty>=planqty?"+(this.putawayQty.doubleValue() >= planQty.doubleValue())+":status"+this.status);
+		
+		this.workDoc.putawayQty(quantityBU,this.item.getBuPrecision());
+	}
+	
+	/**
+	 * 获取任务中未作业数量
+	 * @return
+	 */
+	public Double getUnmovedQuantityBU() {
+		return DoubleUtils.sub(this.planQty,this.putawayQty,this.item.getBuPrecision());
+	}
+	
+	/**
+	 * 更新计划数量
+	 * @param quantityBU
+	 */
+	public void planQty(Double quantityBU,Double packQty){
+		this.planQty = DoubleUtils.add(this.planQty, quantityBU,this.item.getBuPrecision());
+		this.planPackQty = DoubleUtils.add(this.planPackQty, packQty,this.item.getBuPrecision());
+		if(this.workDoc != null){
+			this.workDoc.planQty(quantityBU,this.item.getBuPrecision());
+		}
+	}
+	
+	/**
+	 * 获取拣货任务中未作业包装数量
+	 * @return
+	 */
+	public Double getUnpickedPackQty() {
+		return WmsPackageUnitUtils.getPackQty(packageUnit,
+				DoubleUtils.sub(this.planQty,this.pickedQty,this.item.getBuPrecision()), this.item.getBuPrecision());
+	}
+	/**
+	 * 更新计划数量,不更新作业单头数量
+	 * @param quantityBU
+	 */
+	public void addQty(Double quantityBU,Double packQty){
+		this.planQty = DoubleUtils.add(this.planQty, quantityBU,this.item.getBuPrecision());
+		this.planPackQty = DoubleUtils.add(this.planPackQty, packQty,this.item.getBuPrecision());
+	}
+}

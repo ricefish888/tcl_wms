@@ -1,0 +1,16 @@
+﻿##########
+xxx.raq   							中文备注
+deliveryOrder.raq                   可收货交货单信息表
+completeWork.raq                    完工欠料表
+stagnantInventory.raq               呆滞库存表
+printLabel.raq                      打印标签
+receipt.raq                         打印收货单
+inventoryReport.raq                 库存报表     
+SCTLD.raq                           生产退料单
+QTCKD.raq                           其他出库单（出库单）
+PSD.raq                             配送单
+QTRKD.raq                           其他入库单(收货单)
+XSCK.raq                            销售出库单
+YLCKD.raq                           预留出库单（出库单）
+
+

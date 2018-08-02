@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editTclWmsInventoryTransposingPage" title="editTclWmsInventoryTransposingPage" entityClass="com.vtradex.wms.server.model.entity.inventory.WmsInventory" width="500" height="350">
+        <workflow/>
+        <initListeners>
+        </initListeners>
+        <inputUIs>
+            <hidden id="inventory.id" title="inventory.id" reserve="false"/>
+            <hidden id="inventory.itemKey.id" title="inventory.itemKey.id" reserve="false"/>
+            <hidden id="inventory.location.id" title="inventory.location.id" reserve="false"/>
+            
+             <text id="inventory.location.code" title="inventory.location.code" row="1" col="1" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+             </text> 
+             <remote id="locationId" title="location" row="1" col="2" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="editable" multiple="false" manualEditable="true" displayColumn="3"  enumColumnType="2=WmsLocationType"  percentSignPosition="both" displayedTableHead="序号,库位类型,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT 
+w.id,
+w.type,
+w.code
+FROM WmsLocation w
+WHERE w.status = 'ENABLED'
+AND w.type in ('STORAGE')
+AND (w.code LIKE :param)
+AND w.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}
+order by w.type asc
+ 		]]></hql>
+                    <eventListeners/>
+                </remote>
+                
+			<numberText id="inventory.qty" title="inventory.qty" row="2" col="1" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+            	<visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </numberText>
+            <numberText id="qty" title="qty" row="2" col="2" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+            	<visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </numberText>
+			
+        </inputUIs>
+    </editPage>
+</pages>

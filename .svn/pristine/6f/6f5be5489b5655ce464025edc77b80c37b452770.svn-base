@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--交货输入页面模板 -->
+<RFFormPage id="tclItemBackInPage1" title="tclItemBackInPage1">
+	<RFDisplay id="poInfoDisplay" load="tclRfOrderManager.showPos">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			退料信息: {poInfoStr}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>
+			退料信息: {poInfoStr}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="itemBackInput" title="itemBackInput" tip="itemBackInput" onFoucs="false">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="itemBackScanBt" title="itemBackScanBt" action="tclRfOrderManager.itemBackInfo" validate="" onFoucs="false"/>
+			<RFButton id="genAsnScanBt" title="genAsnScanBt" action="tclRfOrderManager.genASN" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

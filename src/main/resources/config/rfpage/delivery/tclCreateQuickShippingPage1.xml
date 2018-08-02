@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 显示作业单信息 -->
+<RFFormPage id="tclCreateQuickShippingPage1" title="tclCreateQuickShippingPage1">
+	<RFDisplay id="workDocItemDisplay" load="tclRfBolManager.showWorkDocInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			作业单号：{docCode}
+			{docItemInfos}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>	
+		   	作业单号：{docCode}
+			{docItemInfos}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<buttons>
+			<RFButton id="createQuickShippingScan" title="createQuickShippingScan" action="tclRfBolManager.createQuickShipping" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

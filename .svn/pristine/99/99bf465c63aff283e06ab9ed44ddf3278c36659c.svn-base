@@ -1,0 +1,254 @@
+package com.vtradex.wms.server.model.entity.bol;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.vtradex.thorn.server.annotation.UniqueKey;
+import com.vtradex.thorn.server.model.Entity;
+import com.vtradex.thorn.server.model.VersionalEntity;
+import com.vtradex.wms.server.model.component.Contact;
+import com.vtradex.wms.server.model.entity.base.WmsCustomer;
+import com.vtradex.wms.server.model.entity.bol.WmsBolStatus;
+import com.vtradex.wms.server.model.entity.bol.WmsMasterBOL;
+import com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse;
+
+/**
+ * 发货单/装箱单
+ * 
+ * @author <a href="mailto:ming.chen@tech.vtradex.com">陈明</a>
+ * @since Dec 10, 2015
+ */
+public class WmsBol extends VersionalEntity {	
+	
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 所属仓库
+	 */
+	private WmsWarehouse warehouse; 
+	/** 装车单号 */
+	private WmsMasterBOL masterBol;
+	@UniqueKey
+	/** 单号 */
+	private String code;
+	/** 状态 */
+	private String status=WmsBolStatus.OPEN;
+	/** 重量 */
+	private Double weight = 0D;
+	/** 体积 */
+	private Double volume = 0D;
+	/** 件数: 
+	 * 当非包装发货时，一个BOL 是一单货（作为发货单用），按照拣选的基本单位作为件数；包装发货时，一个BOL 是一箱货（作为装箱单用），件数为1
+	 * */
+	private Double qty = 0D;
+	/** 收货人*/
+	private WmsCustomer customer;
+	/** 收货人姓名*/
+	private String shipToName;
+	
+	/** 预计发货时间*/
+	private Date expectedDeliveryTime;
+	/** 实际发货时间*/
+	private Date actualDeliveryTime;
+	/** 预计到货时间*/
+	private Date expectedArriveTime;
+	/** 实际到货时间*/
+	private Date actualArriveTime;
+	/** 联系方式*/
+	private Contact contact;
+	/**
+	 * 发货单明细
+	 */
+	private Set<WmsBolDetail> details = new HashSet<WmsBolDetail>();
+	
+	/**
+	 * v1.9.8 ADD
+	 */
+	/** 托盘 */
+	private String palletCode;
+	
+	/** 箱号*/
+	private String containerCode;
+	
+	/** 是否锁定  表结构V2.1.7新增 */
+	private Boolean isLocked = Boolean.FALSE;
+	
+	/***/
+	private Long   customerWarehouseId;
+	
+	
+	/**
+	 * {@link WmsBolType}
+	 * */
+	private String type;
+	
+	/**拣货单序号  调拨交接单用*/
+	private Long ptId;
+	
+	
+
+	
+	public Long getPtId() {
+		return ptId;
+	}
+	public void setPtId(Long ptId) {
+		this.ptId = ptId;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public Long getCustomerWarehouseId() {
+		return customerWarehouseId;
+	}
+	public void setCustomerWarehouseId(Long customerWarehouseId) {
+		this.customerWarehouseId = customerWarehouseId;
+	}
+	public String getPalletCode() {
+		return palletCode;
+	}
+	public void setPalletCode(String palletCode) {
+		this.palletCode = palletCode;
+	}
+	public String getContainerCode() {
+		return containerCode;
+	}
+	public void setContainerCode(String containerCode) {
+		this.containerCode = containerCode;
+	}
+	public WmsWarehouse getWarehouse() {
+		return warehouse;
+	}
+	public void setWarehouse(WmsWarehouse warehouse) {
+		this.warehouse = warehouse;
+	}
+	public WmsMasterBOL getMasterBol() {
+		return masterBol;
+	}
+	public void setMasterBol(WmsMasterBOL masterBol) {
+		this.masterBol = masterBol;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public Double getWeight() {
+		return weight;
+	}
+	public void setWeight(Double weight) {
+		this.weight = weight;
+	}
+	public Double getVolume() {
+		return volume;
+	}
+	public void setVolume(Double volume) {
+		this.volume = volume;
+	}
+	public Double getQty() {
+		return qty;
+	}
+	public void setQty(Double qty) {
+		this.qty = qty;
+	}
+	public WmsCustomer getCustomer() {
+		return customer;
+	}
+	public void setCustomer(WmsCustomer customer) {
+		this.customer = customer;
+	}
+	public String getShipToName() {
+		return shipToName;
+	}
+	public void setShipToName(String shipToName) {
+		this.shipToName = shipToName;
+	}
+	public Date getExpectedDeliveryTime() {
+		return expectedDeliveryTime;
+	}
+	public void setExpectedDeliveryTime(Date expectedDeliveryTime) {
+		this.expectedDeliveryTime = expectedDeliveryTime;
+	}
+	public Date getActualDeliveryTime() {
+		return actualDeliveryTime;
+	}
+	public void setActualDeliveryTime(Date actualDeliveryTime) {
+		this.actualDeliveryTime = actualDeliveryTime;
+	}
+	public Date getExpectedArriveTime() {
+		return expectedArriveTime;
+	}
+	public void setExpectedArriveTime(Date expectedArriveTime) {
+		this.expectedArriveTime = expectedArriveTime;
+	}
+	public Date getActualArriveTime() {
+		return actualArriveTime;
+	}
+	public void setActualArriveTime(Date actualArriveTime) {
+		this.actualArriveTime = actualArriveTime;
+	}
+	public Set<WmsBolDetail> getDetails() {
+		return details;
+	}
+	public void setDetails(Set<WmsBolDetail> details) {
+		this.details = details;
+	}
+	public Contact getContact() {
+		return contact;
+	}
+	public void setContact(Contact contact) {
+		this.contact = contact;
+	}
+	public Boolean getIsLocked() {
+		return isLocked;
+	}
+	public void setIsLocked(Boolean isLocked) {
+		this.isLocked = isLocked;
+	}
+	/**
+	 * 发货单新增明细
+	 * 
+	 * @param pickTicketDetail
+	 */
+	public void addBOLDetail(WmsBolDetail detail) {
+		detail.setBol(this);
+
+		this.details.add(detail);
+
+//		this.refreshBOLQty();
+	}
+
+	/**
+	 * 发货单删除明细
+	 * 
+	 * @param detail
+	 */
+	public void removeDetails(WmsBolDetail detail) {
+		detail.setBol(null);
+
+		this.details.remove(detail);
+
+		this.refreshBOLQty();
+	}
+
+	/**
+	 * 刷新发货单期待数量
+	 */
+	public void refreshBOLQty() {
+		this.qty = 0.0D;
+		
+		for (WmsBolDetail detail : this.details) {
+			this.qty += detail.getPlanQty();
+		}
+	}
+	
+}

@@ -1,0 +1,633 @@
+package com.vtradex.wms.rfserver.service.order.pojo;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.vtradex.rf.common.RfConstant;
+import com.vtradex.rf.common.exception.RfBusinessException;
+import com.vtradex.thorn.server.exception.BusinessException;
+import com.vtradex.thorn.server.model.EntityFactory;
+import com.vtradex.thorn.server.service.WorkflowManager;
+import com.vtradex.thorn.server.service.pojo.DefaultBaseManager;
+import com.vtradex.thorn.server.util.DateUtil;
+import com.vtradex.thorn.server.web.security.BaseOrganizationHolder;
+import com.vtradex.thorn.server.web.security.UserHolder;
+import com.vtradex.wms.rfserver.service.order.TclRfOrderManager;
+import com.vtradex.wms.rfserver.service.receiving.TclRfAsnManager;
+import com.vtradex.wms.server.enumeration.WarehouseEnumeration;
+import com.vtradex.wms.server.helper.WmsBarCodeParse;
+import com.vtradex.wms.server.model.component.LotInfo;
+import com.vtradex.wms.server.model.entity.base.WmsFactoryWarehouse;
+import com.vtradex.wms.server.model.entity.base.WmsFactoryXmlb;
+import com.vtradex.wms.server.model.entity.base.WmsProOrderBackRfRecord;
+import com.vtradex.wms.server.model.entity.base.WmsProductionOrderCheck;
+import com.vtradex.wms.server.model.entity.base.WmsShippingLotTruck;
+import com.vtradex.wms.server.model.entity.base.WmsSupplier;
+import com.vtradex.wms.server.model.entity.item.WmsBillType;
+import com.vtradex.wms.server.model.entity.item.WmsItem;
+import com.vtradex.wms.server.model.entity.item.WmsPackageUnit;
+import com.vtradex.wms.server.model.entity.production.ProductionOrder;
+import com.vtradex.wms.server.model.entity.production.ProductionOrderDetail;
+import com.vtradex.wms.server.model.entity.receiving.WmsASN;
+import com.vtradex.wms.server.model.entity.receiving.WmsASNDetail;
+import com.vtradex.wms.server.model.entity.warehouse.WmsLocation;
+import com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse;
+import com.vtradex.wms.server.model.enums.WmsPickSource;
+import com.vtradex.wms.server.model.enums.WmsPickticketBillTypeCode;
+import com.vtradex.wms.server.service.pickticket.WmsTclPickticketManager;
+import com.vtradex.wms.server.service.receiving.WmsASNManager;
+import com.vtradex.wms.server.service.receiving.WmsTclASNManager;
+import com.vtradex.wms.server.service.sequence.WmsBussinessCodeManager;
+import com.vtradex.wms.server.utils.BeanUtils;
+import com.vtradex.wms.server.utils.DoubleUtils;
+import com.vtradex.wms.server.utils.StringHelper;
+import com.vtradex.wms.server.utils.WmsPackageUnitUtils;
+import com.vtradex.wms.webservice.utils.CommonHelper;
+
+ 
+/**
+ * 订单RF逻辑类
+ * @author admin
+ *
+ */
+public class DefaultTclRfOrderManager extends DefaultBaseManager implements TclRfOrderManager{
+	
+	private WmsBussinessCodeManager wmsBussinessCodeManager;
+	
+	private WorkflowManager workflowManager;
+	 
+	protected WmsTclASNManager wmsTclAsnManager;
+
+	public DefaultTclRfOrderManager(WmsBussinessCodeManager wmsBussinessCodeManager,WorkflowManager workflowManager,WmsTclASNManager wmsTclAsnManager) {
+		 this.wmsBussinessCodeManager=wmsBussinessCodeManager;
+		 this.workflowManager=workflowManager;
+		 this.wmsTclAsnManager=wmsTclAsnManager;
+	}
+	/**
+	 * 扫描订单/线体号提交
+	 * @param asnMap
+	 * @return
+	 * @throws RfBusinessException
+	 */
+	public Map orderCodeInputCommit(Map orderMap) throws RfBusinessException {
+		String orderCode = (String) orderMap.get("orderCodeInput");
+		if(StringUtils.isEmpty(orderCode)){
+			throw new RfBusinessException("生产工单/线体号不能为空");
+		}
+		
+		String hql = "From ProductionOrder order where order.code=:code";
+		
+		ProductionOrder order = (ProductionOrder)commonDao.findByQueryUniqueResult(hql, "code", orderCode);
+		if(order==null){
+			  hql = "select count(*) From ProductionOrder order where order.productLine=:productLine";
+			  Long num = (Long)commonDao.findByQueryUniqueResult(hql, "productLine", orderCode);
+			  if(num==null||num<1){
+				  orderMap.put("orderCodeInput", "");
+				  throw new RfBusinessException("生产工单/线体号不存在",orderMap);
+			  }
+			  orderMap.put(RfConstant.FORWARD_VALUE, "success_orderProductLine");
+		}else{
+			orderMap.put("orderId", order.getId()); 
+			orderMap.put(RfConstant.FORWARD_VALUE, "success_orderCode");
+		}
+		orderMap.put("orderCode", orderCode); 
+		return orderMap;
+	}
+	 
+
+	/**
+	 * 显示订单信息
+	 * @param asnMap
+	 * @return
+	 * @throws RfBusinessException
+	 */
+	public Map orderInfo(Map orderMap) throws RfBusinessException {
+		return orderMap;
+	}
+	
+	/**
+	 * 扫描货品条码信息
+	 * @param asnMap
+	 * @return
+	 * @throws RfBusinessException
+	 */
+	public Map orderItemCommit(Map orderMap) throws RfBusinessException {
+		String orderCode =  orderMap.get("orderCode").toString() ;
+		String barCode = (String) orderMap.get("itemInput");
+		if(StringUtils.isEmpty(barCode)){
+			throw new RfBusinessException("条码不能为空");
+		}
+		if(!WmsBarCodeParse.isBarCode(barCode)){
+			orderMap.put("itemInput", "");
+			throw new RfBusinessException("条码格式不正确",orderMap);
+		}
+		TclRfAsnManager tclRfAsnManager = (TclRfAsnManager) applicationContext.getBean("tclRfAsnManager");
+		tclRfAsnManager.checkBarCode(barCode);
+		Map map = WmsBarCodeParse.parse(barCode);
+		String itemCode = (String)map.get(WmsBarCodeParse.KEY_ITEMCODE);
+		//不管验证是否通过验证表中不存在数据都记录验证表
+		String hql = "From WmsProductionOrderCheck orderCheck where orderCheck.code=:orderCode";
+		WmsProductionOrderCheck orderCheck =(WmsProductionOrderCheck)commonDao.findByQueryUniqueResult(hql, "orderCode", orderCode);
+		if(orderCheck==null){
+			orderCheck=new WmsProductionOrderCheck();
+			orderCheck.setCheckTime(new Date());
+			orderCheck.setCode(orderCode);
+			orderCheck.setUserCode(UserHolder.getUser().getName());
+			commonDao.store(orderCheck);
+		}
+		
+		hql = "select count(*) From ProductionOrderDetail detail where detail.item.code=:itemCode and detail.productionOrder.code=:orderCode";
+		Long count = (Long)commonDao.findByQueryUniqueResult(hql, new String[]{"itemCode","orderCode"}, new String[]{itemCode,orderCode});
+		if(count==null||count<1){
+			orderMap.put("itemInput", "");
+			throw new RfBusinessException("无此物料",orderMap);
+		} 
+		orderMap.put(RfConstant.CLEAR_VALUE, "true");
+		orderMap.put(RfConstant.FORWARD_VALUE, "success");
+		return orderMap;
+	}
+	
+	/**
+	 * 扫描生产日期信息
+	 * @param asnMap
+	 * @return
+	 * @throws RfBusinessException
+	 */
+	public Map beginDateCommit(Map orderMap) throws RfBusinessException{
+		String beginDate = (String) orderMap.get("beginDate");
+		String orderCode =  orderMap.get("orderCode").toString() ;
+		if(StringUtils.isEmpty(beginDate)){
+			throw new RfBusinessException("生产日期不能为空");
+		}
+		boolean checkDate = beginDate.matches(DateUtil.yyPattern);
+		if(!checkDate){
+			throw new RfBusinessException("生产日期格式不为8位数字");
+		}
+		Date date = DateUtil.formatDate(beginDate);
+		if(date==null){
+			throw new RfBusinessException("生产日期不合法");
+		}
+		String  hql = "select count(*) From ProductionOrder order where to_char(beginDate,'yyyyMMdd')=:beginDateStr and order.productLine=:productLine";
+		Long num = (Long)commonDao.findByQueryUniqueResult(hql, new String []{"beginDateStr","productLine"},new String[]{beginDate,orderCode});
+		if(num==null||num<1){
+			throw new RfBusinessException("当前生产线没有相应生产日期的订单");
+		}
+		orderMap.put(RfConstant.FORWARD_VALUE, "success");
+		return orderMap; 
+	}
+	
+	
+	/**
+	 * 扫描货品条码信息
+	 * @param asnMap
+	 * @return
+	 * @throws RfBusinessException
+	 */
+	@SuppressWarnings("unchecked")
+	public Map productLineItemCommit(Map orderMap) throws RfBusinessException {
+		String orderCode =  orderMap.get("orderCode").toString() ;
+		String barCode = (String) orderMap.get("itemInput");
+		String beginDate = (String) orderMap.get("beginDate");
+		if(StringUtils.isEmpty(barCode)){
+			throw new RfBusinessException("条码不能为空");
+		}
+		if(!WmsBarCodeParse.isBarCode(barCode)){
+			orderMap.put("itemInput", "");
+			throw new RfBusinessException("条码格式不正确",orderMap);
+		}
+		TclRfAsnManager tclRfAsnManager = (TclRfAsnManager) applicationContext.getBean("tclRfAsnManager");
+		tclRfAsnManager.checkBarCode(barCode);
+		Map map = WmsBarCodeParse.parse(barCode);
+		String itemCode = (String)map.get(WmsBarCodeParse.KEY_ITEMCODE);
+		//不管验证是否通过验证表中不存在数据都记录验证表
+		String hql = "From WmsProductionOrderCheck orderCheck where to_char(orderCheck.productionDate,'yyyyMMdd')=:productionDate and orderCheck.code=:orderCode";
+		WmsProductionOrderCheck orderCheck =(WmsProductionOrderCheck)commonDao.findByQueryUniqueResult(hql, new String[]{"productionDate", "orderCode"},new String[]{ beginDate,orderCode});
+		if(orderCheck==null){
+			orderCheck=new WmsProductionOrderCheck();
+			orderCheck.setCheckTime(new Date());
+			orderCheck.setCode(orderCode);
+			Date date = DateUtil.formatDate(beginDate);
+			orderCheck.setProductionDate(date);
+			orderCheck.setUserCode(UserHolder.getUser().getName());
+			commonDao.store(orderCheck);
+		}
+		
+		hql = "select count(*) From ProductionOrderDetail detail where detail.item.code=:itemCode  and to_char(detail.productionOrder.beginDate,'yyyyMMdd')=:beginDate and detail.productionOrder.productLine=:productLine";
+		Long count = (Long)commonDao.findByQueryUniqueResult(hql, new String[]{"itemCode","beginDate","productLine"}, new String[]{itemCode,beginDate,orderCode});
+		if(count==null||count<1){
+			orderMap.put("orderCode", "");
+			orderMap.put("itemInput", "");
+			throw new RfBusinessException("无此物料",orderMap);
+		} 
+		orderMap.put(RfConstant.CLEAR_VALUE, "true");
+		orderMap.put(RfConstant.FORWARD_VALUE, "success");
+		return orderMap;
+	}
+
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map itemBackInfo(Map orderMap) throws RfBusinessException {
+		String barCode =  orderMap.get("itemBackInput").toString().trim();//货品条码
+		if(StringUtils.isEmpty(barCode)){
+			throw new RfBusinessException("条码不能为空");
+		}
+		String itemCode ="";
+		String lotInfo = "";
+		if(WmsBarCodeParse.isBarCode(barCode)){
+			Map map = WmsBarCodeParse.parse(barCode);
+			itemCode = map.get(WmsBarCodeParse.KEY_ITEMCODE).toString().trim();
+			lotInfo = map.get(WmsBarCodeParse.KEY_LOTNO).toString().trim();
+		}else{
+			itemCode = barCode;
+		}
+		TclRfAsnManager tclRfAsnManager = (TclRfAsnManager) applicationContext.getBean("tclRfAsnManager");
+		tclRfAsnManager.checkBarCode(barCode);
+		
+		WmsItem item = (WmsItem)commonDao.findByQueryUniqueResult("FROM WmsItem item where item.code=:ic", "ic", itemCode);
+		if(null==item){
+			orderMap.put("itemBackInput", "");
+			throw new RfBusinessException("货品不存在!!",orderMap);
+		}
+		orderMap.put(RfConstant.ENTITY_ID, item.getId());
+		orderMap.put("itemCode", item.getCode());
+		orderMap.put("lotInfo", lotInfo);
+		/**获取仓库*/
+		WmsWarehouse wh = (WmsWarehouse)commonDao.findByQueryUniqueResult("FROM WmsWarehouse warehouse WHERE warehouse.baseOrganization.id = :baseOrganizationId", 
+				new String[] {"baseOrganizationId"}, new Object[] {BaseOrganizationHolder.getThornBaseOrganization().getId()});
+		String xmlb = "";
+		if(WarehouseEnumeration.VMI.equals(wh.getCode())){
+			xmlb = WmsFactoryXmlb.JS;
+		}else{
+			xmlb = WmsFactoryXmlb.BZ;
+		}
+		orderMap.put("xmlb", xmlb);
+		orderMap.put("barCode", barCode);
+		orderMap.put(RfConstant.FORWARD_VALUE, "success");
+		return orderMap;
+	}
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public Map poInfo(Map orderMap) throws RfBusinessException {
+		ProductionOrderDetail detail = null;
+		WmsShippingLotTruck wslt = null;
+		WmsItem item = null;
+		String barCode = null;
+		if(null!=orderMap.get("id")){
+			String wsltId = orderMap.get("id").toString().trim();
+			if(!StringHelper.isNullOrEmpty(wsltId)){
+				wslt = commonDao.load(WmsShippingLotTruck.class, Long.valueOf(wsltId));
+			}
+		}
+		if(null!=orderMap.get("itemCode")){
+			String itemCode = orderMap.get("itemCode").toString().trim();
+			if(!StringHelper.isNullOrEmpty(itemCode)){
+				item = (WmsItem)commonDao.findByQueryUniqueResult("FROM WmsItem item where item.code=:ic", "ic", itemCode);
+			}
+		}
+		if(null!=orderMap.get("barCode")){
+			barCode = orderMap.get("barCode").toString().trim();
+		}
+		orderMap.put(RfConstant.ENTITY_ID, wslt.getSubRelateId());
+		
+
+		
+		String hql = "FROM WmsShippingLotTruck t where t.item.code=:barcode  AND t.billType='SCLLD' AND t.subRelateId=:subRelateId " +
+				"AND t.lotInfo.extendPropC8=:xmlb AND t.lotInfo.supplierCode=:supplierCode AND t.lotInfo.lot=:lot";
+		List<WmsShippingLotTruck> trucks = commonDao.findByQuery(hql,new String[]{"barcode","subRelateId","xmlb","supplierCode","lot"},
+				new Object[]{item.getCode(),wslt.getSubRelateId(),wslt.getLotInfo().getExtendPropC8(),wslt.getLotInfo().getSupplierCode(),wslt.getLotInfo().getLot()});
+		Double shipqty=0d;
+		for(WmsShippingLotTruck truck : trucks) {
+			shipqty = shipqty + ( truck.getQty()-truck.getReturnQty());
+		}
+		orderMap.put("shipQty", CommonHelper.dealDoubleError(shipqty));//已发运数量
+		orderMap.put("scanedQty", getScanQty(barCode, item, wslt.getSubRelateId()));//已扫描数量
+		orderMap.put(RfConstant.FORWARD_VALUE, RfConstant.FORWARD_SUCCESS);
+		
+		return orderMap;
+	}
+	//查询已扫描数量
+	@SuppressWarnings("unchecked")
+	private Double getScanQty (String barCode,WmsItem item,Long detailId) {
+
+		//查询已扫描的数量
+		String scanHql = "FROM WmsProOrderBackRfRecord record where 1=1 "
+				+ " and record.wmsShippingLotTruck.item=:ri and record.wmsShippingLotTruck.subRelateId=:rs and record.userId=:ru";
+		List<WmsProOrderBackRfRecord> record =  commonDao.findByQuery(scanHql, new String[]{"ri","rs","ru"}, 
+				new Object[]{item,detailId,UserHolder.getUser().getId()});
+		Double qty = 0d ;
+		for(WmsProOrderBackRfRecord r :record) {
+			qty = qty + r.getBackQty();
+		}
+		return qty;
+	}
+	
+	public Map confirm(Map orderMap) throws RfBusinessException {
+		return confirmOrEdit(orderMap,false);
+	}
+	
+	public Map editRecord(Map orderMap) throws RfBusinessException {
+		return confirmOrEdit(orderMap,true);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	private Map confirmOrEdit(Map orderMap,Boolean isEdit) throws RfBusinessException {
+		double qt = 0d;//获取输入数量
+		ProductionOrderDetail detail = null;
+		WmsShippingLotTruck wslt = null;
+		WmsItem item = null;
+		String barCode = null;
+		if(null!=orderMap.get("id")){
+			String wsltId = orderMap.get("id").toString().trim();
+			if(!StringHelper.isNullOrEmpty(wsltId)){
+				wslt = commonDao.load(WmsShippingLotTruck.class, Long.valueOf(wsltId));
+			}
+		}
+		if(null!=orderMap.get("itemCode")){
+			String itemCode = orderMap.get("itemCode").toString().trim();
+			if(!StringHelper.isNullOrEmpty(itemCode)){
+				item = (WmsItem)commonDao.findByQueryUniqueResult("FROM WmsItem item where item.code=:ic", "ic", itemCode);
+			}
+		}
+		if(null!=orderMap.get("barCode")){
+			barCode = orderMap.get("barCode").toString().trim();
+		}
+		if(null!=orderMap.get("qtyInput")){
+			String qty = orderMap.get("qtyInput").toString().trim();
+			if(!StringHelper.isNullOrEmpty(qty)){
+				qt = Double.valueOf(qty);
+			}
+		}
+		
+		String hql = "FROM WmsShippingLotTruck t where t.item.code=:barcode  AND t.billType='SCLLD' AND t.subRelateId=:subRelateId " +
+		"AND t.lotInfo.extendPropC8=:xmlb AND t.lotInfo.supplierCode=:supplierCode AND t.lotInfo.lot=:lot AND t.qty>t.returnQty ";
+		List<WmsShippingLotTruck> trucks = commonDao.findByQuery(hql,new String[]{"barcode","subRelateId","xmlb","supplierCode","lot"},
+				new Object[]{item.getCode(),wslt.getSubRelateId(),wslt.getLotInfo().getExtendPropC8(),wslt.getLotInfo().getSupplierCode(),wslt.getLotInfo().getLot()});
+		Double shipQty = 0d;//已发运数量
+		WmsShippingLotTruck wmsShippingLotTruck = null;
+		for(WmsShippingLotTruck truck : trucks) {
+			shipQty = shipQty + ( truck.getQty()-truck.getReturnQty());
+			if(wmsShippingLotTruck == null) {
+				wmsShippingLotTruck = truck;
+			}
+		}
+		double scanQty = 0d;//已扫描数量
+		
+		//查询是否扫描过
+		String scanHql = "FROM WmsProOrderBackRfRecord record where 1=1 "
+				+ " and record.wmsShippingLotTruck.item=:ri and record.wmsShippingLotTruck.subRelateId=:rs and record.userId=:ru";
+		List<WmsProOrderBackRfRecord> records =  commonDao.findByQuery(scanHql, new String[]{"ri","rs","ru"}, 
+				new Object[]{item,wslt.getSubRelateId(),UserHolder.getUser().getId()});
+		
+		if(!records.isEmpty()) {
+			for(WmsProOrderBackRfRecord r : records) {
+				scanQty = scanQty+r.getBackQty();
+			}
+		}
+		if(isEdit) {
+			scanQty = 0d;
+		}
+		 
+		if(DoubleUtils.add(qt,scanQty)>CommonHelper.dealDoubleError(shipQty)){
+			throw new RfBusinessException("数量与发运数量不符!!");
+		}
+		Double mustBack = DoubleUtils.add(qt,scanQty);
+		commonDao.deleteAll(records); //老数据删除重新生成
+		
+		
+		for(WmsShippingLotTruck truck : trucks) {
+			
+			
+			if(mustBack<=0d) {
+				break;
+			}
+			Double canBackQty =  truck.getQty()-truck.getReturnQty(); // 本条可退
+			//新建扫描记录
+			WmsProOrderBackRfRecord record = EntityFactory.getEntity(WmsProOrderBackRfRecord.class);
+			record.setWmsShippingLotTruck(truck);
+			record.setUserId(UserHolder.getUser().getId());
+			
+			if(canBackQty>=mustBack) { //一条就够了
+				record.setBackQty(mustBack);
+				mustBack = 0d;
+			}
+			else {
+				record.setBackQty(canBackQty);
+				mustBack =mustBack - canBackQty;
+			}
+			 
+			commonDao.store(record);
+			
+		}
+		
+//		orderMap.put(RfConstant.ENTITY_ID, record.getId());
+		orderMap.put(RfConstant.FORWARD_VALUE, RfConstant.FORWARD_SUCCESS);
+		return orderMap;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Map showPos(Map orderMap) throws RfBusinessException { 
+		
+		//查询已扫描的数量
+		String scanHql = "SELECT record.wmsShippingLotTruck.relateCode,record.wmsShippingLotTruck.item.name,record.wmsShippingLotTruck.lotInfo.extendPropC17,"
+				+ "record.userId,sum(record.backQty) "
+				+ " FROM WmsProOrderBackRfRecord record "
+				+ " where record.userId=:ru "
+				+ "group by record.wmsShippingLotTruck.relateCode,record.wmsShippingLotTruck.item.name,record.wmsShippingLotTruck.lotInfo.extendPropC17,record.userId ";
+		
+		List<Object[]> records = commonDao.findByQuery(scanHql,new String[]{"ru"},new Object[]{UserHolder.getUser().getId()});
+		StringBuffer poInfoStr = new StringBuffer();
+		for(int i = 0;i <records.size();i++){
+//			PO订单号：
+//			物料名称：
+//			条码：
+//			扫描数量:
+			Object[] infos = records.get(i);
+			String poCode = infos[0].toString();
+			poInfoStr.append("工单号:").append(poCode).append("\n");
+			String itemName = infos[1].toString();
+			poInfoStr.append("物料名称:").append(itemName).append("\n");
+			String barCode = infos[2].toString();
+			poInfoStr.append("条码:").append(barCode).append("\n");
+//			String userId = infos[3].toString();
+//			poInfoStr.append("操作人:").append(userName).append("\n");
+			Double scanQty =Double.valueOf(infos[4].toString());
+			poInfoStr.append("数量:").append(scanQty).append("\n");
+			if(i<(records.size()-1)){
+				poInfoStr.append("----------------------\n");
+			}
+		}
+		orderMap.put("poInfoStr", poInfoStr);
+		orderMap.put(RfConstant.FORWARD_VALUE,RfConstant.FORWARD_SUCCESS);
+		
+		return orderMap;
+	}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	/**生产退料单生成ASN*/
+	public Map genASN(Map orderMap) throws RfBusinessException {
+		
+		String invStatus = (String) orderMap.get("invStatusInput");
+		
+		//查询待处理的记录
+		List<WmsProOrderBackRfRecord> records = commonDao.findByQuery("FROM WmsProOrderBackRfRecord record where 1=1 and record.userId=:ru","ru",UserHolder.getUser().getId());
+		if(records.size()>0){
+			//生成ASN
+			Set<String> keys = new HashSet<String>();
+			for (WmsProOrderBackRfRecord record : records) {
+				//工单号 ### 供应商编码 ### 项目类别
+				keys.add(record.getWmsShippingLotTruck().getRelateCode()+"###"+record.getWmsShippingLotTruck().getLotInfo().getSupplierCode() +"###"+record.getWmsShippingLotTruck().getLotInfo().getExtendPropC8()+"###"+invStatus);
+			}
+			for(String key : keys) {
+				String[]  obj = key.split("###");
+				String gdcode=obj[0];
+				String supplierCode = obj[1];
+				String xmlb = obj[2];
+				//以工单号分组
+				List<WmsProOrderBackRfRecord> temps = commonDao.findByQuery(
+						"FROM WmsProOrderBackRfRecord record where record.wmsShippingLotTruck.relateCode=:rrc  and  record.userId=:ru "
+						+ "and record.wmsShippingLotTruck.lotInfo.supplierCode=:supplierCode and record.wmsShippingLotTruck.lotInfo.extendPropC8=:xmlb ",
+						new String[]{"rrc","ru","supplierCode","xmlb"},new Object[]{gdcode,UserHolder.getUser().getId(),supplierCode,xmlb});
+				if(temps.size()>0){
+				     genHeader(temps, key);
+				}
+			}
+			
+		}else{
+			throw new RfBusinessException("没有可以生成的退料!!");
+		}
+		orderMap.put(RfConstant.FORWARD_VALUE,RfConstant.FORWARD_SUCCESS);
+		return orderMap;
+	}
+	@SuppressWarnings({ "unchecked" })
+	private WmsASN genHeader(List<WmsProOrderBackRfRecord> temps,String key ) {
+		
+		String[]  obj = key.split("###");
+		String gdcode=obj[0];
+		String supplierCode = obj[1];
+		String xmlb = obj[2];
+		String invStatus = obj[3];
+		
+		WmsASN asn = EntityFactory.getEntity(WmsASN.class);
+		String hql = "from ProductionOrder a where a.code= :code";
+		ProductionOrder productionOrder = (ProductionOrder)commonDao.findByQueryUniqueResult(hql, "code", gdcode);
+		String facCode = productionOrder.getFactory().getCode();
+		hql = "";
+		WmsWarehouse wh = null;
+		if(null != xmlb && xmlb.equals(WmsFactoryXmlb.JS)){//寄售退VMI,标准退自管仓
+			hql = "FROM WmsWarehouse warehouse WHERE warehouse.code='VMI'";
+			wh = (WmsWarehouse)commonDao.findByQueryUniqueResult(hql, "", "");
+		}else{
+			hql = "FROM WmsFactoryWarehouse fw WHERE fw.factory.id =:factoryId AND fw.type =:type";
+			WmsFactoryWarehouse wfw = (WmsFactoryWarehouse)commonDao.
+					findByQueryUniqueResult(hql, new String[]{"factoryId","type"}, 
+							new Object[]{productionOrder.getFactory().getId(),xmlb});
+			wh = wfw.getWarehouse();
+		}
+		asn.setWarehouse(wh);
+		WmsBillType billType = (WmsBillType)commonDao.findByQueryUniqueResult("FROM WmsBillType bt where bt.code=:bc", "bc",WmsPickticketBillTypeCode.SCTLD);
+		if(null==billType){
+			throw new RfBusinessException("单据类型不存在!!");
+		}
+		asn.setBillType(billType);
+		String asnCode = wmsBussinessCodeManager.generateCodeByRule(wh, asn.getBillType().getCode());
+		asn.setCode(asnCode);
+		//谁操作的生产退料,生成的收货单保管员就记录谁
+		asn.setKeeper(UserHolder.getUser());
+		asn.setUserField5(xmlb);
+	
+		String locHql = " FROM WmsLocation receiveLocation WHERE receiveLocation.status = 'ENABLED' AND receiveLocation.type='RECEIVE' AND receiveLocation.warehouse.id=:rw";
+		List<WmsLocation> locs = commonDao.findByQuery(locHql, "rw", wh.getId());
+		if(locs.size()>0){
+			asn.setReceiveLocation(locs.get(0));//收货库位
+		}
+		asn.setCustomerBill(gdcode);//生产订单号
+		
+		
+		asn.setUserField7(facCode);
+		
+		asn.setCompany(temps.get(0).getWmsShippingLotTruck().getCompany());//货主
+	 
+		
+		WmsSupplier sup  = (WmsSupplier)commonDao.findByQueryUniqueResult("FROM WmsSupplier su WHERE su.code=:sc", "sc",
+				supplierCode);
+		if(null!=sup){
+			asn.setSupplier(sup);//供应商
+		}
+		
+		
+		workflowManager.doWorkflow(asn, "wmsASNProcess.new");
+		
+		int lineNo=0;
+		for (WmsProOrderBackRfRecord record : temps) {
+			lineNo++;
+			
+			WmsShippingLotTruck t = record.getWmsShippingLotTruck();
+			
+			String hql2 = "from WmsASNDetail asndetail where asndetail.asn=:asn and asndetail.lotInfo.extendPropC17=:barcode";
+			List<WmsASNDetail> asndetails = commonDao.findByQuery(hql2,new String[]{"asn","barcode"},new Object[]{asn,record.getWmsShippingLotTruck().getLotInfo().getExtendPropC17()});
+			if(asndetails.isEmpty()) {
+				//生成明细
+				WmsASNDetail detail = EntityFactory.getEntity(WmsASNDetail.class);
+				WmsItem item = t.getItem();
+				WmsPackageUnit unit = t.getPackageUnit();
+				
+				Double qty = record.getBackQty();//退料数量
+				
+				Double packQty = WmsPackageUnitUtils.getPackQty(unit, record.getBackQty(),item.getBuPrecision());
+				
+				//批次信息
+				LotInfo lotInfo = t.getLotInfo();
+		        LotInfo newLotInfo = new LotInfo();
+		        BeanUtils.copyEntity(newLotInfo, lotInfo);//复制新批次
+		        
+		        detail.setLotInfo(newLotInfo);
+		        detail.setAsn(asn);
+		        
+		        detail.setLineNo(lineNo);
+		        detail.setExpectedPackQty(packQty);
+		        detail.setExpectedQty(qty);
+		        detail.setItem(item);
+		        detail.setPackageUnit(unit);
+		        detail.setInventoryStatus(invStatus);//库存状态
+		        detail.setUserField2(t.getSubRelateId().toString());//记录工单明细ID
+		     
+		        asn.addDetail(detail);
+		        commonDao.store(detail);
+		        asn.refreshQtyBU();
+		        asn.setOrderDate(new Date());
+		        this.commonDao.store(asn);
+		        t.setReturnQty(t.getReturnQty()+record.getBackQty());
+		        commonDao.store(t);
+			}
+			else if(asndetails.size()>1) {
+				throw new BusinessException("找到了多条相同明细");
+			}
+			else {
+				WmsASNDetail d = asndetails.get(0);
+				d.setExpectedQty(d.getExpectedQty()+record.getBackQty()); 
+				d.setExpectedPackQty(d.getExpectedPackQty() + WmsPackageUnitUtils.getPackQty(d.getPackageUnit(), record.getBackQty(),d.getItem().getBuPrecision()));
+				 commonDao.store(d);
+			        asn.refreshQtyBU();
+			        t.setReturnQty(t.getReturnQty()+record.getBackQty());
+			        commonDao.store(t);
+			}
+			//生产退料要生成拣货单，工单还是要补单的
+			WmsTclPickticketManager wmsTclPickticketManager = (WmsTclPickticketManager) applicationContext.getBean("wmsTclPickticketManager");
+			wmsTclPickticketManager.createPickByTj(t.getSubRelateId(), record.getBackQty(), wh,WmsPickSource.RF);
+		}
+		WmsASNManager wmsASNManager = (WmsASNManager) applicationContext.getBean("wmsASNManager");
+	    wmsASNManager.isActiveAsn(asn);
+//	    wmsTclAsnManager.refreshDetail(asn);//刷新标签数量  生效时会刷新标签数量
+	    wmsTclAsnManager.receiveAll(asn.getId(), UserHolder.getUser().getId());
+		commonDao.deleteAll(temps);
+		return asn;
+	}
+}

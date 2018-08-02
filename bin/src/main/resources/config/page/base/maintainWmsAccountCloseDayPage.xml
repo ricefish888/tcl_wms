@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsAccountCloseDayPage" title="maintainWmsAccountCloseDayPage" mainEntrance="true" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.base.WmsAccountCloseDay">
+        <workflow/>
+        <datasource><![CDATA[SELECT account.id,
+account.accountCloseTime,
+account.updateInfo.creator,
+account.updateInfo.createdTime,
+account.updateInfo.lastOperator,
+account.updateInfo.updateTime
+ FROM WmsAccountCloseDay account
+ WHERE 1=1  
+ ORDER BY account.id]]></datasource>
+        <columns>
+            <column id="account.id" title="account.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="account.accountCloseTime" title="account.accountCloseTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m" language="false"/>
+            <column id="account.updateInfo.creator" title="account.updateInfo.creator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="account.updateInfo.createdTime" title="account.updateInfo.createdTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="account.updateInfo.lastOperator" title="account.updateInfo.lastOperator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="account.updateInfo.updateTime" title="account.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+        </columns>
+    </maintainPage>
+</pages>

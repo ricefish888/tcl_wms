@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsBarCodeRepPrintRecordPage" title="maintainWmsBarCodeRepPrintRecordPage" mainEntrance="true" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.base.WmsBarCodeRepPrintRecord">
+        <workflow/>
+        <datasource><![CDATA[SELECT 
+printRecord.id,
+printRecord.warehouse.name,
+printRecord.wmsASNDetail.asn.supplier.code,
+printRecord.wmsASNDetail.asn.supplier.name,
+printRecord.item.code,
+printRecord.item.name,
+printRecord.lotkey,
+printRecord.barcode,
+printRecord.minPackageQty,
+printRecord.insertTime,
+printRecord.rfUser,
+printRecord.printFlag,
+printRecord.printTime
+ FROM WmsBarCodeRepPrintRecord printRecord
+ LEFT JOIN printRecord.warehouse
+ LEFT JOIN printRecord.item
+ LEFT JOIN printRecord.wmsASNDetail.asn.supplier
+ WHERE 1=1  
+ ORDER BY printRecord.id]]></datasource>
+        <columns>
+            <column id="printRecord.id" title="printRecord.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="printRecord.warehouse.name" title="printRecord.warehouse.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="printRecord.wmsASNDetail.asn.supplier.code" title="printRecord.wmsASNDetail.asn.supplier.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="printRecord.wmsASNDetail.asn.supplier.name" title="printRecord.wmsASNDetail.asn.supplier.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="printRecord.item.code" title="printRecord.item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="printRecord.item.name" title="printRecord.item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="printRecord.lotkey" title="printRecord.lotkey" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="printRecord.barcode" title="printRecord.barcode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="printRecord.minPackageQty" title="printRecord.minPackageQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="printRecord.insertTime" title="printRecord.insertTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="printRecord.rfUser" title="printRecord.rfUser" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="printRecord.printFlag" title="printRecord.printFlag" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="booleanFormat"/>
+            <column id="printRecord.printTime" title="printRecord.printTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" />
+         </columns>
+    </maintainPage>
+</pages>

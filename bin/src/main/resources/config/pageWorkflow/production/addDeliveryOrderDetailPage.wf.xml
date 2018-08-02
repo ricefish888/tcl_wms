@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="addDeliveryOrderDetailPage">
+    <main>
+        <process id="wmsDeliveryOrderProcess">
+            <formCommit id="modifyDetail" title="modifyDetail" process="wmsDeliveryOrderProcess.modifyDetail" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="edit">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="deliveryOrder.id" className="long">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsDeliveryOrderManager" methodName="modifyDetail" parameter="obj,deliveryOrder.id"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="false" editEnabled="true"/>
+                    <forward name="closeWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

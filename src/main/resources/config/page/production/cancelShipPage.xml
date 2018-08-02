@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="cancelShipPage" title="cancelShipPage" entityClass="com.vtradex.wms.server.model.entity.production.WmsReservedOrderDetail" onClose="refreshParent">
+        <workflow/>
+        <initListeners/>
+        <inputUIs>
+            <hidden id="rod.id" title="rod.id" reserve="false"/>
+            <numberText id="cancelQty" title="cancelQty" row="1" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="true" inVisible="false" validator="positiveInteger" returnType="Double">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </numberText>
+        </inputUIs>
+    </editPage>
+</pages>

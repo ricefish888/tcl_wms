@@ -1,0 +1,183 @@
+package com.vtradex.edi.server.utils;
+
+import java.util.List;
+
+import com.vtradex.edi.server.AbstractTaskHelper;
+import com.vtradex.edi.server.service.task.TaskManager;
+import com.vtradex.thorn.server.model.message.Task;
+import com.vtradex.thorn.server.model.message.TaskStatus;
+import com.vtradex.thorn.server.service.message.IMessageService;
+import com.vtradex.wms.server.model.entity.inventory.TclWmsInventoryLedger;
+import com.vtradex.wms.server.utils.DateUtil;
+
+/**
+ * 任务处理
+ * 
+ * @author <a href="mailto:brofe.pan@gmail.com">潘宁波</a>
+ * @version $Revision: 1.2 $Date: 2014/11/24 05:30:52 $
+ */
+@SuppressWarnings("unchecked")
+public class SimpleTaskHelper extends AbstractTaskHelper {
+	
+	protected IMessageService messageService;
+	
+	protected TaskManager ediTaskManager;
+	
+	private static int cnt= 50;//每次取出的条数
+	
+//	private static final int SEND_SMS_SLEEP=5*60*1000; //发短信睡眠时间。
+//	
+//	private static final int SEND_DATA_TO_ERP_SLEEP = 5*60*1000;//发送包装单位到erp的睡眠时间
+//	
+//	private static final int SEND_INV_DATA_TO_ERP_SLEEP = 5*60*1000;//发送库存信息到erp的睡眠时间
+
+	public SimpleTaskHelper(TaskManager ediTaskManager, 
+			IMessageService messageService) {
+		this.ediTaskManager = ediTaskManager;
+		this.messageService = messageService;
+	}
+	
+	/***
+     * 取标准需要标准edi跑的异步任务 由于task表里还有同步telnet规则上线下线的任务 此处只取message中的需要标准edi跑的异步消息
+     */
+	protected List<Long> loadTaskIdsByMustStandardEdiRun() {
+        String hql = "SELECT t.id FROM Task t WHERE t.status=:status " +
+        		"AND t.type not in ('同步TELNET规则','RULE_UPLINE','RULE_OFFLINE','VERSION_UPLINE','VERSION_OFFLINE','SEND_DELIVERY','SEND_ITEMPROPERTY','SEND_SURPPLIERBUSINESS','SEND_DAYLYINVENTORY','SEND_CANCELRECEIVEINFO'," +
+        		"'SEND_PICKCONFIRMINFO','SEND_RECEIVEINFO','SEND_QCRECORDINFO','SEND_PRODUCTIONINFO','SEND_SHIPRESINFO','SEND_PRDRETURNINFO','SEND_OTHEROUTINFO','SEND_OTHERININFO','SEND_BFOUTORININFO','SEND_KNDBINFO','SEND_DBCKINFO','SEND_XSJHDINFO','SEND_WAIT') Order By t.id ASC";
+        return messageService.findByQueryAndParamNum(hql, new String[] { "status", }, new Object[] {TaskStatus.STAT_READY }, cnt);
+    }
+	
+	/***
+     * 取标准需要标准edi跑的异步任务 由于task表里还有同步telnet规则上线下线的任务 此处只取message中的需要标准edi跑的异步消息
+     */
+	protected List<Long> loadTaskIdsWms2SAP() {
+        String hql = "SELECT t.id FROM Task t WHERE t.status=:status " +
+        		"AND t.type in ('SEND_DELIVERY','SEND_SURPPLIERBUSINESS','SEND_ITEMPROPERTY','SEND_DAYLYINVENTORY','SEND_CANCELRECEIVEINFO','SEND_PICKCONFIRMINFO','SEND_RECEIVEINFO'," +
+        		"'SEND_QCRECORDINFO','SEND_PRODUCTIONINFO','SEND_SHIPRESINFO','SEND_PRDRETURNINFO','SEND_OTHEROUTINFO','SEND_OTHERININFO','SEND_BFOUTORININFO','SEND_KNDBINFO','SEND_DBCKINFO','SEND_XSJHDINFO') Order By t.id ASC";
+        return messageService.findByQueryAndParamNum(hql, new String[] { "status", }, new Object[] {TaskStatus.STAT_READY }, cnt);
+    }
+	
+	protected List<Long> loadWaiTaskIds(){
+		String hql = "SELECT t.id FROM Task t WHERE t.status=:status " +
+		"AND t.type in ('SEND_WAIT')";
+		return messageService.findByQueryAndParamNum(hql, new String[] { "status", }, new Object[] {TaskStatus.STAT_READY }, cnt);
+
+	}
+	
+	/**
+	 * 处理任务
+	 */
+	public void doHandle() {
+	    System.out.println(DateUtil.getDateTime()+" "+"SimpleTaskHelper[doHandle] started....................");
+        while (true) {
+            List<Long> taskIds = loadTaskIdsByMustStandardEdiRun();
+            for (Long id : taskIds) {
+                Task task = ediTaskManager.load(Task.class, id);
+                try {
+                    ediTaskManager.doHandle(task);
+                    task.setFinshStatus();
+                } 
+                catch (Exception e) {
+                    task.setFailStatus();
+                }
+                messageService.storeEntity(task);
+            }
+            try {
+                Thread.sleep(10*1000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (!isApplicationAvailable) {
+                System.out.println("SimpleTaskHelper[doHandle] end....................");
+                break;
+            }
+        }
+	}
+	
+	/**
+	 * 处理wms2sap任务
+	 */
+	public void doWms2SAPHandle() {
+	    System.out.println(DateUtil.getDateTime()+" "+"SimpleTaskHelper[doWms2SAPHandle] started....................");
+        while (true) {
+            List<Long> taskIds = loadTaskIdsWms2SAP();
+            for (Long id : taskIds) {
+                Task task = ediTaskManager.load(Task.class, id);
+                try {
+                    ediTaskManager.doHandle(task);
+                    task.setFinshStatus();
+                } 
+                catch (Exception e) {
+                    task.setFailStatus();
+                }
+                messageService.storeEntity(task);
+            }
+            try {
+                Thread.sleep(10*1000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (!isApplicationAvailable) {
+                System.out.println("SimpleTaskHelper[doHandle] end....................");
+                break;
+            }
+        }
+	}
+	
+	/**
+	 * 处理等待中的任务
+	 */
+	public void doWaiTaskHandle(){
+		System.out.println(DateUtil.getDateTime()+" "+"SimpleTaskHelper[doWaiTaskHandle] started....................");
+        while (true) {
+            List<Long> taskIds = loadWaiTaskIds();
+            for (Long id : taskIds) {
+                Task task = ediTaskManager.load(Task.class, id);
+                try {
+                	TclWmsInventoryLedger ledger = ediTaskManager.load(TclWmsInventoryLedger.class, task.getMessageId());
+                	if(ledger.getSapCode()==null){
+                		Thread.sleep(10*1000L);
+                		return;
+                	}
+                    ediTaskManager.doHandle(task);
+                    task.setFinshStatus();
+                } 
+                catch (Exception e) {
+                    task.setFailStatus();
+                }
+                messageService.storeEntity(task);
+            }
+            try {
+                Thread.sleep(10*1000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (!isApplicationAvailable) {
+                System.out.println("SimpleTaskHelper[doHandle] end....................");
+                break;
+            }
+        }
+	}
+//	/***发短信*/
+//	public void sendSms() {
+//	    System.out.println(DateUtil.getDateTime()+" "+"TaskHelper[sendSms] started.................");
+//	    while (true) {
+//	        try {
+//	            wmsSmsManager.sendSms();
+//	        }
+//	        catch (Exception e) {
+//            }
+//            try {
+//                Thread.sleep(SEND_SMS_SLEEP);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            if (!isApplicationAvailable) {
+//                System.out.println("TaskHelper[sendSms] end.................");
+//                break;
+//            }
+//            
+//        }
+//	}
+	
+}

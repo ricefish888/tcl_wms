@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainPopupQuickShippingPage">
+    <main>
+        <process id="wmsTclWorkDocProcess">
+            <tableCommit id="addDetail" title="addDetail" process="wmsTclWorkDocProcess.addDetail" enableType="multi" multiMapping="false" download="false" closeTransactional="false">
+            <enableExpression><![CDATA[${inventory.pallet} =="-"&&${inventory.carton}=="-"]]></enableExpression>
+                <mappings>
+                    <mapping id="workDoc.id" className="long">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsWorkDocManager" methodName="addToMoveDocDetail" parameter="workDoc.id,obj,tableValues"/>
+                </actions>
+                <forwards>
+                    <forward name="resetWindow" newEnabled="true" editEnabled="true"/>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

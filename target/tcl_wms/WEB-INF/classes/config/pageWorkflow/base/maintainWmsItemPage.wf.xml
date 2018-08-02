@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsItemPage">
+    <main>
+        <process id="itemProcess">
+            <tablePopup id="new" title="new" process="itemProcess.new" enableType="none" containId="false" pageId="editWmsItemPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="edit" title="edit" process="itemProcess.edit" enableType="single" containId="true" pageId="editWmsItemPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="enable" title="enable" process="itemProcess.enable" enableType="multi" download="false" confirmMessage="是否确认生效此条记录？">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="disable" title="disable" process="itemProcess.disable" enableType="multi" download="false" confirmMessage="是否确认失效此条记录？">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+        </process>
+        
+        
+        <process id="wmsTclItemProcess">
+        <tablePopup id="import" title="import" process="wmsTclItemProcess.import" enableType="none" containId="false" pageId="importWmsItemPage">
+                <enableExpression/>
+         </tablePopup>   
+        <tablePopup id="importFeilds" title="importFeilds" process="wmsTclItemProcess.importFeilds" enableType="none" containId="false" pageId="importWmsItemAttrPage">
+                <enableExpression/>
+         </tablePopup>   
+        <tablePopup id="importUp" title="importUp" process="wmsTclItemProcess.importUp" enableType="none" containId="false" pageId="importWmsItemUpPage">
+                <enableExpression/>
+         </tablePopup>   
+         <tablePopup id="editScan" title="editScan" process="wmsTclItemProcess.editScan" enableType="multi" containId="true" pageId="editScanWmsItemPage">
+                <enableExpression/>
+         </tablePopup>
+        </process>
+    </main>
+    <detail/>
+</page>

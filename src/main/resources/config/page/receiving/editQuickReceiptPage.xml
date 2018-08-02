@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editQuickReceiptPage" title="editQuickReceiptPage" entityClass="com.vtradex.wms.server.model.entity.receiving.WmsASN" width="200" height="150" onClose="refreshParent">
+        <workflow/>
+        <initListeners/>
+        <inputUIs>
+            <hidden id="asn.id" title="asn.id" reserve="false"/>
+            <hidden id="asn.company.id" title="asn.company.id" reserve="false"/>
+            <remote id="workerId" title="workerId" row="1" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,编码,名称">
+                <visibleExpression/>
+                <hql><![CDATA[ SELECT worker.id,
+ worker.code,
+ worker.name
+ FROM WmsWorker worker
+ WHERE worker.code LIKE :param
+ AND worker.status='ENABLED'
+ and worker.currentWorkArea.zone.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN}]]></hql>
+                <eventListeners/>
+            </remote>
+            <list id="status" title="status" row="3" col="1" span="2" width="120" readOnly="false" required="true" reserve="true" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT itemState.id,itemState.name
+				 FROM WmsInventoryState itemState
+				 WHERE
+				 itemState.masterGroup.id in (select company.masterGroup.id from WmsCompany company where company.id= ${asn.company.id})
+				 AND itemState.status='ENABLED' AND itemState.name='合格'
+				 ORDER BY itemState.id]]></hql>
+                <eventListeners/>
+            </list>
+        </inputUIs>
+    </editPage>
+</pages>

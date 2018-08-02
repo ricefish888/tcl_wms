@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsItemPage">
+    <main>
+        <process id="itemProcess">
+            <tablePopup id="new" title="new" process="itemProcess.new" enableType="none" containId="false" pageId="editWmsItemPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="edit" title="edit" process="itemProcess.edit" enableType="single" containId="true" pageId="editWmsItemPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="enable" title="enable" process="itemProcess.enable" enableType="multi" download="false" confirmMessage="confirm.enable">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="disable" title="disable" process="itemProcess.disable" enableType="multi" download="false" confirmMessage="confirm.disable">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+        </process>
+        
+        
+        <process id="wmsTclItemProcess">
+        <tablePopup id="import" title="import" process="wmsTclItemProcess.import" enableType="none" containId="false" pageId="importWmsItemPage">
+                <enableExpression/>
+         </tablePopup>   
+        </process>
+    </main>
+    <detail/>
+</page>

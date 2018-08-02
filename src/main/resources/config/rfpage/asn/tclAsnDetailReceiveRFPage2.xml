@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 查询列表页面模板 -->
+<RFListPage id="tclAsnDetailReceiveRFPage2" title="tclAsnDetailReceiveRFPage2">
+	<RFSearchUI id="dCodeSearch" text="dCodeSearch" onFoucs="true"/>
+	<RFTable id="receive" rowAction="tclRfAsnManager.receiveQty">
+		<RFTh id="id" title="id" width="10" enumType="" hidden="true" />
+		<RFTh id="dCode" title="dCode" width="100" enumType="" hidden="false" />
+		<RFTh id="deliveryDate" title="deliveryDate" width="80" enumType="" hidden="false" />
+		<RFTh id="fCode" title="fCode" width="50" enumType="" hidden="false" />
+		<RFTh id="iCode" title="iCode" width="100" enumType="" hidden="false" />
+		<RFTh id="qty" title="qty" width="80" enumType="" hidden="false" />
+		<DataSource type="HQL">
+			<statement>
+				<![CDATA[
+				 SELECT
+				 detail.id as id,
+				 deliveryOrder.code as dCode,
+				 to_char(deliveryOrder.deliveryDate,'yyyy-MM-dd') as deliveryDate,
+				 factory.code as fCode,
+				 detail.item.code as iCode,
+				 detail.expectedQty-detail.receivedQty as qty 
+                 FROM WmsASNDetail detail
+                 LEFT JOIN detail.poDetail pd
+	             LEFT JOIN pd.po 
+	             LEFT JOIN detail.asn.supplier supplier
+	             LEFT JOIN detail.transportOrderDetail.deliveryOrderDetail.factory factory
+	             LEFT JOIN detail.transportOrderDetail.deliveryOrderDetail.deliveryOrder deliveryOrder
+	             LEFT JOIN detail.transportOrderDetail.deliveryOrderDetail.deliveryOrder.warehouse warehouse
+	             where 1=1
+	             and detail.expectedQty-detail.receivedQty>0
+	             and detail.asn.code=${asnCode}
+	              /~dCodeSearch: AND deliveryOrder.code like '%{dCodeSearch}%'~/
+				]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

@@ -1,0 +1,1503 @@
+package com.vtradex.wms.server.service.item.pojo;
+
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang.time.DateUtils;
+
+import com.vtradex.sequence.service.sequence.SequenceGenerater;
+import com.vtradex.thorn.server.exception.BusinessException;
+import com.vtradex.thorn.server.model.EntityFactory;
+import com.vtradex.thorn.server.util.BeanUtils;
+import com.vtradex.thorn.server.web.security.BaseOrganizationHolder;
+import com.vtradex.wms.server.model.entity.base.Wms2SapInterfaceLogType;
+import com.vtradex.wms.server.model.entity.base.WmsAccountCloseDay;
+import com.vtradex.wms.server.model.entity.base.WmsFactoryXmlb;
+import com.vtradex.wms.server.model.entity.base.WmsSapFactory;
+import com.vtradex.wms.server.model.entity.bol.WmsBol;
+import com.vtradex.wms.server.model.entity.bol.WmsBolDetail;
+import com.vtradex.wms.server.model.entity.inventory.InventoryLedgerCodeType;
+import com.vtradex.wms.server.model.entity.inventory.TclWmsInventoryLedger;
+import com.vtradex.wms.server.model.entity.inventory.TclWmsInventoryLedgerBillType;
+import com.vtradex.wms.server.model.entity.inventory.TclWmsMoveType;
+import com.vtradex.wms.server.model.entity.inventory.WmsInventory;
+import com.vtradex.wms.server.model.entity.inventory.WmsInventoryLog;
+import com.vtradex.wms.server.model.entity.inventory.WmsStorageDaily;
+import com.vtradex.wms.server.model.entity.item.UnitLevel;
+import com.vtradex.wms.server.model.entity.item.WmsItem;
+import com.vtradex.wms.server.model.entity.item.WmsItemHandOverAtt;
+import com.vtradex.wms.server.model.entity.item.WmsItemJITAtt;
+import com.vtradex.wms.server.model.entity.item.WmsPackageUnit;
+import com.vtradex.wms.server.model.entity.order.PurchaseOrderDetail;
+import com.vtradex.wms.server.model.entity.order.WmsTransportOrderDetail;
+import com.vtradex.wms.server.model.entity.pickticket.WmsPickTicket;
+import com.vtradex.wms.server.model.entity.pickticket.WmsPickTicketDetail;
+import com.vtradex.wms.server.model.entity.production.DeliveryOrderDetailPtDetail;
+import com.vtradex.wms.server.model.entity.production.ProductionOrder;
+import com.vtradex.wms.server.model.entity.production.ProductionOrderDetail;
+import com.vtradex.wms.server.model.entity.production.ReservedOrderDetailPtDetail;
+import com.vtradex.wms.server.model.entity.production.WmsDeliveryOrder;
+import com.vtradex.wms.server.model.entity.production.WmsDeliveryOrderDetail;
+import com.vtradex.wms.server.model.entity.production.WmsReservedOrder;
+import com.vtradex.wms.server.model.entity.production.WmsReservedOrderDetail;
+import com.vtradex.wms.server.model.entity.production.WmsReservedOrderType;
+import com.vtradex.wms.server.model.entity.receiving.WmsASN;
+import com.vtradex.wms.server.model.entity.receiving.WmsASNDetail;
+import com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse;
+import com.vtradex.wms.server.model.entity.workdoc.WmsTask;
+import com.vtradex.wms.server.model.enums.WmsAsnGenType;
+import com.vtradex.wms.server.model.enums.WmsInventoryLogType;
+import com.vtradex.wms.server.model.enums.WmsPickticketBillTypeCode;
+import com.vtradex.wms.server.model.enums.WmsPickticketGenType;
+import com.vtradex.wms.server.service.interf.InterfaceLogManager;
+import com.vtradex.wms.server.service.item.TclMessageManager;
+import com.vtradex.wms.server.service.message.pojo.DefaultWmsMessageManager;
+import com.vtradex.wms.server.service.model.interfaceLog.InterfaceLogTaskType;
+import com.vtradex.wms.server.utils.DateUtil;
+import com.vtradex.wms.server.utils.StringHelper;
+import com.vtradex.wms.webservice.sap.model.Wms2SapEInventory;
+import com.vtradex.wms.webservice.sap.model.Wms2SapEInventoryArray;
+import com.vtradex.wms.webservice.sap.model.Wms2SapInventoryLedger;
+import com.vtradex.wms.webservice.sap.model.Wms2SapInventoryLedgerArray;
+import com.vtradex.wms.webservice.sap.model.Wms2SapItemAttr;
+import com.vtradex.wms.webservice.utils.Arith;
+import com.vtradex.wms.webservice.utils.CommonHelper;
+import com.vtradex.wms.webservice.utils.XmlObjectConver;
+
+public class DefaultTclMessageManager extends DefaultWmsMessageManager implements TclMessageManager{
+	
+	private InterfaceLogManager interfaceLogManager;
+	private SequenceGenerater sequenceGenerater;
+
+	public DefaultTclMessageManager(InterfaceLogManager interfaceLogManager, SequenceGenerater sequenceGenerater) {
+		this.interfaceLogManager = interfaceLogManager;
+		this.sequenceGenerater = sequenceGenerater;
+	}
+	public void subscriberCreatePackageUnit(Object object) {
+		WmsItem item = (WmsItem) object;
+		//判断商品是否已有最小包装，如没有则自动创建，如有则修改最小包装名称为当前包装名称
+		WmsPackageUnit packageUnit = EntityFactory.getEntity(WmsPackageUnit.class);
+		//设置数字1为默认的拆箱级别
+		packageUnit.setConvertFigure(1D);
+		packageUnit.setUnit(item.getBaseUnit());
+		packageUnit.setUnitLevel(UnitLevel.A);
+		packageUnit.setWeight(item.getWeight());
+		packageUnit.setVolume(item.getVolume());
+		packageUnit.setDescription(item.getUserFieldV5());
+		item.addPackageUnit(packageUnit);
+		
+		commonDao.store(item);
+	}
+	@Override
+	public void createItemLog(WmsItem item) {
+		Wms2SapItemAttr wia = new Wms2SapItemAttr();
+		wia.setItemCode(item.getCode());
+		// JITATT属性
+		if(WmsItemJITAtt.NO_JIT.equals(item.getUserFieldV2())){
+			wia.setJitAttr("03");
+		}else if(WmsItemJITAtt.JIT_UPLINE_SETTLE.equals(item.getUserFieldV2())){
+			wia.setJitAttr("02");
+		}else if(WmsItemJITAtt.JIT_DOWNLINE_SETTLE.equals(item.getUserFieldV2())){
+			wia.setJitAttr("01");
+		}else{
+			throw new BusinessException("物料的JITATT属性值为空");
+		}
+		//交接属性
+		if(WmsItemHandOverAtt.LINE_EDGE.equals(item.getUserFieldV1())){
+			wia.setHandoverAttr("01");
+		}else if(WmsItemHandOverAtt.T_1_AREA.equals(item.getUserFieldV1())){
+			wia.setHandoverAttr("02");
+		}else{
+			throw new BusinessException("物料的交接属性值为空");
+		}
+		String xml = XmlObjectConver.toXML(wia);
+		interfaceLogManager.createWmsToSapInterfaceLog(InterfaceLogTaskType.SEND_ITEMPROPERTY, Wms2SapInterfaceLogType.ITEMPROPERTY, xml, item.getId(),item.getCode());
+	}
+	@Override
+	public void createDailyInventory() {
+		Calendar calendar = Calendar.getInstance();
+		String hql = "FROM WmsWarehouse warehouse WHERE warehouse.baseOrganization.id = :baseOrganizationId";
+		WmsWarehouse wh = (WmsWarehouse)commonDao.findByQueryUniqueResult(hql,"baseOrganizationId",BaseOrganizationHolder.getThornBaseOrganization().getId());
+		calendar.add(Calendar.DATE, -1);
+		compute(calendar.getTime(), wh.getId());
+	}
+	@Override
+	public void createDailyInventory(WmsStorageDaily storageDaily) {
+		Calendar calendar = Calendar.getInstance();
+		Date countDate = storageDaily.getComputeDate();//结转日期
+		String hql = "FROM WmsWarehouse warehouse WHERE warehouse.baseOrganization.id = :baseOrganizationId";
+		WmsWarehouse wh = (WmsWarehouse)commonDao.findByQueryUniqueResult(hql,"baseOrganizationId",BaseOrganizationHolder.getThornBaseOrganization().getId());
+		int days = 0;//
+		if(null != countDate){
+			days = DateUtil.getMargin(DateUtil.formatDateYMDToStr(new Date()),DateUtil.formatDateYMDToStr(countDate));
+		}
+		for(int i = 0;i <= days; i++){
+			if(null != countDate){
+				calendar.setTime(countDate);
+				calendar.add(Calendar.DAY_OF_MONTH, i);
+			}
+			calendar.add(Calendar.DATE, -1);
+			compute(calendar.getTime(), wh.getId());
+		}
+		
+	}
+	@SuppressWarnings({ "unchecked", "unused" })
+	private void compute(Date date, Long wmsWarehouseId) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar = DateUtils.truncate(calendar, Calendar.DATE);
+		Date currentDate = calendar.getTime();
+		
+		calendar.add(Calendar.DATE, -1);
+		Date beforeOneDate = calendar.getTime();
+
+		calendar.add(Calendar.DATE, 2);
+		Date afterOneDate = calendar.getTime();
+		
+		// 删除当天该库区的StorageDaily数据
+		String hql = "from WmsStorageDaily where warehouse.id=:warehouseId and computeDate=:curDate";
+		List<WmsStorageDaily> storageDailys = commonDao.findByQuery(hql,new String[] { "warehouseId", "curDate" }, new Object[] {wmsWarehouseId, currentDate });
+		if (storageDailys != null && storageDailys.size() > 0) {
+			commonDao.deleteAll(storageDailys);
+		} 
+		logger.info("Start compute storageDaily" + currentDate);
+		
+		// 拷贝前一天的数据作为当天的初始数据
+		long startTimeMillis = System.currentTimeMillis();
+		logger.debug("Duplicate previous storageDaily!");
+		String queryPreStorageDaily = "from WmsStorageDaily where warehouse.id=:warehouseId and computeDate=:computeDate";
+		List<WmsStorageDaily> preStorageDailys = commonDao.findByQuery(
+				queryPreStorageDaily, new String[] { "warehouseId",
+						"computeDate" }, new Object[] { wmsWarehouseId,
+						beforeOneDate });
+		List<WmsStorageDaily> curStorageDailys = new ArrayList<WmsStorageDaily>();
+		for (WmsStorageDaily preStorageDaily : preStorageDailys) {
+			WmsStorageDaily curStorageDaily = EntityFactory.getEntity(WmsStorageDaily.class);
+			curStorageDaily.setComputeDate(currentDate);
+			curStorageDaily.setLocation(preStorageDaily.getLocation());
+			curStorageDaily.setItem(preStorageDaily.getItem());
+			curStorageDaily.setLotInfo(preStorageDaily.getLotInfo());
+			curStorageDaily.setWarehouse(preStorageDaily.getWarehouse());
+			curStorageDaily.setFactoryCode(preStorageDaily.getFactoryCode());
+			curStorageDaily.setLgort(preStorageDaily.getLgort());
+//			curStorageDaily.setSupplierCode(preStorageDaily.getSupplierCode());
+			curStorageDaily.setPstyp(preStorageDaily.getPstyp());
+			curStorageDaily.setUnlimCount(preStorageDaily.getUnlimCount());
+			curStorageDaily.setCheckInventory(preStorageDaily.getCheckInventory());
+			curStorageDaily.setStartCount(preStorageDaily.getStartCount()==0d?0d:preStorageDaily.getEndCount());
+			curStorageDaily.setInCount(preStorageDaily.getInCount());
+			curStorageDaily.setOutCount(preStorageDaily.getOutCount());
+			curStorageDaily.setEndCount(preStorageDaily.getEndCount());
+			commonDao.store(curStorageDaily);
+			curStorageDailys.add(curStorageDaily);
+		}
+		preStorageDailys = null;
+		logger.debug("Duplicate previous storageDaily finished!");
+		
+		logger.debug("Compute inventoryLog!");
+		
+		String queryInventoryLogHql = "from WmsInventoryLog log where log.updateInfo.createdTime <=:endTime "
+				+ " and log.updateInfo.createdTime>=:startTime and log.warehouse.id=:warehouseId "
+				+ " and log.type NOT IN ('MOVE','LOCK','UNLOCK')";
+		List<WmsInventoryLog> inventoryLogs = commonDao.findByQuery(
+				queryInventoryLogHql, new String[] { "endTime", "startTime",
+						"warehouseId" }, new Object[] { afterOneDate,
+						currentDate, wmsWarehouseId });
+		for (WmsInventoryLog inventoryLog : inventoryLogs) {
+			WmsStorageDaily tempStorageDaily = EntityFactory.getEntity(WmsStorageDaily.class);
+			tempStorageDaily.setComputeDate(currentDate);
+			tempStorageDaily.setWarehouse(inventoryLog.getWarehouse());
+			tempStorageDaily.setLotInfo(inventoryLog.getLotInfo());
+			tempStorageDaily.setItem(inventoryLog.getItem());
+			tempStorageDaily.setLocation(inventoryLog.getLocation());
+			tempStorageDaily.setStartCount(inventoryLog.getStartQty());//期初数量
+			tempStorageDaily.setEndCount(inventoryLog.getEndQty());//期末数量
+			if (inventoryLog.getType().equals(WmsInventoryLogType.RECEIVING)) {
+				tempStorageDaily.setInCount(inventoryLog.getChangeQty());//WMS入库数量
+			}else if (inventoryLog.getType().equals(WmsInventoryLogType.SHIPPING)) {
+				tempStorageDaily.setOutCount(inventoryLog.getChangeQty());//WMS出库数量
+			}
+			WmsStorageDaily daily = null;
+			if (curStorageDailys.contains(tempStorageDaily)) {
+				daily = curStorageDailys.get(curStorageDailys.indexOf(tempStorageDaily));
+				daily.setStartCount(Arith.add(daily.getStartCount(), tempStorageDaily.getStartCount()));
+				daily.setOutCount(daily.getOutCount()+ tempStorageDaily.getOutCount());
+				daily.setInCount(daily.getInCount()+ tempStorageDaily.getInCount());
+				daily.setEndCount(Arith.sub(Arith.add(daily.getStartCount(),daily.getInCount()), daily.getOutCount()));
+			}else{
+				daily =EntityFactory.getEntity(WmsStorageDaily.class);
+				daily.setStartCount(Double.valueOf(0));
+				daily.setInCount(Double.valueOf(0));
+				daily.setOutCount(Double.valueOf(0));
+				daily.setEndCount(Double.valueOf(0));
+				daily.setWarehouse(inventoryLog.getWarehouse());
+				daily.setComputeDate(currentDate);
+				daily.setItem(inventoryLog.getItem());
+				daily.setLotInfo(inventoryLog.getLotInfo());
+				daily.setLocation(inventoryLog.getLocation());
+				daily.setPstyp(inventoryLog.getLotInfo().getExtendPropC8());
+				daily.setFactoryCode(inventoryLog.getLotInfo().getExtendPropC10());
+				String invloglotinfohashcode=BeanUtils.getFormat(inventoryLog.getLotInfo().stringValue());
+				String queryEndQuantityHql = "select sum(endCount) from WmsStorageDaily where computeDate=:computeDate and warehouse.id=:warehouseId "
+						+ " and lotInfoHashCode=:lotInfoHashCode";
+				Double leftQuantity = (Double) commonDao.findByQueryUniqueResult(queryEndQuantityHql,
+								new String[] { "computeDate", "warehouseId",
+										"lotInfoHashCode" }, new Object[] {
+										currentDate,
+										inventoryLog.getWarehouse().getId(),
+										invloglotinfohashcode });
+				if (leftQuantity != null) {
+					tempStorageDaily.setStartCount(leftQuantity);
+				}
+				daily.setStartCount(Arith.add(daily.getStartCount(), tempStorageDaily.getStartCount()));
+				daily.setInCount(Arith.add(daily.getInCount(), tempStorageDaily.getInCount()));
+				daily.setOutCount(Arith.add(daily.getOutCount(), tempStorageDaily.getOutCount()));
+				
+				daily.setEndCount(Arith.sub(Arith.add(daily.getStartCount(),daily.getInCount()), daily.getOutCount()));
+				
+				curStorageDailys.add(daily);
+			}
+			commonDao.store(daily);
+		}
+		hql = "SELECT sd.lotInfo.extendPropC10,sd.lgort,sd.item.code,sd.item.description,to_char(sd.computeDate,'yyyyMMdd'),sd.lotInfo.supplierCode,sd.pstyp," +
+				" SUM(sd.unlimCount),SUM(sd.checkInventory),SUM(sd.startCount),SUM(sd.inCount),SUM(sd.outCount),SUM(sd.endCount) FROM WmsStorageDaily sd WHERE sd.warehouse.id=:warehouseId AND to_char(sd.updateInfo.createdTime,'yyyyMMdd') =:computeDate " +
+				" GROUP BY sd.lotInfo.extendPropC10,sd.lgort,sd.item.code,sd.item.description,to_char(sd.computeDate,'yyyyMMdd'),sd.lotInfo.supplierCode,sd.pstyp ";
+		List<Object[]> infos = commonDao.findByQuery(hql, new String[]{"warehouseId","computeDate"}, new Object[]{wmsWarehouseId,DateUtil.format(new Date(), "yyyyMMdd")});
+		if(!infos.isEmpty()){
+			createWms2SapInterfaceLog(infos);
+		}
+		logger.debug("Compute inventoryLog finished!");
+		inventoryLogs = null;
+		logger.info("Compute storageDaily finished");
+	}
+	private void createWms2SapInterfaceLog(List<Object[]> infos) {
+		Wms2SapEInventoryArray arrays = new Wms2SapEInventoryArray();
+		Wms2SapEInventory[] wsei = new Wms2SapEInventory[infos.size()];
+		int i =0;
+		for(Object[] o :infos){
+			Wms2SapEInventory wse = new Wms2SapEInventory();
+			wse.setWERKS(o[0]==null ? "" :o[0].toString());//工厂
+//暂时写死			wse.setLGORT(o[1]==null ? "" :o[1].toString());//库存地点
+			wse.setLGORT("B001");
+			wse.setMATNR(o[2].toString());//物料号
+			wse.setMAKTX(o[3]==null ? "" :o[3].toString());//物料描述
+			wse.setERDAT(o[4].toString());//库存日期
+			wse.setLIFNR(o[5].toString());//供应商编码
+			wse.setSOBKZ(o[6].toString());//库存类型
+			wse.setMENGE1(o[7].toString());//非限制数量
+			wse.setMENGE2(o[8].toString());//质检库存
+			wse.setBMENG(o[9].toString());//WMS期初数量
+			wse.setIMENG(o[10].toString());//WMS入库数量
+			wse.setOMENG(Math.abs(Double.valueOf(o[11].toString()))+"");//WMS出库数量
+			wse.setMENGE(o[12].toString());//WMS期末数量
+			wsei[i]=wse;
+			arrays.setWms2SapEInventorys(wsei);
+			i++;
+		}
+		
+		String xml = XmlObjectConver.toXML(arrays);
+//		System.out.println(xml);
+		interfaceLogManager.createWmsToSapInterfaceLog(InterfaceLogTaskType.SEND_DAYLYINVENTORY, Wms2SapInterfaceLogType.DAYLYINVENTORY, xml, null,infos.get(0)[4]+"");
+	}
+	
+	
+	private String genLedgerLineNo(String wmsCode,String moveType) {
+		//ledger.getMoveType()+"###"+ledger.getWmsCode();
+		String hql = "from TclWmsInventoryLedger l where l.moveType=:moveType and l.wmsCode=:wmsCode";
+		List<TclWmsInventoryLedger> ledgers =commonDao.findByQuery(hql,new String[]{"moveType","wmsCode"},new Object[]{moveType,wmsCode});
+		int length = 0;
+		if(!ledgers.isEmpty()) {
+			length = ledgers.size();
+		}
+		length=length+1;
+		
+		return CommonHelper.addCharBeforeStr(length+"", 4, "0");
+		
+		
+	}
+	
+	public void sendReceiveInfo2SAP(WmsASNDetail detail,Double receiveQty){
+		detail = commonDao.load(WmsASNDetail.class, detail.getId());
+		WmsASN asn = commonDao.load(WmsASN.class, detail.getAsn().getId());
+		TclWmsInventoryLedger ledger = EntityFactory.getEntity(TclWmsInventoryLedger.class);
+		if(WmsAsnGenType.JITRKD.equals(asn.getBillType().getCode()) 
+				|| WmsAsnGenType.BHRKD.equals(asn.getBillType().getCode())
+				|| WmsAsnGenType.DBRKD.equals(asn.getBillType().getCode())
+				|| WmsAsnGenType.THRKD.equals(asn.getBillType().getCode())){//调拨入库的数据在调拨出库的时候就已经传了
+			return;
+		}
+		if(WmsAsnGenType.ZCCKD.equals(asn.getBillType().getCode()) && WmsItemJITAtt.JIT_DOWNLINE_SETTLE.equals(detail.getItem().getUserFieldV2())){
+			return;
+		}
+		if(WmsPickticketBillTypeCode.SCTLD.equals(asn.getBillType().getCode())){
+			ProductionOrder pdo = (ProductionOrder) commonDao.findByQueryUniqueResult("FROM ProductionOrder o where o.code=:code", "code", asn.getCustomerBill());
+			ledger = this.genTclWmsInventoryLedger(ledger, asn.getWarehouse(), asn.getCode(), TclWmsMoveType.PRDRETURNMOVETYPR, asn.getBillType().getCode(), detail.getItem(), pdo.getFactory(), asn.getSupplier().getCode());
+    		ledger.setProductionCode(asn.getCustomerBill());
+    		if(WmsFactoryXmlb.BZ.equals(asn.getUserField5())){
+        		ledger.setInvType(null);
+        	}else{
+        		ledger.setInvType("K");
+        	}
+    	}else if(WmsAsnGenType.ZCCKD.equals(asn.getBillType().getCode())){
+    		WmsTransportOrderDetail tod = detail.getTransportOrderDetail();
+        	if(tod == null){
+        		return;
+        	}
+        	WmsDeliveryOrderDetail dod = tod.getDeliveryOrderDetail();
+        	PurchaseOrderDetail pod = dod.getPurchaseOrderDetail();
+        	ledger = this.genTclWmsInventoryLedger(ledger, asn.getWarehouse(), asn.getCode(), TclWmsMoveType.ASNMOVETYPE, asn.getBillType().getCode(), detail.getItem(), pod.getFactory(), asn.getSupplier().getCode());
+        	ledger.setPoCode(pod.getPurchaseOrder().getCode());
+        	ledger.setPoLineNo(pod.getEbelp());
+        	if(WmsFactoryXmlb.BZ.equals(pod.getPstyp())){
+        		ledger.setInvType(null);
+        	}else{
+        		ledger.setInvType("K");
+        	}
+        	ledger.setDoCode(dod.getDeliveryOrder().getCode());
+        	ledger.setDoLineNo(dod.getDeliveryOrder().getProject());
+    	}else if (WmsAsnGenType.QTRKD.equals(asn.getBillType().getCode()) || WmsAsnGenType.PYRKD.equals(asn.getBillType().getCode())){
+    		WmsSapFactory factory = getSapFactory(asn.getUserField7());
+    		ledger = this.genTclWmsInventoryLedger(ledger, asn.getWarehouse(), asn.getCode(), TclWmsMoveType.OTHERINMOVETYPE, asn.getBillType().getCode(), detail.getItem(), factory, asn.getSupplier().getCode());
+    		if(WmsFactoryXmlb.BZ.equals(asn.getUserField5())){
+        		ledger.setInvType(null);
+        	}else{
+        		ledger.setInvType("K");
+        	}
+    	}else if(WmsAsnGenType.BFRKD.equals(asn.getBillType().getCode())){
+    		ledger.setCostCenter(asn.getUserField6());
+    		WmsSapFactory factory = getSapFactory(asn.getUserField7());
+    		ledger = this.genTclWmsInventoryLedger(ledger, asn.getWarehouse(), asn.getCode(), TclWmsMoveType.BFINMOVETYPR, asn.getBillType().getCode(), detail.getItem(), factory, asn.getSupplier().getCode());
+    		if(WmsFactoryXmlb.BZ.equals(asn.getUserField5())){
+        		ledger.setInvType(null);
+        	}else{
+        		ledger.setInvType("K");
+        	}
+    	}else if(WmsAsnGenType.YLRKD.equals(asn.getBillType().getCode())){
+    		String hql = "FROM WmsReservedOrder order WHERE order.code =:code ";
+    		WmsReservedOrder reOrder = (WmsReservedOrder) commonDao.findByQueryUniqueResult(hql, "code",asn.getCustomerBill());
+    		ledger.setReservedCode(reOrder.getCode());
+    		WmsReservedOrderDetail wod = commonDao.load(WmsReservedOrderDetail.class, Long.valueOf(detail.getUserField1()));
+    		ledger.setResProject(wod.getProject());
+    		ledger = this.genTclWmsInventoryLedger(ledger, asn.getWarehouse(), asn.getCode(), reOrder.getYdlx(), asn.getBillType().getCode(), detail.getItem(), reOrder.getFactory(), asn.getSupplier().getCode());
+    		if(WmsFactoryXmlb.BZ.equals(asn.getUserField5())){
+        		ledger.setInvType(null);
+        	}else{
+        		ledger.setInvType("K");
+        	}
+    	}
+    	ledger.setQuantity(receiveQty);
+    	ledger.setInvStatus("X");
+    	ledger.setBaseUnit(detail.getPackageUnit().getUnit());
+    	commonDao.store(ledger);
+    }
+	/**生成发送给sap的单号以及报文*/
+	public void genSendToSapLog() {
+		
+		//收货类型先处理  由于取消需要用收货类型的凭证号，凭证号在传接口的时候才生成.
+		genSendToSapLog(TclWmsMoveType.ASNMOVETYPE);//收货的先处理
+		
+		genSendToSapLog(null);
+	}
+	
+	private void genSendToSapLog(String moveType) {
+		
+		String hql = "from TclWmsInventoryLedger ledger where ledger.genXmlFlag is false ";
+		if(!StringHelper.isNullOrEmpty(moveType)) {
+			hql = hql + " and ledger.moveType='"+moveType+"' ";
+		}
+		hql = hql +" order by ledger.id asc ";
+		List<TclWmsInventoryLedger> ledgers = commonDao.findByQuery(hql);
+		
+		Map<String,List<TclWmsInventoryLedger>> map = new HashMap<String,List<TclWmsInventoryLedger>>();
+		for(TclWmsInventoryLedger ledger : ledgers) {
+			
+			String key = ledger.getMoveType()+"###"+ledger.getWmsCode();
+			if(!map.containsKey(key)) {
+				map.put(key, new ArrayList<TclWmsInventoryLedger>());
+			}
+			map.get(key).add(ledger);
+			
+		}
+		
+		Set<String> keys = map.keySet();
+		for(String key : keys) { //一个key生成一个报文
+//			String[] s = key.split("###");
+//			String type = s[0];
+//			String wmsCode=s[1];
+			
+			createInventoryLedgerArrayLog(map.get(key));
+			
+		}
+		
+		
+	}
+	/**创建报文传sap*/
+	private void createInventoryLedgerArrayLog(List<TclWmsInventoryLedger> ledgers) {
+		if(ledgers == null || ledgers.isEmpty()) {
+			return;
+		}
+		TclWmsInventoryLedger l = ledgers.get(0);
+		
+		Wms2SapInventoryLedger[] array = new Wms2SapInventoryLedger[ledgers.size()];
+		int i=0;
+		String code = "";
+		String taskType = "";
+		String interfaceLogType="";
+		/*收货移动类型*/
+		if(TclWmsMoveType.ASNMOVETYPE.equals(l.getMoveType())){ //入库
+			i=0;
+		    code = sequenceGenerater.generateSequence(InventoryLedgerCodeType.RK, 8);
+			for(TclWmsInventoryLedger ledger : ledgers) {
+				
+				Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+				wil.setType(ledger.getBillType());
+				wil.setFRBNR(code);
+				wil.setBLDAT(sdf.format(ledger.getCurDate()));
+				wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+				wil.setZEILE(ledger.getLineNo().toString());
+				wil.setBWART(ledger.getMoveType());
+				wil.setMATNR(ledger.getItem().getCode());
+				wil.setWERKS(ledger.getSapFactory().getCode());
+				wil.setLGORT(ledger.getLocationCode());
+				wil.setLIFNR(ledger.getSupplierCode());
+				wil.setSOBKZ(ledger.getInvType());
+				wil.setMENGE(ledger.getQuantity().toString());
+				wil.setEBELN(ledger.getPoCode());
+				wil.setEBELP(ledger.getPoLineNo().toString());
+				wil.setINSMK(ledger.getInvStatus());
+				wil.setVBELN_IM(ledger.getDoCode());
+				wil.setVBELP_IM(ledger.getDoLineNo() == null ? "":ledger.getDoLineNo().toString());
+				wil.setMEINS(ledger.getBaseUnit());
+				
+				array[i]=wil;
+				i++;
+
+				ledger.setCode(code);
+				ledger.setGenXmlFlag(Boolean.TRUE);
+				
+				
+				
+				commonDao.store(ledger);
+			}
+			taskType = InterfaceLogTaskType.SEND_RECEIVEINFO;
+			interfaceLogType= Wms2SapInterfaceLogType.RECEIVEINFO;
+		}
+		/* 取消收货移动类型*/
+		else if(TclWmsMoveType.CANCELRECEIVETYPE.equals(l.getMoveType())){
+			i=0;
+			code = sequenceGenerater.generateSequence(InventoryLedgerCodeType.RK, 8);
+			
+			for(TclWmsInventoryLedger ledger : ledgers) {
+//				String lineNo = CommonHelper.addCharBeforeStr((i+1)+"", 4, "0");
+//				ledger.setLineNo(lineNo); //重新生成行号  0001 0002
+//				dd
+				Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+				wil.setType(ledger.getBillType());
+				wil.setFRBNR(code);
+				wil.setBLDAT(sdf.format(ledger.getCurDate()));
+				wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+				wil.setBWART(ledger.getMoveType());
+				wil.setXBLNR(ledger.getPoCode());
+				wil.setZEILE(ledger.getLineNo());
+				wil.setMENGE(ledger.getQuantity().toString());
+				
+				
+				TclWmsInventoryLedger oldLedger = commonDao.load(TclWmsInventoryLedger.class, ledger.getOldLedgerId()); //务必确保取消收货在收货报文生成之后执行。
+				if(oldLedger==null) {
+					throw new BusinessException("根据OLDID="+ledger.getOldLedgerId()+"未找到库存台账记录");
+				}
+				ledger.setWmsInCode(oldLedger.getCode());
+				
+				wil.setLFBNR(ledger.getWmsInCode()); //被取消的入库单的WMS凭证号码；
+				wil.setSGTXT("取消收货");
+				
+				wil.setLFPOS(ledger.getWmsInCodeLineNo()); ////被取消的入库单的WMS凭证行号；
+
+				array[i]=wil;
+				i++;
+
+				ledger.setCode(code);
+				ledger.setGenXmlFlag(Boolean.TRUE);
+				commonDao.store(ledger);
+			}
+			
+			taskType = InterfaceLogTaskType.SEND_CANCELRECEIVEINFO;
+			interfaceLogType= Wms2SapInterfaceLogType.CANCELRECEIVEINFO;
+		}
+		//采购退货移动类型
+		else if(TclWmsMoveType.PICKMOVETYPE.equals(l.getMoveType())){
+			i=0;
+			code = sequenceGenerater.generateSequence(InventoryLedgerCodeType.CK, 8);
+			
+			for(TclWmsInventoryLedger ledger : ledgers) {
+				Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+				wil.setType(ledger.getBillType());
+				wil.setFRBNR(code);
+				wil.setBLDAT(sdf.format(ledger.getCurDate()));
+				wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+				wil.setEKGRP(ledger.getItem().getUserFieldV4());
+				wil.setZEILE(ledger.getLineNo());
+				wil.setBWART(ledger.getMoveType());
+				wil.setMATNR(ledger.getItem().getCode());
+				if(ledger.getSapFactory() == null){
+					wil.setWERKS(null);
+				}else{
+					wil.setWERKS(ledger.getSapFactory().getCode());
+				}
+				wil.setLGORT(ledger.getLocationCode());
+				wil.setLIFNR(ledger.getSupplierCode());
+				wil.setSOBKZ(ledger.getInvType());
+				wil.setMENGE(ledger.getQuantity().toString());
+				wil.setRETPO("X");
+				wil.setINSMK(ledger.getInvStatus());
+				
+				array[i]=wil;
+				i++;
+
+				ledger.setCode(code);
+				ledger.setGenXmlFlag(Boolean.TRUE);
+				commonDao.store(ledger);
+			}
+			taskType = InterfaceLogTaskType.SEND_PICKCONFIRMINFO;
+			interfaceLogType= Wms2SapInterfaceLogType.PICKCONFIRMINFO;
+		}
+		//质检转合格移动类型
+		else if(TclWmsMoveType.QCMOVETYPE.equals(l.getMoveType())){
+			i=0;
+			code = sequenceGenerater.generateSequence(InventoryLedgerCodeType.ZJ, 8);
+			
+			for(TclWmsInventoryLedger ledger : ledgers) {
+//				
+//				String lineNo = CommonHelper.addCharBeforeStr((i+1)+"", 4, "0");
+//				ledger.setLineNo(lineNo); //重新生成行号  0001 0002
+				
+				
+				Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+				wil.setType(ledger.getBillType());
+				wil.setFRBNR(code);
+				wil.setBLDAT(sdf.format(ledger.getCurDate()));
+				wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+				wil.setZEILE(ledger.getLineNo());
+				wil.setBWART(ledger.getMoveType());
+				wil.setMATNR(ledger.getItem().getCode());
+				if(ledger.getSapFactory() == null){
+					wil.setWERKS(null);
+				}else{
+					wil.setWERKS(ledger.getSapFactory().getCode());
+				}
+				wil.setLGORT(ledger.getLocationCode());
+				wil.setLIFNR(ledger.getSupplierCode());
+				wil.setSOBKZ(ledger.getInvType());
+				wil.setMENGE(ledger.getQuantity().toString());
+				wil.setUMLGO(ledger.getQcLocCode());
+				wil.setMEINS(ledger.getBaseUnit());
+				
+				array[i]=wil;
+				i++;
+
+				ledger.setCode(code);
+				ledger.setGenXmlFlag(Boolean.TRUE);
+				commonDao.store(ledger);
+			}
+			taskType = InterfaceLogTaskType.SEND_QCRECORDINFO;
+			interfaceLogType= Wms2SapInterfaceLogType.QCRECORDINFO;
+		}
+		//生产订单发料移动类型
+		else if(TclWmsMoveType.PRODUCTIONMOVETYPE.equals(l.getMoveType())){
+			i=0;
+			code = sequenceGenerater.generateSequence(InventoryLedgerCodeType.CK, 8);
+			
+			for(TclWmsInventoryLedger ledger : ledgers) {
+				Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+				wil.setType(ledger.getBillType());
+				wil.setFRBNR(code);
+				wil.setBLDAT(sdf.format(ledger.getCurDate()));
+				wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+				wil.setZEILE(ledger.getLineNo());
+				wil.setBWART(ledger.getMoveType());
+				wil.setMATNR(ledger.getItem().getCode());
+				wil.setWERKS(ledger.getSapFactory().getCode());
+				wil.setLGORT(ledger.getLocationCode());
+				wil.setLIFNR(ledger.getSupplierCode());
+				wil.setSOBKZ(ledger.getInvType());
+				wil.setMENGE(ledger.getQuantity().toString());
+				wil.setAUFNR(ledger.getProductionCode());
+				
+				array[i]=wil;
+				i++;
+
+				ledger.setCode(code);
+				ledger.setGenXmlFlag(Boolean.TRUE);
+				commonDao.store(ledger);
+			}
+			taskType = InterfaceLogTaskType.SEND_PRODUCTIONINFO;
+			interfaceLogType= Wms2SapInterfaceLogType.PRODUCTIONINFO;
+		}
+		//生产订单退料移动类型
+		else if(TclWmsMoveType.PRDRETURNMOVETYPR.equals(l.getMoveType())){
+			i=0;
+			code = sequenceGenerater.generateSequence(InventoryLedgerCodeType.RK, 8);
+			
+			for(TclWmsInventoryLedger ledger : ledgers) {
+				Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+				wil.setType(ledger.getBillType());
+				wil.setFRBNR(code);
+				wil.setBLDAT(sdf.format(ledger.getCurDate()));
+				wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+				wil.setZEILE(ledger.getLineNo().toString());
+				wil.setBWART(ledger.getMoveType());
+				wil.setMATNR(ledger.getItem().getCode());
+				wil.setWERKS(ledger.getSapFactory().getCode());
+				wil.setLGORT(ledger.getLocationCode());
+				wil.setLIFNR(ledger.getSupplierCode());
+				wil.setSOBKZ(ledger.getInvType());
+				wil.setMENGE(ledger.getQuantity().toString());
+				wil.setAUFNR(ledger.getProductionCode());
+				
+				array[i]=wil;
+				i++;
+
+				ledger.setCode(code);
+				ledger.setGenXmlFlag(Boolean.TRUE);
+				commonDao.store(ledger);
+			}
+			taskType = InterfaceLogTaskType.SEND_PRDRETURNINFO;
+			interfaceLogType= Wms2SapInterfaceLogType.PRDRETURNINFO;
+		}
+		/**预留出库单 */
+		else if(StringHelper.in(l.getMoveType(), new String[]{WmsReservedOrderType.Z01,WmsReservedOrderType.Z03,WmsReservedOrderType.Z311,WmsReservedOrderType.Z02,WmsReservedOrderType.Z04})) {
+		 
+			i=0;
+			if(StringHelper.in(l.getMoveType(), new String[]{WmsReservedOrderType.Z02,WmsReservedOrderType.Z04})){
+				code = sequenceGenerater.generateSequence(InventoryLedgerCodeType.RK, 8);
+			}else{
+				code = sequenceGenerater.generateSequence(InventoryLedgerCodeType.CK, 8);
+			}
+			
+			for(TclWmsInventoryLedger ledger : ledgers) {
+				Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+				wil.setType(ledger.getBillType());
+				wil.setFRBNR(code);
+				wil.setBLDAT(sdf.format(ledger.getCurDate()));
+				wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+				wil.setZEILE(ledger.getLineNo());
+				wil.setBWART(ledger.getMoveType());
+				wil.setMATNR(ledger.getItem().getCode());
+				wil.setWERKS(ledger.getSapFactory().getCode());
+				wil.setLGORT(ledger.getLocationCode());
+				wil.setLIFNR(ledger.getSupplierCode());
+				wil.setSOBKZ(ledger.getInvType());
+				wil.setMENGE(ledger.getQuantity().toString());
+				wil.setRSNUM(ledger.getReservedCode());
+				wil.setRSPOS(ledger.getResProject());
+				
+				array[i]=wil;
+				i++;
+
+				ledger.setCode(code);
+				ledger.setGenXmlFlag(Boolean.TRUE);
+				commonDao.store(ledger);
+			}
+			taskType = InterfaceLogTaskType.SEND_SHIPRESINFO;
+			interfaceLogType= Wms2SapInterfaceLogType.RESINFO;
+			
+		}
+		//其它出库单移动类型
+		else if(TclWmsMoveType.OTHEROUTMOVETYPE.equals(l.getMoveType())){
+			i=0;
+			code = sequenceGenerater.generateSequence(InventoryLedgerCodeType.CK, 8);
+			
+			for(TclWmsInventoryLedger ledger : ledgers) {
+				Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+				wil.setType(ledger.getBillType());
+				wil.setFRBNR(code);
+				wil.setBLDAT(sdf.format(ledger.getCurDate()));
+				wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+				wil.setZEILE(ledger.getLineNo());
+				wil.setBWART(ledger.getMoveType());
+				wil.setMATNR(ledger.getItem().getCode());
+				wil.setWERKS(ledger.getSapFactory().getCode());
+				wil.setLGORT(ledger.getLocationCode());
+				wil.setLIFNR(ledger.getSupplierCode());
+				wil.setSOBKZ(ledger.getInvType());
+				wil.setMENGE(ledger.getQuantity().toString());
+				wil.setKOSTL(ledger.getSapFactory().getCode());
+				
+				array[i]=wil;
+				i++;
+	
+				ledger.setCode(code);
+				ledger.setGenXmlFlag(Boolean.TRUE);
+				commonDao.store(ledger);
+			}
+			taskType = InterfaceLogTaskType.SEND_OTHEROUTINFO;
+			interfaceLogType= Wms2SapInterfaceLogType.OTHEROUTINFO;
+		}
+		//其它入库单移动类型
+		else if(TclWmsMoveType.OTHERINMOVETYPE.equals(l.getMoveType())){
+			i=0;
+			code = sequenceGenerater.generateSequence(InventoryLedgerCodeType.RK, 8);
+			
+			for(TclWmsInventoryLedger ledger : ledgers) {
+				Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+				wil.setType(ledger.getBillType());
+				wil.setFRBNR(code);
+				wil.setBLDAT(sdf.format(ledger.getCurDate()));
+				wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+				wil.setZEILE(ledger.getLineNo());
+				wil.setBWART(ledger.getMoveType());
+				wil.setMATNR(ledger.getItem().getCode());
+				wil.setWERKS(ledger.getSapFactory().getCode());
+				wil.setLGORT(ledger.getLocationCode());
+				wil.setLIFNR(ledger.getSupplierCode());
+				wil.setSOBKZ(ledger.getInvType());
+				wil.setMENGE(ledger.getQuantity().toString());
+				wil.setKOSTL(ledger.getSapFactory().getCode());
+				array[i]=wil;
+				i++;
+	
+				ledger.setCode(code);
+				ledger.setGenXmlFlag(Boolean.TRUE);
+				commonDao.store(ledger);
+			}
+			taskType = InterfaceLogTaskType.SEND_OTHERININFO;
+			interfaceLogType= Wms2SapInterfaceLogType.OTHERININFO;
+		}
+		//报废入库  报废出库
+		else if(TclWmsMoveType.BFINMOVETYPR.equals(l.getMoveType()) || TclWmsMoveType.BFOUTMOVETYPE.equals(l.getMoveType())){
+			
+			i=0;
+			code ="";
+			if(TclWmsMoveType.BFINMOVETYPR.equals(l.getMoveType())) {
+				code = sequenceGenerater.generateSequence(InventoryLedgerCodeType.RK, 8);
+			}
+			else if(TclWmsMoveType.BFOUTMOVETYPE.equals(l.getMoveType())){
+				code = sequenceGenerater.generateSequence(InventoryLedgerCodeType.CK, 8);
+			}
+			
+			for(TclWmsInventoryLedger ledger : ledgers) {
+				
+			
+				Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+				wil.setType(ledger.getBillType());
+				wil.setFRBNR(code);
+				wil.setBLDAT(sdf.format(ledger.getCurDate()));
+				wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+				wil.setZEILE(ledger.getLineNo());
+				wil.setBWART(ledger.getMoveType());
+				wil.setMATNR(ledger.getItem().getCode());
+				wil.setWERKS(ledger.getSapFactory().getCode());
+				wil.setLGORT(ledger.getLocationCode());
+				wil.setLIFNR(ledger.getSupplierCode());
+				wil.setSOBKZ(ledger.getInvType());
+				wil.setMENGE(ledger.getQuantity().toString());
+				wil.setKOSTL(ledger.getCostCenter());
+				
+				array[i]=wil;
+				i++;
+	
+				ledger.setCode(code);
+				ledger.setGenXmlFlag(Boolean.TRUE);
+				commonDao.store(ledger);
+			
+			}
+			taskType = InterfaceLogTaskType.SEND_BFOUTORININFO;
+			interfaceLogType= Wms2SapInterfaceLogType.BFOUTORININFO;
+		}
+		//库存调拨 内外销   库存调拨两个仓库
+		else if(TclWmsMoveType.KNDBMOVETYPE.equals(l.getMoveType()) || TclWmsMoveType.DBCKMOVETYPE.equals(l.getMoveType())){
+			i=0;
+			code = sequenceGenerater.generateSequence(InventoryLedgerCodeType.DB, 8);
+			 
+			
+			for(TclWmsInventoryLedger ledger : ledgers) {
+				
+				Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+				wil.setType(ledger.getBillType());
+				wil.setFRBNR(code);
+				wil.setBLDAT(sdf.format(ledger.getCurDate()));
+				wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+				wil.setZEILE(ledger.getLineNo());
+				if(TclWmsMoveType.KNDBMOVETYPE.equals(l.getMoveType())){
+					wil.setBWART("311");
+				}else{
+					wil.setBWART(ledger.getMoveType());
+				}
+				wil.setMATNR(ledger.getItem().getCode());
+				wil.setWERKS(ledger.getSapFactory().getCode());
+				wil.setLGORT(ledger.getLocationCode());
+				wil.setLIFNR(ledger.getSupplierCode());
+				wil.setSOBKZ(ledger.getInvType());
+				wil.setMENGE(ledger.getQuantity().toString());
+				wil.setUMWRK(ledger.getRecFatoryCode());
+				wil.setUMLGO(ledger.getRecWarehouse());
+				
+				array[i]=wil;
+				i++;
+	
+				ledger.setCode(code);
+				ledger.setGenXmlFlag(Boolean.TRUE);
+				commonDao.store(ledger);
+				
+			}
+			if(TclWmsMoveType.KNDBMOVETYPE.equals(l.getMoveType())){
+				taskType = InterfaceLogTaskType.SEND_KNDBINFO;
+				interfaceLogType= Wms2SapInterfaceLogType.KNDBINFO;
+			}else{
+				taskType = InterfaceLogTaskType.SEND_DBCKINFO;
+				interfaceLogType= Wms2SapInterfaceLogType.DBCKINFO;
+			}
+		}
+		//销售交货单
+		else if(TclWmsMoveType.OUTDELIVERYMOVETYPE.equals(l.getMoveType())){
+			i=0;
+			code = sequenceGenerater.generateSequence(InventoryLedgerCodeType.CK, 8);
+			
+			for(TclWmsInventoryLedger ledger : ledgers) {
+				Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+				wil.setType(ledger.getBillType());
+				wil.setFRBNR(code);
+				wil.setBLDAT(sdf.format(ledger.getCurDate()));
+				wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+				wil.setZEILE(ledger.getLineNo());
+				wil.setBWART(ledger.getMoveType());
+				wil.setMATNR(ledger.getItem().getCode());
+				wil.setWERKS(ledger.getSapFactory().getCode());
+				wil.setLGORT(ledger.getLocationCode());
+				wil.setLIFNR(ledger.getSupplierCode());
+				wil.setSOBKZ(ledger.getInvType());
+				wil.setMENGE(ledger.getQuantity().toString());
+				wil.setINSMK(ledger.getInvStatus());
+				wil.setVBELN_IM(ledger.getDoCode());
+				wil.setVBELP_IM(ledger.getDoLineNo());
+				
+				array[i]=wil;
+				i++;
+	
+				ledger.setCode(code);
+				ledger.setGenXmlFlag(Boolean.TRUE);
+				commonDao.store(ledger);
+			}
+			taskType = InterfaceLogTaskType.SEND_XSJHDINFO;
+			interfaceLogType= Wms2SapInterfaceLogType.XSJHDINFO;
+		}
+		
+		
+		Wms2SapInventoryLedgerArray la = new Wms2SapInventoryLedgerArray();
+		la.setWms2SapInventoryLedgers(array);
+		String xml = XmlObjectConver.toXML(la);
+		interfaceLogManager.createWmsToSapInterfaceLog(taskType,interfaceLogType, xml,null, code);
+		
+		
+		
+	}
+	
+	
+	
+	
+	
+	private void createInventoryLedgerLog(TclWmsInventoryLedger ledger){
+		if(TclWmsMoveType.ASNMOVETYPE.equals(ledger.getMoveType())){
+			Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+			wil.setType(ledger.getBillType());
+			wil.setFRBNR(ledger.getCode());
+			wil.setBLDAT(sdf.format(ledger.getCurDate()));
+			wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+			wil.setZEILE(ledger.getLineNo().toString());
+			wil.setBWART(ledger.getMoveType());
+			wil.setMATNR(ledger.getItem().getCode());
+			wil.setWERKS(ledger.getSapFactory().getCode());
+			wil.setLGORT(ledger.getLocationCode());
+			wil.setLIFNR(ledger.getSupplierCode());
+			wil.setSOBKZ(ledger.getInvType());
+			wil.setMENGE(ledger.getQuantity().toString());
+			wil.setEBELN(ledger.getPoCode());
+			wil.setEBELP(ledger.getPoLineNo().toString());
+			wil.setINSMK(ledger.getInvStatus());
+			wil.setVBELN_IM(ledger.getDoCode());
+			wil.setVBELP_IM(ledger.getDoLineNo() == null ? "":ledger.getDoLineNo().toString());
+			wil.setMEINS(ledger.getBaseUnit());
+			String xml = XmlObjectConver.toXML(wil);
+			interfaceLogManager.createWmsToSapInterfaceLog(InterfaceLogTaskType.SEND_RECEIVEINFO, Wms2SapInterfaceLogType.RECEIVEINFO, xml, ledger.getId(),ledger.getCode());
+		}
+		else if(TclWmsMoveType.CANCELRECEIVETYPE.equals(ledger.getMoveType())){
+			Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+			wil.setType(ledger.getBillType());
+			wil.setFRBNR(ledger.getCode());
+			wil.setBLDAT(sdf.format(ledger.getCurDate()));
+			wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+			wil.setBWART(ledger.getMoveType());
+			wil.setXBLNR(ledger.getPoCode());
+			wil.setZEILE(ledger.getLineNo());
+			wil.setMENGE(ledger.getQuantity().toString());
+			wil.setLFBNR(ledger.getSapCode());
+			wil.setSGTXT("取消收货");
+			String xml = XmlObjectConver.toXML(wil);
+			interfaceLogManager.createWmsToSapInterfaceLog(InterfaceLogTaskType.SEND_CANCELRECEIVEINFO, Wms2SapInterfaceLogType.CANCELRECEIVEINFO, xml, ledger.getId(),ledger.getCode());
+		}
+		else if(TclWmsMoveType.PICKMOVETYPE.equals(ledger.getMoveType())){
+			Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+			wil.setType(ledger.getBillType());
+			wil.setFRBNR(ledger.getCode());
+			wil.setBLDAT(sdf.format(ledger.getCurDate()));
+			wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+			wil.setEKGRP(ledger.getItem().getUserFieldV4());
+			wil.setZEILE(ledger.getLineNo());
+			wil.setBWART(ledger.getMoveType());
+			wil.setMATNR(ledger.getItem().getCode());
+			if(ledger.getSapFactory() == null){
+				wil.setWERKS(null);
+			}else{
+				wil.setWERKS(ledger.getSapFactory().getCode());
+			}
+			wil.setLGORT(ledger.getLocationCode());
+			wil.setLIFNR(ledger.getSupplierCode());
+			wil.setSOBKZ(ledger.getInvType());
+			wil.setMENGE(ledger.getQuantity().toString());
+			wil.setRETPO("X");
+			wil.setINSMK(ledger.getInvStatus());
+			String xml = XmlObjectConver.toXML(wil);
+			interfaceLogManager.createWmsToSapInterfaceLog(InterfaceLogTaskType.SEND_PICKCONFIRMINFO, Wms2SapInterfaceLogType.PICKCONFIRMINFO, xml, ledger.getId(),ledger.getCode());
+		}
+		else if(TclWmsMoveType.QCMOVETYPE.equals(ledger.getMoveType())){
+			Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+			wil.setType(ledger.getBillType());
+			wil.setFRBNR(ledger.getCode());
+			wil.setBLDAT(sdf.format(ledger.getCurDate()));
+			wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+			wil.setZEILE(ledger.getLineNo());
+			wil.setBWART(ledger.getMoveType());
+			wil.setMATNR(ledger.getItem().getCode());
+			if(ledger.getSapFactory() == null){
+				wil.setWERKS(null);
+			}else{
+				wil.setWERKS(ledger.getSapFactory().getCode());
+			}
+			wil.setLGORT(ledger.getLocationCode());
+			wil.setLIFNR(ledger.getSupplierCode());
+			wil.setSOBKZ(ledger.getInvType());
+			wil.setMENGE(ledger.getQuantity().toString());
+			wil.setUMLGO(ledger.getQcLocCode());
+			wil.setMEINS(ledger.getBaseUnit());
+			String xml = XmlObjectConver.toXML(wil);
+			interfaceLogManager.createWmsToSapInterfaceLog(InterfaceLogTaskType.SEND_QCRECORDINFO, Wms2SapInterfaceLogType.QCRECORDINFO, xml, ledger.getId(),ledger.getCode());
+		}
+		else if(TclWmsMoveType.PRODUCTIONMOVETYPE.equals(ledger.getMoveType())){
+			Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+			wil.setType(ledger.getBillType());
+			wil.setFRBNR(ledger.getCode());
+			wil.setBLDAT(sdf.format(ledger.getCurDate()));
+			wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+			wil.setZEILE(ledger.getLineNo());
+			wil.setBWART(ledger.getMoveType());
+			wil.setMATNR(ledger.getItem().getCode());
+			wil.setWERKS(ledger.getSapFactory().getCode());
+			wil.setLGORT(ledger.getLocationCode());
+			wil.setLIFNR(ledger.getSupplierCode());
+			wil.setSOBKZ(ledger.getInvType());
+			wil.setMENGE(ledger.getQuantity().toString());
+			wil.setAUFNR(ledger.getProductionCode());
+			String xml = XmlObjectConver.toXML(wil);
+			interfaceLogManager.createWmsToSapInterfaceLog(InterfaceLogTaskType.SEND_PRODUCTIONINFO, Wms2SapInterfaceLogType.PRODUCTIONINFO, xml, ledger.getId(),ledger.getCode());
+		}
+		else if(TclWmsMoveType.PRDRETURNMOVETYPR.equals(ledger.getMoveType())){
+			Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+			wil.setType(ledger.getBillType());
+			wil.setFRBNR(ledger.getCode());
+			wil.setBLDAT(sdf.format(ledger.getCurDate()));
+			wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+			wil.setZEILE(ledger.getLineNo().toString());
+			wil.setBWART(ledger.getMoveType());
+			wil.setMATNR(ledger.getItem().getCode());
+			wil.setWERKS(ledger.getSapFactory().getCode());
+			wil.setLGORT(ledger.getLocationCode());
+			wil.setLIFNR(ledger.getSupplierCode());
+			wil.setSOBKZ(ledger.getInvType());
+			wil.setMENGE(ledger.getQuantity().toString());
+			wil.setAUFNR(ledger.getProductionCode());
+			String xml = XmlObjectConver.toXML(wil);
+			interfaceLogManager.createWmsToSapInterfaceLog(InterfaceLogTaskType.SEND_PRDRETURNINFO, Wms2SapInterfaceLogType.PRDRETURNINFO, xml, ledger.getId(),ledger.getCode());
+		}
+		else if(WmsPickticketBillTypeCode.YLCKD.equals(ledger.getBillType())){
+			Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+			wil.setType(ledger.getBillType());
+			wil.setFRBNR(ledger.getCode());
+			wil.setBLDAT(sdf.format(ledger.getCurDate()));
+			wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+			wil.setZEILE(ledger.getLineNo());
+			wil.setBWART(ledger.getMoveType());
+			wil.setMATNR(ledger.getItem().getCode());
+			wil.setWERKS(ledger.getSapFactory().getCode());
+			wil.setLGORT(ledger.getLocationCode());
+			wil.setLIFNR(ledger.getSupplierCode());
+			wil.setSOBKZ(ledger.getInvType());
+			wil.setMENGE(ledger.getQuantity().toString());
+			wil.setRSNUM(ledger.getReservedCode());
+			wil.setRSPOS(ledger.getResProject());
+			String xml = XmlObjectConver.toXML(wil);
+			interfaceLogManager.createWmsToSapInterfaceLog(InterfaceLogTaskType.SEND_SHIPRESINFO, Wms2SapInterfaceLogType.RESINFO, xml, ledger.getId(),ledger.getCode());
+		}
+		else if(TclWmsMoveType.OTHEROUTMOVETYPE.equals(ledger.getMoveType())){
+			Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+			wil.setType(ledger.getBillType());
+			wil.setFRBNR(ledger.getCode());
+			wil.setBLDAT(sdf.format(ledger.getCurDate()));
+			wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+			wil.setZEILE(ledger.getLineNo());
+			wil.setBWART(ledger.getMoveType());
+			wil.setMATNR(ledger.getItem().getCode());
+			wil.setWERKS(ledger.getSapFactory().getCode());
+			wil.setLGORT(ledger.getLocationCode());
+			wil.setLIFNR(ledger.getSupplierCode());
+			wil.setSOBKZ(ledger.getInvType());
+			wil.setMENGE(ledger.getQuantity().toString());
+			wil.setKOSTL(ledger.getSapFactory().getCode());
+			String xml = XmlObjectConver.toXML(wil);
+			interfaceLogManager.createWmsToSapInterfaceLog(InterfaceLogTaskType.SEND_OTHEROUTINFO, Wms2SapInterfaceLogType.OTHEROUTINFO, xml, ledger.getId(),ledger.getCode());
+		}
+		else if(TclWmsMoveType.OTHERINMOVETYPE.equals(ledger.getMoveType())){
+			Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+			wil.setType(ledger.getBillType());
+			wil.setFRBNR(ledger.getCode());
+			wil.setBLDAT(sdf.format(ledger.getCurDate()));
+			wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+			wil.setZEILE(ledger.getLineNo());
+			wil.setBWART(ledger.getMoveType());
+			wil.setMATNR(ledger.getItem().getCode());
+			wil.setWERKS(ledger.getSapFactory().getCode());
+			wil.setLGORT(ledger.getLocationCode());
+			wil.setLIFNR(ledger.getSupplierCode());
+			wil.setSOBKZ(ledger.getInvType());
+			wil.setMENGE(ledger.getQuantity().toString());
+			wil.setKOSTL(ledger.getSapFactory().getCode());
+			String xml = XmlObjectConver.toXML(wil);
+			interfaceLogManager.createWmsToSapInterfaceLog(InterfaceLogTaskType.SEND_OTHERININFO, Wms2SapInterfaceLogType.OTHERININFO, xml, ledger.getId(),ledger.getCode());
+		}
+		else if(TclWmsMoveType.BFINMOVETYPR.equals(ledger.getMoveType()) || TclWmsMoveType.BFOUTMOVETYPE.equals(ledger.getMoveType())){
+			Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+			wil.setType(ledger.getBillType());
+			wil.setFRBNR(ledger.getCode());
+			wil.setBLDAT(sdf.format(ledger.getCurDate()));
+			wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+			wil.setZEILE(ledger.getLineNo());
+			wil.setBWART(ledger.getMoveType());
+			wil.setMATNR(ledger.getItem().getCode());
+			wil.setWERKS(ledger.getSapFactory().getCode());
+			wil.setLGORT(ledger.getLocationCode());
+			wil.setLIFNR(ledger.getSupplierCode());
+			wil.setSOBKZ(ledger.getInvType());
+			wil.setMENGE(ledger.getQuantity().toString());
+			wil.setKOSTL(ledger.getCostCenter());
+			String xml = XmlObjectConver.toXML(wil);
+			interfaceLogManager.createWmsToSapInterfaceLog(InterfaceLogTaskType.SEND_BFOUTORININFO, Wms2SapInterfaceLogType.BFOUTORININFO, xml, ledger.getId(),ledger.getCode());
+		}
+		else if(TclWmsMoveType.KNDBMOVETYPE.equals(ledger.getMoveType()) || TclWmsMoveType.DBCKMOVETYPE.equals(ledger.getMoveType())){
+			Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+			wil.setType(ledger.getBillType());
+			wil.setFRBNR(ledger.getCode());
+			wil.setBLDAT(sdf.format(ledger.getCurDate()));
+			wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+			wil.setZEILE(ledger.getLineNo());
+			wil.setBWART(ledger.getMoveType());
+			wil.setMATNR(ledger.getItem().getCode());
+			wil.setWERKS(ledger.getSapFactory().getCode());
+			wil.setLGORT(ledger.getLocationCode());
+			wil.setLIFNR(ledger.getSupplierCode());
+			wil.setSOBKZ(ledger.getInvType());
+			wil.setMENGE(ledger.getQuantity().toString());
+			wil.setUMWRK(ledger.getRecFatoryCode());
+			wil.setUMLGO(ledger.getRecWarehouse());
+			String xml = XmlObjectConver.toXML(wil);
+			if(TclWmsMoveType.KNDBMOVETYPE.equals(ledger.getMoveType())){
+				interfaceLogManager.createWmsToSapInterfaceLog(InterfaceLogTaskType.SEND_KNDBINFO, Wms2SapInterfaceLogType.KNDBINFO, xml, ledger.getId(),ledger.getCode());
+			}else{
+				interfaceLogManager.createWmsToSapInterfaceLog(InterfaceLogTaskType.SEND_DBCKINFO, Wms2SapInterfaceLogType.DBCKINFO, xml, ledger.getId(),ledger.getCode());
+			}
+		}
+		else if(TclWmsMoveType.OUTDELIVERYMOVETYPE.equals(ledger.getMoveType())){
+			Wms2SapInventoryLedger wil = new Wms2SapInventoryLedger();
+			wil.setType(ledger.getBillType());
+			wil.setFRBNR(ledger.getCode());
+			wil.setBLDAT(sdf.format(ledger.getCurDate()));
+			wil.setBUDAT(sdf.format(ledger.getReceiveDate()));
+			wil.setZEILE(ledger.getLineNo());
+			wil.setBWART(ledger.getMoveType());
+			wil.setMATNR(ledger.getItem().getCode());
+			wil.setWERKS(ledger.getSapFactory().getCode());
+			wil.setLGORT(ledger.getLocationCode());
+			wil.setLIFNR(ledger.getSupplierCode());
+			wil.setSOBKZ(ledger.getInvType());
+			wil.setMENGE(ledger.getQuantity().toString());
+			wil.setINSMK(ledger.getInvStatus());
+			wil.setVBELN_IM(ledger.getDoCode());
+			wil.setVBELP_IM(ledger.getDoLineNo());
+			String xml = XmlObjectConver.toXML(wil);
+			interfaceLogManager.createWmsToSapInterfaceLog(InterfaceLogTaskType.SEND_XSJHDINFO, Wms2SapInterfaceLogType.XSJHDINFO, xml, ledger.getId(),ledger.getCode());
+		}
+	}
+	
+	public List<WmsAccountCloseDay> getReceiveDate(){
+		String hql = "from WmsAccountCloseDay d";
+		List<WmsAccountCloseDay> lists = commonDao.findByQuery(hql);
+		return lists;
+	}
+	/**
+	 * 获取下一个月的第一天
+	 * @return
+	 */
+	public static Date nextMonthFirstDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.add(Calendar.MONTH, 1);
+        return calendar.getTime();
+    }
+	
+	public void sendCancelReceiveInfo2SAP(WmsASNDetail detail,Double cancleQty){
+//		asn = commonDao.load(WmsASN.class, asn.getId());
+//        for (WmsASNDetail detail : asn.getDetails()) {
+        	WmsTransportOrderDetail tod = detail.getTransportOrderDetail();
+        	if(tod == null){
+        		return;
+        	}
+        	WmsDeliveryOrderDetail dod = tod.getDeliveryOrderDetail();
+        	PurchaseOrderDetail pod = dod.getPurchaseOrderDetail();
+        	//取消收货要给SAP传收货凭证
+        	String hql = "FROM TclWmsInventoryLedger l WHERE l.wmsCode =:wmsCode AND l.moveType =:moveType AND l.item.code =:itemCode "
+        			+ " order by l.lineNo desc ";
+        	List<TclWmsInventoryLedger> recLedgers = commonDao.findByQuery(hql, new String[]{"wmsCode","itemCode","moveType"}, 
+        			new Object[]{detail.getAsn().getCode(),detail.getItem().getCode(),TclWmsMoveType.ASNMOVETYPE}); 
+        	
+        	Double mustCancelqty = cancleQty; //需要取消的数量
+        	for(TclWmsInventoryLedger l : recLedgers) { //循环取消
+        		if(mustCancelqty<=0d) {
+        			break;
+        		}
+        		Double oldLedgerCanCancelQty = l.getQuantity() - l.getCancelQuantity(); //老ledger可以取消的数量
+        		if(oldLedgerCanCancelQty<=0d) {
+        			continue; //全部被取消的明细不处理
+        		}
+        		if(oldLedgerCanCancelQty>=mustCancelqty) {//1张就够了
+        			TclWmsInventoryLedger t_ledger = this.getLedger(detail);
+        			t_ledger.setPoCode(pod.getPurchaseOrder().getCode());
+        			t_ledger.setSapFactory(pod.getPurchaseOrder().getSapFactory());
+        			t_ledger.setWmsInCode(l.getCode()); // 先记录
+        			t_ledger.setOldLedgerId(l.getId());
+        			t_ledger.setWmsInCodeLineNo(l.getLineNo());
+        			t_ledger.setInvType(l.getInvType());
+        			t_ledger.setQuantity(mustCancelqty);
+        			l.setCancelQuantity(l.getCancelQuantity()+mustCancelqty);
+        			
+        			commonDao.store(l);
+        			commonDao.store(t_ledger);
+        			
+        			mustCancelqty = 0d;
+        		}
+        		else {
+        			TclWmsInventoryLedger t_ledger = this.getLedger(detail);
+        			t_ledger.setPoCode(pod.getPurchaseOrder().getCode());
+        			t_ledger.setSapFactory(pod.getPurchaseOrder().getSapFactory());
+        			t_ledger.setWmsInCode(l.getCode());
+        			t_ledger.setOldLedgerId(l.getId());
+        			t_ledger.setWmsInCodeLineNo(l.getLineNo());
+        			t_ledger.setInvType(l.getInvType());
+        			t_ledger.setQuantity(oldLedgerCanCancelQty);
+        			l.setCancelQuantity(l.getCancelQuantity()+oldLedgerCanCancelQty);
+        			commonDao.store(l);
+        			commonDao.store(t_ledger);
+        			
+        			mustCancelqty = mustCancelqty - oldLedgerCanCancelQty;
+        		}
+        	}
+        	if(mustCancelqty>0d) {
+        		throw new BusinessException("接口数量取消失败，剩余"+mustCancelqty+"无法取消");
+        	}
+//        }
+	}
+	
+	private TclWmsInventoryLedger getLedger(WmsASNDetail asnDetail) {
+		TclWmsInventoryLedger ledger = EntityFactory.getEntity(TclWmsInventoryLedger.class);
+    	ledger.setWarehouse(asnDetail.getAsn().getWarehouse());
+    	ledger.setWmsCode(asnDetail.getAsn().getCode());
+    	ledger.setBillType(asnDetail.getAsn().getBillType().getCode());
+    	ledger.setItem(asnDetail.getItem());
+    	
+    	 
+    	
+    	//收货时如果收货日期碰到了账期关闭日，且收货时间大于关闭日时间，则过账日期设置为下月的1号
+    	List<WmsAccountCloseDay> lists = getReceiveDate();
+    	if(lists.isEmpty()){
+    		ledger.setCurDate(new Date());
+        	ledger.setReceiveDate(new Date());
+    	}
+    	for(WmsAccountCloseDay day : lists){
+    		if(DateUtil.isSameDay(day.getAccountCloseTime(), new Date()) && day.getAccountCloseTime().before(new Date())){
+    			ledger.setCurDate(new Date());
+    			ledger.setReceiveDate(nextMonthFirstDate());
+    		}else{
+    			ledger.setCurDate(new Date());
+            	ledger.setReceiveDate(new Date());
+    		}
+    	}
+    	
+    	
+//    	ledger.setPoCode(pod.getPurchaseOrder().getCode());
+    	ledger.setMoveType(TclWmsMoveType.CANCELRECEIVETYPE);
+//    	ledger.setQuantity(cancleQty);
+    	
+    	ledger.setLineNo(this.genLedgerLineNo(ledger.getWmsCode(), ledger.getMoveType()));//生成报文时会重新生成
+    	
+    	return ledger;
+	}
+	
+	public WmsSapFactory getSapFactory(String code){
+		String hql = "FROM WmsSapFactory f WHERE f.code =:code ";
+		return (WmsSapFactory) commonDao.findByQueryUniqueResult(hql, "code", code);
+	}
+	
+	public void sendQcRecordInfo2SAP(WmsASNDetail detail,String qcStatus,Double QcQty){
+		WmsASN asn = commonDao.load(WmsASN.class, detail.getAsn().getId());
+		if(WmsAsnGenType.JITRKD.equals(asn.getBillType().getCode()) 
+				|| WmsAsnGenType.BHRKD.equals(asn.getBillType().getCode())
+				|| WmsAsnGenType.DBRKD.equals(asn.getBillType().getCode())
+				|| WmsAsnGenType.THRKD.equals(asn.getBillType().getCode())){
+			return;
+		}
+		if(WmsAsnGenType.ZCCKD.equals(asn.getBillType().getCode()) && WmsItemJITAtt.JIT_DOWNLINE_SETTLE.equals(detail.getItem().getUserFieldV2())){
+			return;
+		}
+		TclWmsInventoryLedger ledger = EntityFactory.getEntity(TclWmsInventoryLedger.class);
+		WmsSapFactory factory = getSapFactory(detail.getLotInfo().getExtendPropC10());
+		
+		ledger = this.genTclWmsInventoryLedger(ledger, asn.getWarehouse(), asn.getCode(), TclWmsMoveType.QCMOVETYPE, asn.getBillType().getCode(), detail.getItem(), factory, detail.getLotInfo().getSupplierCode());
+    	
+    	if(WmsFactoryXmlb.BZ.equals(detail.getLotInfo().getExtendPropC8())){
+    		ledger.setInvType(null);
+    	}else{
+    		ledger.setInvType("K");
+    	}
+    	ledger.setQuantity(QcQty);
+    	if("不良品".equals(qcStatus)){
+    		ledger.setLocationCode("B001");
+    		ledger.setQcLocCode("B002");
+    	}else{
+    		ledger.setLocationCode("B001");
+    		ledger.setQcLocCode("B001");
+    	}
+    	ledger.setBaseUnit(detail.getPackageUnit().getUnit());
+    	commonDao.store(ledger);
+	}
+	
+	public void sendProductionShipInfo(Long detailId,WmsInventory inventory,Double pickQty){
+		WmsPickTicketDetail detail = commonDao.load(WmsPickTicketDetail.class, detailId);
+		WmsPickTicket pick = commonDao.load(WmsPickTicket.class, detail.getPickTicket().getId());
+		TclWmsInventoryLedger ledger = EntityFactory.getEntity(TclWmsInventoryLedger.class);
+		ledger.setWarehouse(pick.getWarehouse());
+		ledger.setBillType(pick.getBillType().getCode());
+		ledger.setWmsCode(pick.getCode());
+    	//日期碰到了账期关闭日，且时间大于关闭日时间，则过账日期设置为下月的1号
+    	List<WmsAccountCloseDay> lists = getReceiveDate();
+    	if(lists.isEmpty()){
+    		ledger.setCurDate(new Date());
+        	ledger.setReceiveDate(new Date());
+    	}
+    	for(WmsAccountCloseDay day : lists){
+    		if(DateUtil.isSameDay(day.getAccountCloseTime(), new Date()) && day.getAccountCloseTime().before(new Date())){
+    			ledger.setCurDate(new Date());
+    			ledger.setReceiveDate(nextMonthFirstDate());
+    		}else{
+    			ledger.setCurDate(new Date());
+            	ledger.setReceiveDate(new Date());
+    		}
+    	}
+    	if(WmsPickticketGenType.SCLLD.equals(pick.getBillType().getCode())){
+    		ledger.setMoveType(TclWmsMoveType.PRODUCTIONMOVETYPE);
+    		ledger.setProductionCode(pick.getRelatedBill1());
+    	}
+    	if(WmsPickticketBillTypeCode.YLCKD.equals(pick.getBillType().getCode())){
+    		String hql = "FROM WmsReservedOrder order WHERE order.code =:code ";
+    		WmsReservedOrder reOrder = (WmsReservedOrder) commonDao.findByQueryUniqueResult(hql, "code", pick.getRelatedBill1());
+    		ledger.setMoveType(reOrder.getYdlx());
+    		ledger.setReservedCode(reOrder.getCode());
+    		hql = "FROM ReservedOrderDetailPtDetail d WHERE d.pickticketDetail.id =:pickticketDetailId  ";
+    		ReservedOrderDetailPtDetail d = (ReservedOrderDetailPtDetail) commonDao.findByQueryUniqueResult(hql, "pickticketDetailId", detailId);
+    		ledger.setResProject(d.getReservedOrderDetail().getProject());
+    	}
+    	if(WmsPickticketBillTypeCode.QTCKD.equals(pick.getBillType().getCode()) || WmsPickticketBillTypeCode.PKCKD.equals(pick.getBillType().getCode())){
+    		ledger.setMoveType(TclWmsMoveType.OTHEROUTMOVETYPE);
+    	}
+    	if(WmsPickticketBillTypeCode.BFCKD.equals(pick.getBillType().getCode())){
+    		ledger.setMoveType(TclWmsMoveType.BFOUTMOVETYPE);
+    		ledger.setCostCenter(pick.getUserField4());
+    	}
+    	if(WmsPickticketBillTypeCode.XSJHD.equals(pick.getBillType().getCode())){
+    		ledger.setMoveType(TclWmsMoveType.OUTDELIVERYMOVETYPE);
+    		ledger.setDoCode(pick.getRelatedBill1());
+    		String hql = "FROM DeliveryOrderDetailPtDetail d WHERE d.pickticketDetail.id =:pickticketDetailId  ";
+    		DeliveryOrderDetailPtDetail d = (DeliveryOrderDetailPtDetail) commonDao.findByQueryUniqueResult(hql, "pickticketDetailId", detailId);
+    		ledger.setDoLineNo(d.getDeliveryOrderDetail().getPosnr());
+    		ledger.setInvType(null);
+    		ledger.setInvStatus(null);
+    		ledger.setSupplierCode(null);
+    	}
+    	if(WmsPickticketBillTypeCode.DBCKD.equals(pick.getBillType().getCode())){
+    		ledger.setMoveType(TclWmsMoveType.DBCKMOVETYPE);
+    		ledger.setRecFatoryCode(pick.getUserField2());
+//    		String hql = "FROM WmsFactoryWarehouse w WHERE w.factory.code =:factoryCode AND w.type=:type ";
+//    		WmsFactoryWarehouse w = (WmsFactoryWarehouse) commonDao.findByQueryUniqueResult(hql, new String[]{"factoryCode","type"}, new Object[]{pick.getUserField2(),inventory.getItemKey().getLotInfo().getExtendPropC8()});
+    		ledger.setRecWarehouse(pick.getShipLocation().getZone().getWmsSapWarehouse().getCode());
+    	}
+    	if(WmsPickticketBillTypeCode.TGYSCK.equals(pick.getBillType().getCode())){
+    		ledger.setMoveType(TclWmsMoveType.PICKMOVETYPE);
+    	}
+    	ledger.setLineNo(this.genLedgerLineNo(ledger.getWmsCode(), ledger.getMoveType()));
+    	ledger.setItem(detail.getItem());
+    	WmsSapFactory factory = getSapFactory(pick.getUserField1());
+    	ledger.setSapFactory(factory);
+    	ledger.setLocationCode("B001");//测试暂时写死
+    	if(WmsFactoryXmlb.BZ.equals(inventory.getItemKey().getLotInfo().getExtendPropC8())){
+    		ledger.setInvType(null);
+    	}else{
+    		ledger.setInvType("K");
+    	}
+    	if("待检".equals(inventory.getStatus())){
+    		ledger.setInvStatus("X");
+    	}else{
+    		ledger.setInvStatus(null);
+    	}
+    	ledger.setSupplierCode(inventory.getItemKey().getLotInfo().getSupplierCode());
+    	ledger.setQuantity(pickQty);
+    	commonDao.store(ledger);
+	}
+	/**
+	 * 库存调拨--一个仓库两个工厂之间的调拨
+	 */
+	public void sendChangeTypeInfo(WmsInventory inventory,Double newFactoryQty,String newFactoryCode){
+		TclWmsInventoryLedger ledger = EntityFactory.getEntity(TclWmsInventoryLedger.class);
+		String wmsCode = sequenceGenerater.generateSequence(InventoryLedgerCodeType.KJDB, 8);//内外销调拨没有WMS对应的业务单据号，生成一个流水号
+		WmsSapFactory factory = getSapFactory(inventory.getItemKey().getLotInfo().getExtendPropC10());
+		
+		ledger = this.genTclWmsInventoryLedger(ledger, inventory.getWarehouse(), wmsCode, TclWmsMoveType.DBCKMOVETYPE, WmsPickticketBillTypeCode.KNDBD, inventory.getItem(), factory, inventory.getItemKey().getLotInfo().getSupplierCode());
+    	
+		if(WmsFactoryXmlb.BZ.equals(inventory.getItemKey().getLotInfo().getExtendPropC8())){
+    		ledger.setInvType(null);
+    	}else{
+    		ledger.setInvType("K");
+    	}
+    	ledger.setQuantity(newFactoryQty);
+    	ledger.setRecFatoryCode(newFactoryCode);
+    	ledger.setRecWarehouse(inventory.getLocation().getZone().getWmsSapWarehouse().getCode());
+    	commonDao.store(ledger);
+	}
+	/**生产订单入库JIT下线出库*/
+	public void shipJITDownLine(WmsInventory inventory,WmsTask task,Double qty){
+		ProductionOrderDetail pod = commonDao.load(ProductionOrderDetail.class, task.getProductionDetailId());
+		if(pod==null){
+			throw new BusinessException("未找到生产订单明细");
+		}
+		TclWmsInventoryLedger ledger = EntityFactory.getEntity(TclWmsInventoryLedger.class);
+		
+		ledger = this.genTclWmsInventoryLedger(ledger, inventory.getWarehouse(), task.getWorkDoc().getCode(), TclWmsMoveType.PRODUCTIONMOVETYPE, WmsPickticketBillTypeCode.SCLLD, pod.getItem(), pod.getProductionOrder().getFactory(),inventory.getItemKey().getLotInfo().getSupplierCode());
+    	
+		ledger.setProductionCode(pod.getProductionOrder().getCode());
+    	
+    	if(WmsFactoryXmlb.BZ.equals(inventory.getItemKey().getLotInfo().getExtendPropC8())){
+    		ledger.setInvType(null);
+    	}else{
+    		ledger.setInvType("K");
+    	}
+    	if("待检".equals(inventory.getStatus())){
+    		ledger.setInvStatus("X");
+    	}else{
+    		ledger.setInvStatus(null);
+    	}
+    	ledger.setQuantity(qty);
+    	commonDao.store(ledger);
+	}
+	/**获取sap仓库*/
+	private String getSapWarehouseCode(String inventoryStatus,String warehouseCode) {
+		String sapWarehouseCode="";
+		
+		if("VMI".equals(warehouseCode)) { //VMI仓
+			if("合格".equals(inventoryStatus)) {//好仓
+				sapWarehouseCode="";
+			}
+			else {//坏仓
+				sapWarehouseCode="";
+			}
+		}
+		else {//自管仓
+			if("合格".equals(inventoryStatus)) {//好仓
+				sapWarehouseCode="";
+			}
+			else {//坏仓
+				sapWarehouseCode="";
+			}
+		}
+		
+		return sapWarehouseCode;
+		
+	}
+	/**销售交货单传SAP*/
+	public void sendOutDeliveryShipInfo(WmsBol bol){
+		String hql = "select bd.pickTicketDetail.id from WmsBolDetail bd where bd.bol.id =:bolId ";
+		List<Long> pickDetailIds = commonDao.findByQuery(hql, "bolId", bol.getId());
+		
+		hql = " SELECT distinct d.deliveryOrderDetail.deliveryOrder.id FROM DeliveryOrderDetailPtDetail d WHERE d.pickticketDetail.id in(:pickticketDetailId)  ";
+		List<Long> doIds = commonDao.findByQuery(hql, new String[]{"pickticketDetailId"}, new Object[]{pickDetailIds});
+		if(doIds.size()>1){
+			throw new BusinessException("该BOL:"+bol.getCode()+"加入了"+doIds.size()+"个销售拣货单");
+		}
+		WmsDeliveryOrder order = commonDao.load(WmsDeliveryOrder.class, doIds.get(0));
+		
+		WmsPickTicketDetail pickDetail = commonDao.load(WmsPickTicketDetail.class, pickDetailIds.get(0));
+		
+		for(WmsDeliveryOrderDetail dod : order.getDetails()){
+			TclWmsInventoryLedger ledger = EntityFactory.getEntity(TclWmsInventoryLedger.class);
+			ledger = this.genTclWmsInventoryLedger(ledger, pickDetail.getPickTicket().getWarehouse(), pickDetail.getPickTicket().getCode(), TclWmsMoveType.OUTDELIVERYMOVETYPE, pickDetail.getPickTicket().getBillType().getCode(), dod.getItem(), dod.getFactory(),null);
+			ledger.setDoCode(dod.getDeliveryOrder().getCode());
+			ledger.setDoLineNo(dod.getPosnr());
+			ledger.setInvType(null);
+			ledger.setInvStatus(null);
+			ledger.setQuantity(dod.getDelivedQuantityBu());
+			commonDao.store(ledger);
+		}
+		
+	}
+	/**创建台账*/
+	private TclWmsInventoryLedger genTclWmsInventoryLedger(TclWmsInventoryLedger ledger,WmsWarehouse warehouse,String wmsCode,String moveType,String billTypeCode,WmsItem item,WmsSapFactory factory,String supplierCode){
+		ledger.setWarehouse(warehouse);
+    	ledger.setWmsCode(wmsCode);
+    	String lineNo = genLedgerLineNo(wmsCode,moveType);
+    	ledger.setLineNo(lineNo);
+    	ledger.setBillType(billTypeCode);
+    	//收货时如果收货日期碰到了账期关闭日，且收货时间大于关闭日时间，则过账日期设置为下月的1号
+    	List<WmsAccountCloseDay> lists = getReceiveDate();
+    	if(lists.isEmpty()){
+    		ledger.setCurDate(new Date());
+        	ledger.setReceiveDate(new Date());
+    	}
+    	for(WmsAccountCloseDay day : lists){
+    		if(DateUtil.isSameDay(day.getAccountCloseTime(), new Date()) && day.getAccountCloseTime().before(new Date())){
+    			ledger.setCurDate(new Date());
+    			ledger.setReceiveDate(nextMonthFirstDate());
+    		}else{
+    			ledger.setCurDate(new Date());
+            	ledger.setReceiveDate(new Date());
+    		}
+    	}
+    	ledger.setSupplierCode(supplierCode);
+    	ledger.setSapFactory(factory);
+    	ledger.setItem(item);
+    	ledger.setLocationCode("B001");
+    	ledger.setMoveType(moveType);
+    	commonDao.store(ledger);
+		
+		return ledger;
+	}
+}

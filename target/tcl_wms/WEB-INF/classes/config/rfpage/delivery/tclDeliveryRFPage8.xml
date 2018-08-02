@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--交货输入页面模板 -->
+<RFFormPage id="tclDeliveryRFPage8" title="tclDeliveryRFPage8">
+	<RFDisplay id="deliveryDisplay" load="tclRfDeliveryManager.delInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			交货单号: {bolCode}
+			{detailInfoStr}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>
+			交货单号: {bolCode}
+			{detailInfoStr}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<buttons>
+			<RFButton id="delConfirmBt" title="delConfirmBt" action="tclRfDeliveryManager.delConfirm" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

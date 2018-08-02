@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="addPurchaseOrderDetail4DeliveryOrderDetaliPage" title="addPurchaseOrderDetail4DeliveryOrderDetaliPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.order.PurchaseOrderDetail" width="800" height="400" onClose="refreshParent" mainEntrance="false">
+        <workflow/>
+        <datasource><![CDATA[SELECT pod.id,pod.purchaseOrder.code,
+pod.lineNo,
+pod.item.name,
+pod.packageUnit.unit,
+pod.expectedQty,
+pod.allotQty,
+pod.receivedQty,
+pod.expectedPackQty,
+factory.name,
+pod.ebelp 
+ FROM PurchaseOrderDetail pod LEFT JOIN pod.factory factory
+WHERE 1=1 AND pod.purchaseOrder.supplier.id={deliveryOrder.supplier.id}]]></datasource>
+        <columns>
+            <column id="pod.id" title="pod.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="pod.purchaseOrder.code" title="pod.purchaseOrder.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="pod.lineNo" title="pod.lineNo" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="pod.item.name" title="pod.item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="pod.packageUnit.unit" title="pod.packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="pod.expectedQty" title="pod.expectedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="pod.allotQty" title="pod.allotQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="pod.receivedQty" title="pod.receivedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="pod.expectedPackQty" title="pod.expectedPackQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="factory.name" title="factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="pod.ebelp" title="pod.ebelp" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+        </columns>
+    </maintainPage>
+</pages>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.order.PurchaseOrder" table="PURCHASE_ORDER">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">TSEQ_PURCHASE_ORDER</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        <discriminator column="DISCRIMINATOR" type="string"/>
+		<many-to-one name="warehouse" class="com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse">
+			<column name="WAREHOUSE_ID"  />
+		</many-to-one>
+		
+		<many-to-one name="company" class="com.vtradex.wms.server.model.entity.item.WmsCompany">
+			<column name="COMPANY_ID" not-null="true" />
+		</many-to-one>
+		
+		<many-to-one name="supplier" class="com.vtradex.wms.server.model.entity.base.WmsSupplier">
+			<column name="SUPPLIER_ID" not-null="true" />
+		</many-to-one>	
+		
+		<many-to-one name="sapFactory" class="com.vtradex.wms.server.model.entity.base.WmsSapFactory">
+			<column name="WMSSAPFACTORY_ID"  />
+		</many-to-one>	
+		
+		<property name="code" column="CODE" type="string" length="50"/>
+		<property name="bsart" column="BSART" type="string" length="10"/>
+	    <property name="creatDate" column="CREAT_DATE" type="timestamp"/>
+		<property name="ekorg" column="EKORG" type="string" length="50"/>
+		<property name="ekgrp" column="EKGRP" type="string" length="50"/>
+		<property name="qty" type="double" column="QTY" not-null="true"/>
+		<property name="allotQty" type="double" column="ALLOT_QTY" not-null="true"/>
+		<property name="receiveQty" type="double" column="RECEIVE_QTY" not-null="true"/>
+		<property name="actualDate" column="ACTUAL_DATE" type="timestamp"/>
+		<property name="startReceivedDate" column="START_RECEIVED_DATE" type="timestamp"/>
+		<property name="endReceivedDate" column="END_RECEIVED_DATE" type="timestamp"/>
+		<property name="fromCode" type="string" column="FROM_CODE" length="50"/>
+		<property name="fromName" type="string" column="FROM_NAME" length="50"/>
+		<property name="status" type="string" column="STATUS" length="50"/>
+		<component name="fromContact" class="com.vtradex.wms.server.model.component.Contact">
+            <property name="country" type="string">
+                <column name="C_COUNTRY" length="100"/>
+            </property>
+             <property name="province" type="string">
+                <column name="C_PROVINCE" length="100"/>
+            </property>
+            <property name="city" type="string">
+                <column name="C_CITY" length="50"/>
+            </property>
+            <property name="address" type="string">
+                <column name="C_ADDRESS" length="255"/>
+            </property>
+            <property name="postCode" type="string">
+                <column name="C_POSTCODE" length="10"/>
+            </property>
+            <property name="contactName" type="string">
+                <column name="C_CONTACT_NAME" length="50"/>
+            </property>
+            <property name="mobile" type="string">
+                <column name="C_MOBILE" length="100"/>
+            </property>
+            <property name="telephone" type="string">
+                <column name="C_TELEPHONE" length="50"/>
+            </property>
+            <property name="fax" type="string">
+                <column name="C_FAX" length="50"/>
+            </property>
+            <property name="email" type="string">
+                <column name="C_EMAIL" length="100"/>
+            </property>
+        </component>
+		<property name="userField1" type="string" column="USER_FIELD_1"  length="50"/>
+		<property name="userField2" type="string" column="USER_FIELD_2"  length="50"/>
+		<property name="userField3" type="string" column="USER_FIELD_3"  length="50"/>
+		<property name="userField4" type="string" column="USER_FIELD_4"  length="50"/>
+		<property name="userField5" type="string" column="USER_FIELD_5"  length="50"/>
+		
+		<set name="details" inverse="true" lazy="true" cascade="all-delete-orphan">
+			<key column="PURCHASE_ORDER_ID"/>
+			<one-to-many class="com.vtradex.wms.server.model.entity.order.PurchaseOrderDetail"></one-to-many>
+		</set>	
+		
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+		<property name="confirmor" type="string" column="CONFIRMOR" length="50" />
+		<property name="confirmTime" type="timestamp" column="CONFIRM_TIME"/>
+		<property name="confirmStatus" type="string" column="CONFIRM_STATUS" length="50"/>
+		<property name="receiver" type="string" column="RECEIVER" length="50" />
+		<property name="receiveTime" type="timestamp" column="RECEIVE_TIME"/>
+	</class>
+</hibernate-mapping>

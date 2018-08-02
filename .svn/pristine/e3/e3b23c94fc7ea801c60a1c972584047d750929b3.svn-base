@@ -1,0 +1,27 @@
+package com.vtradex.wms.server.service.pickticket.pojo;
+
+import com.vtradex.thorn.server.service.WorkflowManager;
+import com.vtradex.wms.server.service.inventory.WmsInventoryManager;
+import com.vtradex.wms.server.service.pickticket.WmsPickticketClientCustomerManager;
+import com.vtradex.wms.server.service.pickticket.WmsPickticketManager;
+
+/**
+ * 
+ * TCL 定制化 手工分配管理
+ * 
+ * @author <a href="zhen.lei@vtradex.com">Yogurt_lei</a>
+ * 
+ * @date 2017年7月19日 上午10:54:29
+ */
+public class DefaultWmsTclPickticketClientManager extends DefaultWmsPickticketClientManager {
+
+    public DefaultWmsTclPickticketClientManager (
+            WorkflowManager workflowManager,
+            WmsInventoryManager inventoryManager,
+            WmsPickticketManager wmsPickticketManager,
+            WmsPickticketClientCustomerManager wmsPickticketClientCustomerManager) {
+        super(workflowManager, inventoryManager, wmsPickticketManager,
+                wmsPickticketClientCustomerManager);
+    }
+
+}

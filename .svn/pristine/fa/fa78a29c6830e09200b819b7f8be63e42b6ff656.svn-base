@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editWmsAccountCloseDayPage">
+    <main>
+        <process id="wmsAccountCloseDayProcess">
+            <formCommit id="new" title="new" process="wmsAccountCloseDayProcess.new" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="new">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                </actions>            
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="true" editEnabled="false"/>
+                </forwards>
+            </formCommit>
+            <formCommit id="modify" title="modify" process="wmsAccountCloseDayProcess.modify" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="edit">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                </actions>            
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

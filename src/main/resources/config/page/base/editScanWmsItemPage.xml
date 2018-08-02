@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editScanWmsItemPage" title="editScanWmsItemPage" entityClass="com.vtradex.wms.server.model.entity.item.WmsItem" width="450" height="300">
+        <workflow/>
+        <inputUIs>
+       		<hidden id="item.id" title="item.id" reserve="false"/>
+            <list id="userFieldV10" title="item.userFieldV10" row="11" col="2" span="1" width="120" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false" enumType="WmsItemScanCode">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT 
+ enumerate.enumValue,
+ enumerate.enumValue FROM Enumerate enumerate 
+ where enumerate.enumType = 'WmsItemScanCode']]></hql>
+                    <eventListeners/>
+                </list>
+            </inputUIs>
+    </editPage>
+</pages>

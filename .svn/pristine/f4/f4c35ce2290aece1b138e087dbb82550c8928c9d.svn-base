@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsLocationPage" title="maintainWmsLocationPage" mainEntrance="true" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.warehouse.WmsLocation">
+        <workflow/>
+        <datasource><![CDATA[SELECT location.id,
+location.code,
+location.zone.name,
+location.workArea.code,
+location.type,
+location.description,
+location.exeType,
+location.locationCapacity.code,
+location.putawayCategory,
+location.allocationCategory,
+location.putawaySequence,
+location.pickingSequence,
+location.checkingSequence,
+location.aisle,
+location.status,
+location.mixRule,
+location.inOutLock,
+location.useRate,
+location.countLock,
+location.locationStatus,
+location.exceptionFlag,
+location.touchTimes
+ FROM WmsLocation location
+ LEFT JOIN location.locationCapacity
+ LEFT JOIN location.workArea
+ WHERE 1=1  
+ AND location.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}
+ ORDER BY location.code]]></datasource>
+        <columns>
+            <column id="location.id" title="location.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="location.code" title="location.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="location.zone.name" title="location.zone.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="location.workArea.code" title="location.workArea.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>       
+            <column id="location.type" title="location.type" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsLocationType"/>
+            <column id="location.description" title="location.description" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+            <column id="location.exeType" title="location.exeType" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsLocationExeType"/>
+            <column id="location.locationCapacity.code" title="location.locationCapacity.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>   
+            <column id="location.putawayCategory" title="location.putawayCategory" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>   
+            <column id="location.allocationCategory" title="location.allocationCategory" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>   
+            <column id="location.putawaySequence" title="location.putawaySequence" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>       
+            <column id="location.pickingSequence" title="location.pickingSequence" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+            <column id="location.checkingSequence" title="location.checkingSequence" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+            <column id="location.aisle" title="location.aisle" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+            <column id="location.status" title="location.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="BaseStatus"/>
+            <column id="location.mixRule" title="location.mixRule" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsMixRuleType"/>
+            <column id="location.inOutLock" title="location.inOutLock" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsInOutLockType"/>
+        	<column id="location.useRate" title="location.useRate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+        	<column id="location.countLock" title="location.countLock" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="enumFormat" formatParam="booleanFormat"/>
+            <column id="location.locationStatus" title="location.locationStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsLocationStatus"/>
+            <column id="location.exceptionFlag" title="location.exceptionFlag" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="enumFormat" formatParam="booleanFormat"/>
+            <column id="location.touchTimes" title="location.touchTimes" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>       
+        </columns>
+    </maintainPage>
+</pages>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="wmsTclBOLProcess" control="status">
+
+	<task id="printXSCK" title="打印销售出库单">
+	</task>
+
+	<task id="printQTCKD" title="打印其他出库单">
+	</task>
+
+	<task id="printVMI" title="打印VMI交接单">
+	</task>
+
+</process>

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <modifyDetailPage id="editWmsASNPage" title="editWmsASNPage" entityClass="com.vtradex.wms.server.model.entity.receiving.WmsASN" onClose="refreshParent" width="970" height="425">
+        <initListeners/>
+        <modify>
+            <inputUIs>
+                <hidden id="asn.id" title="asn.id" reserve="false"/>
+                <text id="asn.code" title="asn.code" row="1" col="1" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <remote id="asn.company.id" title="asn.company.id" row="1" col="2" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="uneditable" multiple="false" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,代码,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[ SELECT 
+ company.id,
+ company.code,
+ company.name
+ FROM WmsCompany company 
+ WHERE company.status = 'ENABLED' 
+ AND company.id in (select wareCompany.company.id from WmsWarehouseCompany wareCompany where wareCompany.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN})
+ AND (company.code  LIKE :param OR  company.name LIKE :param) ]]></hql>
+                    <eventListeners>
+                        <eventListener id="asn.billType.id" index="1" refreshUI="true"/>
+                    </eventListeners>
+                </remote>
+                <list id="asn.billType.id" title="asn.billType.id" row="1" col="3" span="1" width="120" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                    <visibleExpression/>
+                    <hql><![CDATA[ SELECT
+ billType.id,
+ billType.name
+ FROM WmsBillType billType
+ WHERE 1=1 
+ AND billType.type = 'ASN'					
+ AND billType.masterGroup.id in (select company.masterGroup.id from WmsCompany company where company.id= ${asn.company.id})
+ AND billType.status = 'ENABLED'
+ order by billType.id]]></hql>
+                    <eventListeners/>
+                </list>
+                <remote id="asn.supplier.id" title="asn.supplier.id" row="1" col="4" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="uneditable" multiple="false" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,代码,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[ SELECT 
+ supplier.id,
+ supplier.code,
+ supplier.name
+ FROM WmsSupplier supplier 
+ WHERE supplier.status = 'ENABLED'
+ AND (supplier.code  LIKE :param OR  supplier.name LIKE :param) ]]></hql>
+                    <eventListeners>
+                    </eventListeners>
+                </remote>
+                <date id="asn.orderDate" title="asn.orderDate" row="2" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" showTime="true" manualEditable="true" defaultCurrentDate="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </date>
+                <date id="asn.estimateDate" title="asn.estimateDate" row="2" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" showTime="true" manualEditable="true" defaultCurrentDate="false">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </date>
+                <remote id="asn.receiveDock.id" title="asn.receiveDock.id" row="2" col="3" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="editable" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,代码,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[ SELECT 
+ receiveDock.id,
+ receiveDock.name,
+ receiveDock.name
+ FROM WmsDock receiveDock 
+ WHERE receiveDock.isReceive = true 
+AND receiveDock.status = 'ENABLED' 
+AND (receiveDock.name LIKE :param OR receiveDock.name LIKE :param) 
+AND receiveDock.zone.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}]]></hql>
+                    <eventListeners/>
+                </remote>
+                <remote id="asn.receiveLocation.id" title="asn.receiveLocation.id" row="2" col="4" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="editable" language="false" multiple="false" manualEditable="true" displayColumn="3" enumColumnType="2=WmsLocationType" percentSignPosition="both" displayedTableHead="序号,库位类型,代码">
+                    <visibleExpression/>
+                    <hql><![CDATA[ SELECT 
+ receiveLocation.id,
+ receiveLocation.type,
+ receiveLocation.code
+ FROM WmsLocation receiveLocation
+ WHERE receiveLocation.status = 'ENABLED' 
+ AND receiveLocation.type in ('RECEIVE','STORAGE')
+AND (receiveLocation.code LIKE :param OR receiveLocation.code LIKE :param) 
+AND receiveLocation.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}
+order by receiveLocation.type asc]]></hql>
+                    <eventListeners/>
+                </remote>
+                <text id="asn.customerBill" title="asn.customerBill" row="3" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <date id="asn.startReceivedDate" title="asn.startReceivedDate" row="3" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" showTime="false" manualEditable="true" defaultCurrentDate="false">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </date>
+                <date id="asn.endReceivedDate" title="asn.endReceivedDate" row="3" col="3" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" showTime="false" manualEditable="true" defaultCurrentDate="false">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </date>
+                <text id="asn.fromCode" title="asn.fromCode" row="3" col="4" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="asn.fromName" title="asn.fromName" row="4" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="asn.fromContact.contactName" title="asn.fromContact.contactName" row="4" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="asn.fromContact.telephone" title="asn.fromContact.telephone" row="4" col="3" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <remote id="asn.keeper.id" title="asn.keeper.id" row="4" col="4" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="" language="false" multiple="false" manualEditable="true" displayColumn="2" percentSignPosition="both" displayedTableHead="序号,代码,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT keeper.id, keeper.code, keeper.name
+ FROM ThornUser keeper
+ WHERE (keeper.code LIKE :param OR keeper.name LIKE :param)]]></hql>
+                    <eventListeners/>
+                </remote>
+                <list id="asn.userField5" title="asn.userField5" row="5" col="1" span="1" width="118" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false" enumType="WmsFactoryXmlb">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT 
+	 enumerate.enumValue,
+	 enumerate.enumValue FROM Enumerate enumerate 
+	 where enumerate.enumType = 'WmsFactoryXmlb']]></hql>
+                <eventListeners/>
+            </list>
+            
+             <list id="asn.userField6" title="asn.userField6" row="5" col="2" span="1" width="118" readOnly="false" required="false" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false" >
+                <visibleExpression/>
+                <hql><![CDATA[SELECT 
+	 w.code,
+	 w.name
+	 FROM WmsCostCenter w 
+	 WHERE 1=1
+	 order by w.id desc
+	 ]]></hql>
+                <eventListeners/>
+            </list>
+            
+             <list id="asn.userField7" title="asn.userField7" row="5" col="3" span="1" width="120" readOnly="false" required="false" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT
+ factory.code,
+ factory.name
+ FROM WmsFactoryWarehouse w
+ LEFT JOIN w.factory factory
+ LEFT JOIN w.warehouse warehouse
+ LEFT JOIN w.warehouse.baseOrganization
+ WHERE 1=1 
+ AND factory.status = 'ENABLED'	
+ AND w.warehouse.baseOrganization.id = #{SESSION_BASE_ORGAN}				
+ order by factory.id desc]]></hql>
+                </list>
+                
+            
+            
+                <text id="asn.fromContact.address" title="asn.fromContact.address" row="6" col="1" span="2" width="410" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+            </inputUIs>
+        </modify>
+        <detail entityClass="com.vtradex.wms.server.model.entity.receiving.WmsASNDetail">
+            <datasource><![CDATA[SELECT asnDetail.id,asnDetail.lineNo,warehouse.name,factory.name,deliveryOrder.code,asnDetail.item.code,asnDetail.item.name,asnDetail.packageUnit.unit,asnDetail.expectedPackQty,asnDetail.expectedQty,asnDetail.expectedUnpackQty,asnDetail.shortQty,asnDetail.receivedQty,asnDetail.movedQty,asnDetail.lotInfo.storageDate,asnDetail.lotInfo.productDate,asnDetail.lotInfo.expireDate,asnDetail.lotInfo.lot,asnDetail.lotInfo.soiCode,asnDetail.lotInfo.asnCustomerBill,asnDetail.lotInfo.supplierCode,supplier.name,asnDetail.asn.userField5,asnDetail.lotInfo.serialNo,pd.po.code,asnDetail.label,asnDetail.lotInfo.extendPropC12,asnDetail.userField1,asnDetail.userField2,asnDetail.userField3,asnDetail.inventoryStatus,asnDetail.lotInfo.extendPropC17  FROM WmsASNDetail asnDetail
+             LEFT JOIN asnDetail.poDetail pd
+             LEFT JOIN pd.po 
+             LEFT JOIN asnDetail.asn.supplier supplier
+             LEFT JOIN asnDetail.transportOrderDetail.deliveryOrderDetail.factory factory
+             LEFT JOIN asnDetail.transportOrderDetail.deliveryOrderDetail.deliveryOrder deliveryOrder
+             LEFT JOIN asnDetail.transportOrderDetail.deliveryOrderDetail.deliveryOrder.warehouse warehouse
+		 WHERE 1=1
+		 AND asnDetail.asn.id = {asn.id}
+		 ORDER BY asnDetail.lineNo ASC]]></datasource>
+            <columns>
+                <column id="asnDetail.id" title="asnDetail.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+                <column id="asnDetail.lineNo" title="asnDetail.lineNo" width="50" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+                <column id="warehouse.name" title="warehouse.name"  visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="factory.name" title="factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="deliveryOrder.code" title="deliveryOrder.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="asnDetail.item.code" title="asnDetail.item.code"  visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="asnDetail.item.name" title="asnDetail.item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="asnDetail.packageUnit.unit" title="asnDetail.packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="asnDetail.expectedPackQty" title="asnDetail.expectedPackQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="asnDetail.expectedQty" title="asnDetail.expectedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="asnDetail.expectedUnpackQty" title="asnDetail.expectedUnpackQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="asnDetail.shortQty" title="asnDetail.shortQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="asnDetail.receivedQty" title="asnDetail.receivedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="asnDetail.movedQty" title="asnDetail.movedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="asnDetail.lotInfo.storageDate" title="asnDetail.lotInfo.storageDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date"/>
+                <column id="asnDetail.lotInfo.productDate" title="asnDetail.lotInfo.productDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date"/>
+                <column id="asnDetail.lotInfo.expireDate" title="asnDetail.lotInfo.expireDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date"/>
+                <column id="asnDetail.lotInfo.lot" title="asnDetail.lotInfo.lot" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="asnDetail.lotInfo.soiCode" title="asnDetail.lotInfo.soiCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="asnDetail.lotInfo.asnCustomerBill" title="asnDetail.lotInfo.asnCustomerBill" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="asnDetail.lotInfo.supplierCode" title="asnDetail.lotInfo.supplierCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="supplier.name" title="supplier.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="asnDetail.asn.userField5" title="asnDetail.asn.userField5" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsFactoryXmlb"/>
+                <column id="asnDetail.lotInfo.serialNo" title="asnDetail.lotInfo.serialNo" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="pd.po.code" title="pd.po.code" width="80" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="asnDetail.label" title="asnDetail.label" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="asnDetail.lotInfo.extendPropC12" title="asnDetail.lotInfo.extendPropC12" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="asnDetail.userField1" title="asnDetail.userField1" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="asnDetail.userField2" title="asnDetail.userField2" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="asnDetail.userField3" title="asnDetail.userField3" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="asnDetail.inventoryStatus" title="asnDetail.inventoryStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="asnDetail.lotInfo.extendPropC17" title="asnDetail.lotInfo.extendPropC17" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            </columns>
+        </detail>
+    </modifyDetailPage>
+</pages>

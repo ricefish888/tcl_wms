@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsPickTicketPage">
+    <main>
+        <process id="wmsPickTicketProcess">
+            <tablePopup id="view" title="view" process="wmsPickTicketProcess.view" enableType="single" containId="true" pageId="viewWmsPickTicketPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="new" title="new" process="wmsPickTicketProcess.new" enableType="none" containId="false" pageId="modifyWmsPickTicketPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="edit" title="edit" process="wmsPickTicketProcess.edit" enableType="single" containId="true" pageId="modifyWmsPickTicketPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="conversion" title="conversion" process="wmsPickTicketProcess.conversion" enableType="multi" multiMapping="false" >
+                <enableExpression><![CDATA[${shipLocation.type} != 'STORAGE' && ${pickTicket.status} == 'OPEN']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsPickticketManager" methodName="copyToNewPickTicket" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="quickPickTicket" title="quickPickTicket" process="wmsPickTicketProcess.quickPickTicket" enableType="multi" multiMapping="false" >
+                <enableExpression><![CDATA[${shipLocation.type} == 'STORAGE']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsPickticketManager" methodName="quickPickTicket" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="autoAllocate" title="autoAllocate" process="wmsPickTicketProcess.autoAllocate" enableType="multi" multiMapping="false" download="false" closeTransactional="true">
+                <enableExpression><![CDATA[${waveDoc.code} == '-'&&${shipLocation.type} != 'STORAGE']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsPickticketManager" methodName="autoAllocate" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="autoAllocateReplenish" title="autoAllocateReplenish" process="wmsPickTicketProcess.autoAllocateReplenish" enableType="multi" multiMapping="false" download="false" closeTransactional="true">
+                <enableExpression><![CDATA[${waveDoc.code} == '-'&&${shipLocation.type} != 'STORAGE']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsPickticketManager" methodName="autoAllocateReplenish" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+			<tablePopup id="allocate" title="allocate" process="wmsPickTicketProcess.allocate" enableType="single" containId="true" pageId="manualPickingAllocatePage">
+				<enableExpression><![CDATA[${shipLocation.type} != 'STORAGE']]></enableExpression>
+			</tablePopup>
+			<tableCommit id="supplyWarehouseReplenish" title="supplyWarehouseReplenish" process="wmsPickTicketProcess.supplyWarehouseReplenish" enableType="multi" multiMapping="false" download="false" closeTransactional="true">
+                <enableExpression><![CDATA[${pickTicket.qty} - ${pickTicket.allocateQty} > 0]]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsTclPickticketManager" methodName="supplyWarehouseReplenish" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="createWorkDoc" title="createWorkDoc" process="wmsPickTicketProcess.createWorkDoc" enableType="multi" multiMapping="false" download="false" closeTransactional="false">
+                <enableExpression><![CDATA[${waveDoc.code} == '-'&&${shipLocation.type} != 'STORAGE']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsPickticketManager" methodName="createWorkDoc" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="cancelAll" title="maintainWmsPickTicketPage.cancelAll" process="wmsPickTicketProcess.cancelAll" enableType="multi" confirmMessage="confirm.maintainWmsPickTicketPage.cancelAll">
+                <enableExpression><![CDATA[${shipLocation.type} != 'STORAGE']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsPickticketManager" methodName="cancelAllocate" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tablePopup id="cancelSingle" title="cancelSingle" process="wmsPickTicketProcess.cancelSingle" enableType="single" containId="true" pageId="manualPickingCancelAllocatePage">
+                <enableExpression><![CDATA[${shipLocation.type} != 'STORAGE']]></enableExpression>
+            </tablePopup>
+            <tableCommit id="cancel" title="cancel" process="wmsPickTicketProcess.cancel" enableType="multi" multiMapping="false" download="false" closeTransactional="false" confirmMessage="confirm.maintainWmsPickTicketPage.cancel">
+                <enableExpression><![CDATA[${waveDoc.code} == '-']]></enableExpression>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="close" title="close" process="wmsPickTicketProcess.close" enableType="multi" multiMapping="false" download="false" closeTransactional="false" confirmMessage="confirm.maintainWmsPickTicketPage.close">
+                <enableExpression><![CDATA[${shipLocation.type} != 'STORAGE']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsPickticketManager" methodName="closePickTicket" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="reOpen" title="reOpen" process="wmsPickTicketProcess.reOpen" enableType="multi" multiMapping="false" download="false" closeTransactional="false">
+                <enableExpression><![CDATA[${shipLocation.type} != 'STORAGE' && ${pickTicket.isExecutable} == 'true']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsPickticketManager" methodName="reOpenPickTicket" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="createBOL" title="createBOL" process="wmsPickTicketProcess.createBOL" enableType="multi">
+                <enableExpression><![CDATA[${pickTicket.status} != 'FINISHED' && ${pickTicket.pickQty} > 0 &&  (${planedShipQty} == '-' || ${pickTicket.pickQty} - ${planedShipQty} > 0)&&${shipLocation.type} != 'STORAGE']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsBolManager" methodName="createBOL" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+<!--             <tablePopup id="packingbackUp" title="packingbackUp" process="wmsPickTicketProcess.packingbackUp" enableType="single" containId="true" pageId="maintainPickTicketBackUpPage"> -->
+<!--                 <enableExpression><![CDATA[${pickTicket.pickQty} > 0]]></enableExpression> -->
+<!--             </tablePopup> -->
+            <tablePopup id="multiUpdateShipDock" title="multiUpdateShipDock" process="wmsPickTicketProcess.multiUpdateShipDock" enableType="multi" containId="true" pageId="editPickTicketMultiUpdateShipDockPage">
+                <enableExpression><![CDATA[${shipLocation.type} != 'STORAGE']]></enableExpression>
+            </tablePopup>
+            <tablePopup id="multiUpdateShipLocation" title="multiUpdateShipLocation" process="wmsPickTicketProcess.multiUpdateShipLocation" enableType="multi" containId="true" pageId="editPickTicketMultiUpdateShipLocationPage">
+                <enableExpression><![CDATA[${shipLocation.type} != 'STORAGE']]></enableExpression>
+            </tablePopup>
+            <tablePopup id="multiUpdateRoute" title="multiUpdateRoute" process="wmsPickTicketProcess.multiUpdateRoute" enableType="multi" containId="true" pageId="editPickTicketMultiUpdateRoutePage">
+                <enableExpression><![CDATA[${shipLocation.type} != 'STORAGE']]></enableExpression>
+            </tablePopup>
+			
+        </process>
+        <process id="wmsPickTicketExtendProcess">
+        	<tableCommit id="convertWarehouse" title="convertWarehouse" process="wmsPickTicketExtendProcess.convertWarehouse" enableType="single" multiMapping="false" >
+                <enableExpression><![CDATA[${pickTicket.status} == 'OPEN']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsTclPickticketManager" methodName="pickTicketconvertWarehouse" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

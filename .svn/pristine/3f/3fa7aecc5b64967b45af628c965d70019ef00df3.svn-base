@@ -1,0 +1,13 @@
+pickTicketDetail.packageUnit.id=\u5305\u88c5\u5355\u4f4d
+pickTicketDetail.item.id=\u7269\u6599
+edit=\u4fdd\u5b58
+inventoryStatus=\u5e93\u5b58\u72b6\u6001
+save=\u4fdd\u5b58
+pickTicketDetail.expectedPackQty=\u671f\u5f85\u5305\u88c5\u6570\u91cf
+pickTicketDetail.id=\u5e8f\u53f7
+modifyDetail=\u4fee\u6539\u660e\u7ec6
+editWmsPickTicketDetailPage=\u7f16\u8f91\u62e3\u8d27\u5355\u660e\u7ec6
+addDetail=\u65b0\u589e\u660e\u7ec6
+pickTicketDetail.lineNo=\u884c\u53f7
+pickTicketDetail.lotInfo=\u6279\u6b21\u5c5e\u6027
+pickTicketDetail.inventoryStatus=\u5e93\u5b58\u72b6\u6001

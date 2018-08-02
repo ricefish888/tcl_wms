@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainTclWmsInventoryCountPage" title="maintainTclWmsInventoryCountPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.inventory.TclWmsInventoryCount" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT inventoryCount.id,
+warehouse.name,
+inventoryCount.companyCode,
+inventoryCount.factoryCode,
+inventoryCount.lgort,
+item.code,
+item.name,
+inventoryCount.computeDate,
+inventoryCount.supplierCode,
+inventoryCount.pstyp,
+inventoryCount.unlimCount,
+inventoryCount.checkInventory,
+inventoryCount.startCount,
+inventoryCount.inCount,
+inventoryCount.outCount,
+inventoryCount.endCount
+ FROM TclWmsInventoryCount inventoryCount
+ LEFT JOIN inventoryCount.warehouse warehouse
+ LEFT JOIN inventoryCount.item item
+  WHERE 1=1
+ ORDER BY inventoryCount.id DESC]]></datasource>
+        <columns>
+            <column id="inventoryCount.id" title="inventoryCount.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="warehouse.name" title="warehouse.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryCount.companyCode" title="inventoryCount.companyCode" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryCount.factoryCode" title="inventoryCount.factoryCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>           
+            <column id="inventoryCount.lgort" title="inventoryCount.lgort" width="180" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryCount.computeDate" title="inventoryCount.computeDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" format="dateFormat" language="false"/>
+            <column id="inventoryCount.supplierCode" title="inventoryCount.supplierCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" format="tclSupplierNameFormatter"/>
+            <column id="inventoryCount.pstyp" title="inventoryCount.pstyp" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsFactoryXmlb"/>
+            <column id="inventoryCount.unlimCount" title="inventoryCount.unlimCount" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+            <column id="inventoryCount.checkInventory" title="inventoryCount.checkInventory" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+            <column id="inventoryCount.startCount" title="inventoryCount.startCount" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+            <column id="inventoryCount.inCount" title="inventoryCount.inCount" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+            <column id="inventoryCount.outCount" title="inventoryCount.outCount" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+            <column id="inventoryCount.endCount" title="inventoryCount.endCount" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+        </columns>
+    </maintainPage>
+</pages>

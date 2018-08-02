@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editScanWmsItemPage">
+    <main>
+        <process id="wmsTclItemProcess">
+            <formCommit id="editScan" title="editScan" process="wmsTclItemProcess.editScan" enableType="none" download="false" closeTransactional="false" visibleType="none">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="userFieldV10" className="string">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                	<action managerName="wmsTclItemManager" methodName="editWmsItemScan" parameter="parentObj,userFieldV10"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+</page>

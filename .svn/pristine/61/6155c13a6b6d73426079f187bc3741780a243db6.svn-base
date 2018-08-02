@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.workdoc.WmsWorkDoc" table="WMS_WORK_DOC">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_WMS_WORK_DOC</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        <version name="version" column="VERSION" type="long"/>
+        
+		<many-to-one name="warehouse" class="com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse">
+			<column name="WAREHOUSE_ID" not-null="true"/>
+		</many-to-one>
+		<many-to-one name="keeper" class="com.vtradex.thorn.server.model.security.ThornUser">
+			<column name="KEEPER_ID" />
+		</many-to-one>
+		
+		<property name="code" type="string" column="CODE" length="50" />
+		<property name="type" type="string" column="type" length="50" />
+		<property name="relatedBillCode" type="string" column="RELATED_BILL_CODE" length="100" />
+		<property name="status" type="string" column="STATUS" length="50"/>
+		<property name="qty" type="double" column="QTY" />
+		<property name="allocateQty" type="double" column="ALLOCATE_QTY" />
+		<property name="pickedQty" type="double" column="PICKED_QTY" />
+		<property name="putawayQty" type="double" column="PUTAWAY_QTY" />
+		<property name="printTimes" type="int" column="PRINT_TIMES" />
+		
+		<property name="startTime" type="timestamp" column="START_TIME" />
+		<property name="endTime" type="timestamp" column="END_TIME"/>
+		
+		<property name="userField1" type="string" column="USER_FIELD1" length="255"/>
+		<property name="userField2" type="string" column="USER_FIELD2" length="255"/>
+		<property name="userField3" type="string" column="USER_FIELD3" length="255"/>
+		<property name="userField4" type="string" column="USER_FIELD4" length="255"/>
+		<property name="userField5" type="string" column="USER_FIELD5" length="255"/>
+		<property name="productLine" type="string" column="PRODUCT_LINE" length="50"/>
+		<property name="productOrderCode" type="string" column="PRODUCT_ORDER_CODE" length="100"/>
+		<property name="billTypeCode" type="string" column="BILLTYPE_CODE" length="100"/>
+		<property name="billTypeName" type="string" column="BILLTYPE_NAME" length="100"/>
+		
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,63 @@
+package com.vtradex.wms.server.service.order;
+
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import com.vtradex.thorn.server.model.security.ThornUser;
+import com.vtradex.thorn.server.service.BaseManager;
+import com.vtradex.wms.server.model.entity.base.WmsSupplier;
+import com.vtradex.wms.server.model.entity.item.WmsCompany;
+import com.vtradex.wms.server.model.entity.production.WmsReservedOrder;
+import com.vtradex.wms.server.model.entity.production.WmsReservedOrderDetail;
+import com.vtradex.wms.server.model.entity.receiving.WmsASN;
+import com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse;
+
+public interface WmsReservedOrderManager extends BaseManager{
+	
+	//保存
+	@Transactional
+	void saveReservedOrder(WmsReservedOrder reservedOrder);
+	
+	
+	//保存明细
+	@Transactional
+	void saveOrderDetail(Long id,WmsReservedOrderDetail wmsReservedOrderDetail);
+	
+	//保存明细
+	@Transactional
+	void deleteOrderDetail(WmsReservedOrderDetail wmsReservedOrderDetail);
+	
+	/**出库类型预留单生效,生成拣货单*/
+	@Transactional
+	void activeReserveOrder(WmsReservedOrder reservedOrder);
+	
+	/**入库类型预留单生效,生成拣货单*/
+	@Transactional
+	void createAsnByReservedOrder(WmsReservedOrder reservedOrder);
+	
+	/**
+	 * 创建ASN公用方法
+	 * @param company 货主
+	 * @param billCode 单据类型编码
+	 * @param warehouse 仓库
+	 * @param date 订单日期
+	 * @param orderCode 单号
+	 * @param supplierCode 供应商编码
+	 * @param supplierName 供应商名称
+	 * @param supplier 供应商
+	 * @param bgy 保管员
+	 */
+	@Transactional
+	WmsASN createAsnByValues(WmsCompany company,String billCode,WmsWarehouse warehouse,Date date,
+			String orderCode,String supplierCode,String supplierName,WmsSupplier supplier,ThornUser bgy,
+			List<Object[]> detailValues,WmsASN asn);
+	
+	/**
+	 * 如果预留单生成了ASN或者拣货单,失效的时候需要删除对应的ASN或者拣货单
+	 * @param reservedOrder
+	 */
+	@Transactional
+	void unActiveOrder(WmsReservedOrder reservedOrder);
+}

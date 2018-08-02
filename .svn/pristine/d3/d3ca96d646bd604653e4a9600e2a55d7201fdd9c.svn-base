@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainAddWmsTransportOrderDetailnewPage" title="maintainAddWmsTransportOrderDetailnewPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.production.WmsDeliveryOrderDetail"  width="1100" height="450"  mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[select 
+orderDetail.id,
+orderDetail.deliveryOrder.warehouse.name,
+orderDetail.factory.name,
+orderDetail.deliveryOrder.code,
+orderDetail.deliveryOrder.deliveryDate,
+orderDetail.item.code,
+orderDetail.item.name,
+orderDetail.planQuantityBu,
+orderDetail.delivedQuantityBu,
+orderDetail.theDeliveryQuantityBu,
+orderDetail.quantity,
+(orderDetail.theDeliveryQuantityBu - orderDetail.quantity) as  theDeliveryQuantityBu,
+(select w.theDeliveryQuantityBu - w.quantity from WmsDeliveryOrderDetail w where w.id=orderDetail.id ) as amount
+FROM WmsDeliveryOrderDetail orderDetail
+LEFT JOIN  orderDetail.item
+LEFT JOIN  orderDetail.packageUnit
+LEFT JOIN  orderDetail.deliveryOrder
+LEFT JOIN  orderDetail.factory
+LEFT JOIN  orderDetail.deliveryOrder.warehouse
+WHERE 1=1
+AND (orderDetail.theDeliveryQuantityBu - orderDetail.quantity) >0
+AND orderDetail.deliveryOrder.status in ('ACTIVE','PARTIALRECEIPT')
+AND orderDetail.deliveryOrder.supplier.id = {wmsTransportOrder.supplier.id}
+AND	((
+	orderDetail.deliveryOrder.deliveryDate <= (sysdate+7) and orderDetail.deliveryOrder.warehouse.code in ('BX','XYJ')
+	)
+
+	OR
+	(
+		orderDetail.deliveryOrder.warehouse.code='VMI'
+	)
+)
+ORDER BY orderDetail.id]]></datasource>
+        <columns>
+            <column id="orderDetail.id" title="orderDetail.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="orderDetail.deliveryOrder.warehouse.name" title="orderDetail.deliveryOrder.warehouse.name" width="80" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="orderDetail.factory.name" title="orderDetail.factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="orderDetail.deliveryOrder.code" title="orderDetail.deliveryOrder.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="orderDetail.deliveryOrder.deliveryDate" title="orderDetail.deliveryOrder.deliveryDate" width="100" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="orderDetail.item.code" title="orderDetail.item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="orderDetail.item.name" title="orderDetail.item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="orderDetail.planQuantityBu" title="orderDetail.planQuantityBu" width="85" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="orderDetail.delivedQuantityBu" title="orderDetail.delivedQuantityBu" width="85" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="orderDetail.theDeliveryQuantityBu" title="orderDetail.theDeliveryQuantityBu" width="80" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="orderDetail.quantity" title="orderDetail.quantity" visible="true" sortable="true" width="80" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="theDeliveryQuantityBu" title="theDeliveryQuantityBu" visible="true" sortable="true" width="80" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="amount" title="amount" width="60" visible="true" sortable="false" horizonAlign="center" verticalAlign="middle" dataType="double" inputUI="true"/>
+        </columns>
+    </maintainPage>
+</pages>

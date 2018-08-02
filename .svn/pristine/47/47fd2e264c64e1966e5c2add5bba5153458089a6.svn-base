@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainPickTicketWorkDocPage" title="maintainPickTicketWorkDocPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.workdoc.WmsWorkDoc" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT workDoc.id,
+workDoc.code,
+workDoc.type,
+workDoc.qty,
+workDoc.pickedQty,
+workDoc.relatedBillCode,
+workDoc.billTypeCode,
+workDoc.billTypeName,
+workDoc.status,
+workDoc.keeper.name,
+workDoc.productLine,
+workDoc.userField5, 
+workDoc.productOrderCode,
+workDoc.printTimes,
+workDoc.startTime,
+workDoc.endTime,
+workDoc.userField1,
+workDoc.userField4,
+workDoc.updateInfo.creator,
+workDoc.updateInfo.createdTime,
+workDoc.updateInfo.lastOperator,
+workDoc.updateInfo.updateTime
+ FROM WmsWorkDoc workDoc
+ LEFT JOIN workDoc.keeper
+ WHERE 1=1
+ AND (workDoc.type = 'PICKING' or workDoc.type = 'WAVE_PICKING')
+ AND workDoc.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}
+ ORDER BY workDoc.id DESC
+ ]]></datasource>
+        <columns>
+            <column id="workDoc.id" title="workDoc.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="workDoc.code" title="workDoc.code" width="150" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="workDoc.type" title="workDoc.type" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsWorkDocType"/>
+            <column id="workDoc.qty" title="workDoc.qty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="3"/>
+            <column id="workDoc.pickedQty" title="workDoc.pickedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="3"/>
+            <column id="workDoc.relatedBillCode" title="workDoc.relatedBillCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="workDoc.billTypeCode" title="workDoc.billTypeCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="workDoc.billTypeName" title="workDoc.billTypeName" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="workDoc.status" title="workDoc.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsWorkDocStatus"/>
+            <column id="workDoc.keeper.name" title="workDoc.keeper.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="workDoc.productLine" title="workDoc.productLine" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="workDoc.userField5" title="workDoc.userField5" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="workDoc.productOrderCode" title="workDoc.productOrderCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="workDoc.printTimes" title="workDoc.printTimes" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer" language="false"/>
+            <column id="workDoc.startTime" title="workDoc.startTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m:s"/>
+            <column id="workDoc.endTime" title="workDoc.endTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m:s"/>
+            <column id="workDoc.userField1" title="workDoc.userField1" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="workDoc.userField4" title="workDoc.userField4" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+        	<column id="workDoc.updateInfo.creator" title="workDoc.updateInfo.creator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="workDoc.updateInfo.createdTime" title="workDoc.updateInfo.createdTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m:s"/>
+            <column id="workDoc.updateInfo.lastOperator" title="workDoc.updateInfo.lastOperator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="workDoc.updateInfo.updateTime" title="workDoc.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m:s"/>            
+            
+        </columns>
+    </maintainPage>
+</pages>

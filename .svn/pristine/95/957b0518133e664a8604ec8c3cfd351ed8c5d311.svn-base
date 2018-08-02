@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainDailyDeliverOrderDetailPage">
+    <main>
+        <process id="dailyDeliverOrderDetailProcess">
+            <tablePopup id="new" title="new" process="dailyDeliverOrderDetailProcess.new" enableType="none" containId="false" pageId="editDailyDeliverOrderDetailPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="delete" title="delete" process="dailyDeliverOrderDetailProcess.delete" enableType="multi" multiMapping="false" download="false" closeTransactional="false" confirmMessage="是否确认删除此条记录？">
+                <enableExpression><![CDATA[${ddod.isAutoCreate} == 'false']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsDeliveryOrderManager" methodName="deleteDailyOrder" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

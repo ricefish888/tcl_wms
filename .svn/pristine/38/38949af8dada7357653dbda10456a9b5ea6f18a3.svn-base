@@ -1,0 +1,40 @@
+package com.vtradex.wms.rfserver.service.move;
+
+import java.util.Map;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import com.vtradex.thorn.server.service.BaseManager;
+
+/** 
+* @ClassName: 按货品无计划移位处理类 
+* @Description: RfNPMoveBySkuManager
+* @author <a href="huayang.yuan@tech.vtradex.com">袁华洋</a>  
+* @date 2017-8-16 下午5:41:33  
+*/
+public interface TclRfNPMoveBySkuManager extends BaseManager{
+	
+	/**库位扫描*/
+	@Transactional
+	Map<String,Object> tclMoveBySkuLocationCommit(Map<String,Object> params);
+	
+	/**库位信息*/
+	@Transactional
+	Map<String,Object> loctionInfo(Map<String,Object> params);
+	
+	/**货品扫描*/
+	@Transactional
+	Map<String,Object> tclMoveBySkuItemCommit(Map<String,Object> params);
+	
+	/**库存信息*/
+	@Transactional
+	Map<String,Object> inventoryInfo(Map<String,Object> params);
+	
+	/**移位确认*/
+	@Transactional
+	Map<String,Object> moveBySkuComfirmCommit(Map<String,Object> params);
+	
+	/**移位验证*/
+	@Transactional
+	Map<String,Object> moveBySkuComfirmCommitValidate(Map<String,Object> params);
+}

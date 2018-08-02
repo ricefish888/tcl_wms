@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editWmsLocationPage" title="editWmsLocationPage" entityClass="com.vtradex.wms.server.model.entity.warehouse.WmsLocation" width="400" height="300" onClose="refreshParent">
+        <workflow/>
+        <initListeners/>
+        <inputUIs>
+            <hidden id="location.id" title="location.id" reserve="false"/>
+            <list id="location.zone.id" title="location.zone.id" row="1" col="1" span="1" width="118" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT zone.id,
+zone.name
+FROM WmsZone zone WHERE zone.status='ENABLED' 
+AND zone.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}]]></hql>
+                    <eventListeners>
+                        <eventListener id="location.workArea.id" index="1" refreshUI="true"/>
+                    </eventListeners>
+            </list>
+            <list id="location.type" title="location.type" row="1" col="2" span="1" width="118" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false" enumType="WmsLocationType">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT 
+ enumerate.enumValue,
+ enumerate.enumValue FROM Enumerate enumerate 
+ where enumerate.enumType = 'WmsLocationType']]></hql>
+                <eventListeners/>
+            </list>
+            <text id="location.code" title="location.code" row="2" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <list id="location.workArea.id" title="location.workArea.id" row="2" col="2" span="1" width="118" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT workArea.id,
+workArea.code
+FROM WmsWorkArea workArea WHERE workArea.status='ENABLED' 
+AND workArea.zone.id = {location.zone.id}
+AND workArea.zone.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}]]></hql>
+                <eventListeners/>
+            </list>
+            <separator id="s1" title="s1" row="3"/>
+            <text id="location.aisle" title="location.aisle" row="4" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <text id="location.lineNo" title="location.lineNo" row="4" col="2" defaultValue="0" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" validator="number" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <text id="location.columnNo" title="location.columnNo" row="5" col="1" defaultValue="0" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" validator="numberRequired" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <text id="location.layerNo" title="location.layerNo" row="5" col="2" defaultValue="0" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" validator="number" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <separator id="s2" title="s2" row="6"/>
+            <list id="location.locationCapacity.id" title="location.locationCapacity.id" row="7" col="1" span="1" width="118" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT locationCapacity.id,
+locationCapacity.code
+FROM WmsLocationCapacity locationCapacity
+WHERE 1=1
+AND locationCapacity.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}
+]]></hql>
+                <eventListeners/>
+            </list>
+            <text id="location.putawayCategory" title="location.putawayCategory" row="7" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <text id="location.allocationCategory" title="location.allocationCategory" row="8" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <text id="location.putawaySequence" title="location.putawaySequence" row="8" col="2" defaultValue="0" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" validator="integerRequired" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <text id="location.pickingSequence" title="location.pickingSequence" row="9" col="1" defaultValue="0" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" validator="integerRequired" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <text id="location.checkingSequence" title="location.checkingSequence" row="9" col="2" defaultValue="0" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" validator="integerRequired" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+           <list id="location.mixRule" title="location.mixRule" row="10" col="1" span="1" width="118" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false" enumType="WmsMixRuleType">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT 
+ enumerate.enumValue,
+ enumerate.enumValue FROM Enumerate enumerate 
+ where enumerate.enumType = 'WmsMixRuleType']]></hql>
+                <eventListeners/>
+            </list>
+           <list id="location.inOutLock" title="location.inOutLock" row="10" col="2" span="1" width="118" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false" enumType="WmsInOutLockType">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT 
+ enumerate.enumValue,
+ enumerate.enumValue FROM Enumerate enumerate 
+ where enumerate.enumType = 'WmsInOutLockType']]></hql>
+                <eventListeners/>
+            </list>
+            <list id="location.exeType" title="location.exeType" row="11" col="1" span="1" width="118" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false" enumType="WmsLocationExeType">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT 
+ enumerate.enumValue,
+ enumerate.enumValue FROM Enumerate enumerate 
+ where enumerate.enumType = 'WmsLocationExeType']]></hql>
+                <eventListeners/>
+            </list>
+            <text id="location.description" title="location.description" row="12" col="1" span="1" width="130" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+        </inputUIs>
+    </editPage>
+</pages>

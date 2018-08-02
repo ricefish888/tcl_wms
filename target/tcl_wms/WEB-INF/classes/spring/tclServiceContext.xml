@@ -1,0 +1,259 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC
+        "-//SPRING//DTD BEAN//EN"
+        "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<!-- Tcl 客户化 bean定义处理 -->
+	<bean id="tclCustomPostProcessor" class="com.vtradex.wms.server.service.spring.config.TclCustomPostProcessor"/>
+	
+	<!-- tcl事务管理-->
+	<bean id="wmsTclTransactionalManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.workdoc.pojo.DefaultWmsTclTransactionalManager" parent="baseManager" >
+				<constructor-arg index="0">
+					<ref bean="workflowManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="1">
+					<ref bean="wmsInventoryManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="2">
+					<ref bean="wmsBolManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="3">
+					<ref bean="wmsTaskManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="4">
+					<ref bean="wmsBussinessCodeManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="5">
+					<ref bean="wmsRuleManager"/>
+				</constructor-arg>
+				<constructor-arg index="6">
+					<ref bean="wmsCustomerManager"/>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	<!--tcl拣货单管理-->
+	<bean id="wmsTclPickticketManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.pickticket.pojo.DefaultWmsTclPickticketManager" parent="baseManager" >
+				<constructor-arg index="0">
+					<ref bean="workflowManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="1">
+					<ref bean="wmsInventoryManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="2">
+					<ref bean="wmsBussinessCodeManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="3">
+			        <ref bean="wmsRuleManager"/>
+	        	</constructor-arg>	
+	        	<constructor-arg index="4">
+			        <ref bean="wmsCustomerManager"/>
+	        	</constructor-arg>	
+	        	<constructor-arg index="5">
+					<ref bean="wmsTclTransactionalManager"/>
+				</constructor-arg>
+	        	<constructor-arg index="6">
+					<ref bean="wmsMoveDocReplenishmentManager"/>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	<!--tcl手工分配管理-->
+	<bean id="wmsTclPickticketClientManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.pickticket.pojo.DefaultWmsTclPickticketClientManager" parent="baseManager" >
+				<constructor-arg index="0">
+					<ref bean="workflowManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="1">
+					<ref bean="wmsInventoryManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="2">
+					<ref bean="wmsTclPickticketManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="3">
+					<ref bean="wmsPickticketClientCustomerManager"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	<!--tcl作业单-->
+	<bean id="wmsTclWorkDocManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.workdoc.pojo.DefaultWmsTclWorkDocManager" parent="baseManager" >
+				<constructor-arg index="0">
+					<ref bean="workflowManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="1">
+					<ref bean="wmsInventoryManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="2">
+					<ref bean="wmsBolManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="3">
+					<ref bean="wmsTaskManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="4">
+					<ref bean="wmsBussinessCodeManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="5">
+					<ref bean="wmsRuleManager"/>
+				</constructor-arg>
+				<constructor-arg index="6">
+					<ref bean="wmsCustomerManager"/>
+				</constructor-arg>
+				<constructor-arg index="7">
+					<ref bean="wmsTransactionalManager"/>
+				</constructor-arg>
+				<constructor-arg index="8">
+					<ref bean="wmsInventoryLogManager"/>
+				</constructor-arg>
+				<constructor-arg index="9">
+					<ref bean="tclMessageManager"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	<!--tcl发货单-->
+	<bean id="wmsTclBolManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.bol.pojo.DefaultWmsTclBolManager" parent="baseManager" >
+				<constructor-arg index="0">
+					<ref bean="workflowManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="1">
+					<ref bean="wmsInventoryManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="2">
+					<ref bean="wmsBussinessCodeManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="3">
+					<ref bean="wmsRuleManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="4">
+					<ref bean="wmsCustomerManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="5">
+					<ref bean="wmsTclASNManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="6">
+					<ref bean="tclMessageManager"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	<!-- tcl ASN -->
+	<bean id="wmsTclASNManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.receiving.pojo.DefaultWmsTclASNManager" parent="baseManager" >
+				<constructor-arg index="0">
+					<ref bean="workflowManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="1">
+					<ref bean="wmsInventoryManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="2">
+					<ref bean="wmsItemManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="3">
+					<ref bean="wmsBussinessCodeManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="4">
+					<ref bean="wmsRuleManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="5">
+					<ref bean="sequenceGenerater"></ref>
+				</constructor-arg>
+				<constructor-arg index="6">
+					<ref bean="tclMessageManager"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	<!-- wmsTclItemManager-->
+	 <bean id="wmsTclItemManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.item.pojo.DefaultWmsTclItemManager" parent="baseManager" >
+			<constructor-arg index="0">
+					<ref bean="workflowManager"></ref>
+			</constructor-arg>
+			</bean>
+		</property>
+	</bean>  
+	<!-- wmsTclInventoryManageManager -->
+	 <bean id="wmsTclInventoryManageManager" parent="abstractTransactionProxy">
+	 	<property name="target">
+			<bean class="com.vtradex.wms.server.service.inventory.pojo.DefaultWmsTclInventoryManageManager" parent="baseManager" >
+			<constructor-arg index="0">
+					<ref bean="workflowManager"></ref>
+			</constructor-arg>
+			<constructor-arg index="1">
+					<ref bean="wmsInventoryManager"></ref>
+			</constructor-arg>
+			<constructor-arg index="2">
+					<ref bean="wmsItemManager"></ref>
+			</constructor-arg>
+			<constructor-arg index="3">
+					<ref bean="wmsPickticketManager"></ref>
+			</constructor-arg>
+			<constructor-arg index="4">
+					<ref bean="wmsASNManager"></ref>
+			</constructor-arg>
+			<constructor-arg index="5">
+					<ref bean="wmsInventoryLogManager"></ref>
+			</constructor-arg>
+			<constructor-arg index="6">
+					<ref bean="wmsTaskManager"></ref>
+			</constructor-arg>
+			<constructor-arg index="7">
+					<ref bean="wmsWorkDocManager"></ref>
+			</constructor-arg>
+			<constructor-arg index="8">
+					<ref bean="tclMessageManager"></ref>
+			</constructor-arg>
+			</bean>
+		</property>
+	 </bean>
+	 
+	  <bean id="wmsTclInventoryManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.inventory.pojo.DefaultWmsTclInventoryManager" parent="baseManager" >
+			<constructor-arg index="0">
+					<ref bean="wmsInventoryLogManager"></ref>
+			</constructor-arg>
+			<constructor-arg index="1">
+					<ref bean="wmsRuleManager"></ref>
+			</constructor-arg>
+			<constructor-arg index="2">
+					<ref bean="wmsLocationManager"></ref>
+			</constructor-arg>
+			<constructor-arg index="3">
+					<ref bean="workflowManager"></ref>
+			</constructor-arg>
+			</bean>
+		</property>
+	</bean> 
+	 
+	  <bean id="wmsTclNoTransactionalManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.receiving.pojo.DefaultWmsTclNoTransactionalManager" parent="baseManager" >
+			<constructor-arg index="0">
+					<ref bean="wmsASNManager"></ref>
+			</constructor-arg>
+			<constructor-arg index="1">
+					<ref bean="workflowManager"></ref>
+			</constructor-arg>
+			<constructor-arg index="2">
+					<ref bean="wmsWorkDocManager"></ref>
+			</constructor-arg>
+			</bean>
+		</property>
+	</bean>  
+	
+</beans>
+

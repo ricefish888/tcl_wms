@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editWmsFactoryWarehousePage" title="editWmsFactoryWarehousePage" entityClass="com.vtradex.wms.server.model.entity.base.WmsFactoryWarehouse">
+        <workflow/>
+        <initListeners/>
+        <inputUIs>
+        		<hidden id="factoryWarehouse.id" title="factoryWarehouse.id" reserve="false"/>
+        		<remote id="factoryWarehouse.factory.id" title="factoryWarehouse.factory.id" row="1" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="" language="false" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,代码,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT sapFactory.id, sapFactory.code, sapFactory.name
+ FROM WmsSapFactory sapFactory
+ WHERE (sapFactory.code LIKE :param OR sapFactory.name LIKE :param)
+ AND sapFactory.status = 'ENABLED']]></hql>
+                    <eventListeners/>
+                </remote>
+                
+                <list id="factoryWarehouse.type" title="factoryWarehouse.type" row="2" col="1" span="1" width="120" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" enumType="WmsFactoryXmlb" inVisible="false">
+                    <hql><![CDATA[ select enum.enumValue,enum.enumValue
+ from Enumerate enum
+ where enum.enumType = 'WmsFactoryXmlb' order by enum.id ]]></hql>
+                </list>
+                
+                
+                <remote id="factoryWarehouse.warehouse.id" title="factoryWarehouse.warehouse.id" row="3" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="" language="false" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,代码,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT warehouse.id, warehouse.code, warehouse.name
+ FROM WmsWarehouse warehouse
+ WHERE (warehouse.code LIKE :param OR warehouse.name LIKE :param)
+ AND warehouse.status = 'ENABLED']]></hql>
+                    <eventListeners/>
+                </remote>
+        </inputUIs>
+    </editPage>
+</pages>

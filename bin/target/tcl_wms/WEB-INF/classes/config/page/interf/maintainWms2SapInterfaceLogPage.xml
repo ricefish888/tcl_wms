@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWms2SapInterfaceLogPage" title="maintainWms2SapInterfaceLogPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.base.Wms2SapInterfaceLog" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT
+wi.id,
+wi.type,
+wi.request,
+wi.fromSYS,
+wi.toSYS,
+wi.sendStatus,
+wi.docId,
+wi.errorLog,
+wi.requestTime,
+wi.requestCnt, 
+wi.receiveStatus,
+wi.receiveTime,
+wi.dealStatus,
+wi.responseTime
+ from Wms2SapInterfaceLog wi
+where 1=1 order by wi.id desc]]></datasource>
+        <columns>
+            <column id="wi.id" title="wi.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="wi.type" title="wi.type" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false" dataType="enum" format="enumFormat" formatParam="Wms2SapInterfaceLogType"/>   
+            <column id="wi.request" title="wi.request" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wi.fromSYS" title="wi.fromSYS" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wi.toSYS" title="wi.toSYS" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>  
+            <column id="wi.sendStatus" title="wi.sendStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="InterfaceLogStatus" width="60"/>             
+            <column id="wi.docId" title="wi.docId" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="wi.errorLog" title="wi.errorLog" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wi.requestTime" title="wi.requestTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="wi.requestCnt" title="wi.requestCnt" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wi.receiveStatus" title="wi.receiveStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="InterfaceLogStatus"/>
+            <column id="wi.receiveTime" title="wi.receiveTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="wi.dealStatus" title="wi.dealStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="InterfaceLogStatus"/>
+            <column id="wi.responseTime" title="wi.responseTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+         </columns>
+    </maintainPage>
+</pages>

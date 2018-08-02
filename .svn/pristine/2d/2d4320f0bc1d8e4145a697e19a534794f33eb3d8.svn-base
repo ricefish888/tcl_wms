@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 标准输入货品 -->
+<RFFormPage id="pickRFItemPage" title="pickRFItemPage">
+	<RFDisplay id="pickDisplay" load="rfPickticketManager.showLocCodeAndItemCode">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+		    拣货单号:{workCode}               
+			任务组名称:{wmsTaskGroupName}      
+			任务组编号:{wmsTaskGroupCode}
+			计划移位数量:{planQty}
+			已拣数量:{qty}
+			库位:{loc}
+			货品代码:{itemCode}
+			货品名称:{itemName}
+			收货人:{customer}
+			订单日期:{orderDate}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>	
+		    拣货单号:{workCode}               
+			任务组名称:{wmsTaskGroupName}      
+			任务组编号:{wmsTaskGroupCode}
+			计划移位数量:{planQty}
+			已拣数量:{qty}
+			库位:{loc}
+			货品代码:{itemCode}
+			货品名称:{itemName}
+			收货人:{customer}
+			订单日期:{orderDate}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="pickItemInput" title="pickItemInput" tip=""
+				 onFoucs="true">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="pickItemScan" title="pickItemScan" action="tclRfPickticketManager.inputItemCommit" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

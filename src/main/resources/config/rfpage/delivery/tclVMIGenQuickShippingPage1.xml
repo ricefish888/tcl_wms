@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--VMI创建配送单输入页面模板 -->
+<RFFormPage id="tclVMIGenQuickShippingPage1" title="tclVMIGenQuickShippingPage1">
+	<RFForm>
+		<inputs>
+			<RFSelect id="warehouseInput" title="warehouseInput" enumType="w.name" onFoucs="true">
+				<hql>
+					<![CDATA[ 
+						select w.id,w.name from WmsWarehouse w WHERE 1=1 AND w.code=(select u.department from ThornUser u where u.id =#{SESSION_USERS}) 
+					]]>
+				</hql>
+			</RFSelect>
+			<RFText id="remarkInput" title="remarkInput" tip="remarkInput" onFoucs="false">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="confirmScan" title="confirmScan" action="tclRfBolManager.genWmsWorkDoc" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

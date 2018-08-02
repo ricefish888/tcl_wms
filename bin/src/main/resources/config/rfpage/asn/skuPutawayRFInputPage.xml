@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 按SKU上架|输入页面模板 -->
+<RFFormPage id="skuPutawayRFInputPage" title="skuPutawayRFInputPage">
+	<RFDisplay id="workDocDisplay" load="rfSKUPutawayWorkManager.workDocInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			货品代码: {itemCode}
+			货品名称:{itemName}
+			计划上架数量:{planQty}
+			包装单位: {unit}
+			库存状态:{inventoryStatus}
+			批次号:{lot}
+			生产日期:{productDate}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>
+			货品代码: {itemCode}
+			货品名称:{itemName}
+			计划上架数量:{planQty}
+			包装单位: {unit}
+			库存状态:{inventoryStatus}
+			批次号:{lot}
+			生产日期:{productDate}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="itemCodeInput" title="itemCodeInput" tip="itemCodeInput" onFoucs="true"></RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="skuTaskItemScan" title="skuTaskItemScan" action="tclRfAsnManager.skuTaskItemCommit" validate="rfSKUPutawayWorkManager.skuTaskItemInputDataValidate" onFoucs="false"/>
+		</buttons> 
+	</RFForm>
+</RFFormPage>

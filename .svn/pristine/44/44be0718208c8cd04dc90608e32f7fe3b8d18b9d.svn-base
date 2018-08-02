@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsZonePage">
+    <main>
+        <process id="wmsZoneBaseProcess">
+            <tablePopup id="new" title="new" process="wmsZoneBaseProcess.new" enableType="none" containId="false" pageId="editWmsZonePage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="edit" title="edit" process="wmsZoneBaseProcess.edit" enableType="single" containId="true" pageId="editWmsZonePage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="disable" title="disable" process="wmsZoneBaseProcess.disable" enableType="multi" download="false" confirmMessage="是否确认失效此条记录？">
+                <enableExpression><![CDATA[]]></enableExpression>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="enable" title="enable" process="wmsZoneBaseProcess.enable" enableType="multi" download="false" confirmMessage="是否确认生效此条记录？">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

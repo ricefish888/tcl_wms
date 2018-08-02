@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainPurchaseOrderPage">
+    <main>
+        <process id="purchaseOrderProcess">
+            <tablePopup id="view" title="view" process="purchaseOrderProcess.view" enableType="single" containId="true" pageId="editPurchaseOrderPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="new" title="new" process="purchaseOrderProcess.new" enableType="none" containId="false" pageId="editPurchaseOrderPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="modify" title="modify" process="purchaseOrderProcess.modify" enableType="single" containId="true" pageId="editPurchaseOrderPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="active" title="active" process="purchaseOrderProcess.active" enableType="multi" multiMapping="false" download="false" confirmMessage="是否确认生效此条记录？">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsPurchaseOrderManager" methodName="isActivePurchase" parameter="obj"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="unActive" title="unActive" process="purchaseOrderProcess.unActive" enableType="multi" multiMapping="false" download="false" confirmMessage="是否确认失效此条记录？">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="received" title="received" process="purchaseOrderProcess.received" enableType="multi" multiMapping="true" download="false" closeTransactional="false">
+                <enableExpression><![CDATA[${purchaseOrder.confirmStatus} == 'OPEN']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsPurchaseOrderManager" methodName="received" parameter="objs"/>
+                </actions> 
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="confirm" title="confirm" process="purchaseOrderProcess.confirm" enableType="multi" multiMapping="true" download="false" closeTransactional="false">
+                <enableExpression><![CDATA[${purchaseOrder.confirmStatus} == 'RECEIVED']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsPurchaseOrderManager" methodName="confirm" parameter="objs"/>
+                </actions> 
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            
+             <tablePopup id="import" title="import" process="purchaseOrderProcess.import" enableType="none" containId="false" pageId="importPurchaseOrderPage">
+                <enableExpression/>
+            
+            </tablePopup>
+        </process>
+    </main>
+    <detail/>
+</page>

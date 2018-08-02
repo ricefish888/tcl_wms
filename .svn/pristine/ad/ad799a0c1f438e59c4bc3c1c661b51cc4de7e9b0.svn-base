@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC
+        "-//SPRING//DTD BEAN//EN"
+        "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+<description>TCL EDI JOB Setting</description>
+
+	<bean id="ediSchedulerBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+			    <!-- edi标准任务 -->
+				<ref bean="ediTaskHandleTrigger" />
+				
+				<!-- 处理wms2sap任务 -->
+				<ref bean="ediTWms2SAPTaskHandleTrigger" />
+				
+				
+				<!-- 
+				
+				<ref bean="deleteInvalidInventoryTrigger"/>	
+				<ref bean="createDailyInventoryTrigger"/>	
+			 	-->
+			 
+			</list>
+		</property>
+		<property name="quartzProperties">
+			<props>
+				<prop key="org.quartz.threadPool.threadCount">200</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- 标准的edi任务 -->
+	<bean id="ediTaskHandleJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="tclSimpleTaskHelper" />
+		<property name="targetMethod" value="doHandle" />
+	</bean>
+	<bean id="ediTaskHandleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="ediTaskHandleJob" />
+		<property name="startDelay" value="20000" />
+		<property name="repeatInterval" value="1000" />
+		<property name="repeatCount" value="0" />
+	</bean>
+	
+	<!-- 处理wms2sap任务 -->
+	<bean id="ediTWms2SAPTaskHandleJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="tclSimpleTaskHelper" />
+		<property name="targetMethod" value="doWms2SAPHandle" />
+	</bean>
+	<bean id="ediTWms2SAPTaskHandleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="ediTWms2SAPTaskHandleJob" />
+		<property name="startDelay" value="20000" />
+		<property name="repeatInterval" value="1000" />
+		<property name="repeatCount" value="0" />
+	</bean>
+	
+	 
+	 <!-- 每天凌晨三点定时删除无效库存记录 -->
+	<bean id="deleteInvalidInventoryJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="wmsInventoryManager"/>
+        </property>
+        <property name="targetMethod">
+            <value>deleteInvalidInventory</value>
+        </property>
+    </bean>	
+	<bean id="deleteInvalidInventoryTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref local="deleteInvalidInventoryJob"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 0 3 * * ?</value>
+        </property>
+    </bean> 
+	<!-- 日结 -->
+	<bean id="createDailyInventoryJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="tclMessageManager"/>
+        </property>
+        <property name="targetMethod">
+            <value>createDailyInventory</value>
+        </property>
+    </bean>	
+	<bean id="createDailyInventoryTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref local="createDailyInventoryJob"/>
+        </property>
+        <property name="cronExpression">
+             <value>0 0 3 * * ?</value> 
+        </property>
+    </bean> 
+	
+
+</beans>
+
+
+
+ 

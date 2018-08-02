@@ -1,0 +1,57 @@
+package com.vtradex.wms.server.service.base.po;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import com.vtradex.thorn.server.exception.BusinessException;
+import com.vtradex.thorn.server.service.pojo.DefaultBaseManager;
+import com.vtradex.thorn.server.util.DateUtil;
+import com.vtradex.wms.server.model.entity.base.WmsCostCenter;
+import com.vtradex.wms.server.service.base.WmsCostCenterManager;
+import com.vtradex.wms.webservice.utils.ExcelHelper;
+
+/**
+ * 成本中心
+ */
+public class DefaultWmsCostCenterManager extends DefaultBaseManager implements WmsCostCenterManager {
+	
+	//导入
+	public void importWmsCostCenterFile(File file){
+		
+		List<WmsCostCenter> costCenters=readWmsCostCenterFileExcel(file);
+		for(WmsCostCenter costCenter : costCenters){
+			commonDao.store(costCenter);
+		}
+	}
+	
+	
+	
+	 private List<WmsCostCenter> readWmsCostCenterFileExcel(File file){
+		 List<WmsCostCenter> list = new ArrayList<WmsCostCenter>();
+	    	List<Map<String,Object>> infos = ExcelHelper.parseExcel2List(file);
+	    	for(Map<String,Object> info : infos){
+	    		String code = (String) info.get("编码");
+	    		if(code == null || "".equals(code)){
+	    			throw new BusinessException("编码不能为空，请维护编码");
+	    		}
+	    		String name = (String) info.get("名称");
+	    		if(name == null || "".equals(name)){
+	    			throw new BusinessException("名称不能为空，请维护名称");
+	    		}
+	    		String xxpirationDate = (String) info.get("有效期");
+	    		if(xxpirationDate == null || "".equals(xxpirationDate)){
+	    			throw new BusinessException("有效期不能为空，请维护有效期");
+	    		}
+	    		
+	    		WmsCostCenter costCenter = new WmsCostCenter();
+	    		costCenter.setCode(code);
+	    		costCenter.setName(name);
+	    		costCenter.setXxpirationDate(DateUtil.formatDate(xxpirationDate));
+	    		
+	    		list.add(costCenter);
+	    	}
+		return list;		 
+	 }
+}

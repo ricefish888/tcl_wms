@@ -1,0 +1,28 @@
+package com.vtradex.wms.server.model.enums;
+
+public interface WmsPickticketBillTypeCode {
+	
+	public static String SCTLD = "SCTLD";/**生产退料单*/
+	
+	/**其它出库单 */
+	public static String QTCKD = "QTCKD";
+	
+	/**预留出库单 */
+	public static String YLCKD = "YLCKD";
+	/**生产领料单 */
+	public static String SCLLD = "SCLLD";
+	/**销售交货单 */
+	public static String XSJHD = "XSJHD";
+	
+	/**报废出库单*/
+	public static String BFCKD = "BFCKD";
+	/**调拨出库单*/
+	public static String DBCKD = "DBCKD";
+	
+	
+	/**退供应商出库单*/
+	public static String TGYSCK="TGYSCK";
+	
+	/**库内调拨单*/
+	public static String KNDBD="KNDBD";
+}

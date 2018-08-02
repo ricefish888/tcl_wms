@@ -1,0 +1,211 @@
+package com.vtradex.wms.server.service.supplier.pojo;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.vtradex.thorn.server.exception.BusinessException;
+import com.vtradex.thorn.server.model.EntityFactory;
+import com.vtradex.thorn.server.model.enumerate.BaseStatus;
+import com.vtradex.thorn.server.model.security.ThornBaseOrganization;
+import com.vtradex.thorn.server.model.security.ThornGroup;
+import com.vtradex.thorn.server.model.security.ThornRole;
+import com.vtradex.thorn.server.model.security.ThornUser;
+import com.vtradex.thorn.server.service.pojo.DefaultBaseManager;
+import com.vtradex.thorn.server.util.DateUtil;
+import com.vtradex.wms.server.model.component.Contact;
+import com.vtradex.wms.server.model.entity.base.MidSurpplierUser;
+import com.vtradex.wms.server.model.entity.base.WmsSupplier;
+import com.vtradex.wms.server.model.entity.email.EmailRecordType;
+import com.vtradex.wms.server.service.emailrecord.EmailRecordManager;
+import com.vtradex.wms.server.service.supplier.WmsSupplierManager;
+import com.vtradex.wms.webservice.utils.CommonHelper;
+import com.vtradex.wms.webservice.utils.EmailHelper;
+import com.vtradex.wms.webservice.utils.ExcelHelper;
+
+public class DefaultWmsSupplierManager extends DefaultBaseManager implements WmsSupplierManager {
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void storeSurpplier(WmsSupplier supplier) {
+		String gcode = "SUPPLIER_GRP"; //默认组
+		String ocode = "GYSPT"; //加入到供应商平台 组织
+		String rcode = "SUPPLIER_MGR"; //供应商角色
+		ThornUser user = null;
+		if(supplier.isNew()){
+			String temp = EmailHelper.getEmailAddress(supplier);
+			user = EntityFactory.getEntity(ThornUser.class);
+			String psw = CommonHelper.getRandNum(6);//随机生成6位数密码;
+			user.setCode(supplier.getCode());
+			user.setLoginName(supplier.getCode());
+			user.setName(supplier.getCode());
+			user.setPassword(shaEncodePassword(psw));//随机生成6位数密码
+			user.setLocale(Locale.CHINESE);
+			user.setEmail(temp);
+			user.setExpiryDate(DateUtil.addMonthToDate(new Date(), 12));
+			user.setPasswordExpiryDate(DateUtil.addMonthToDate(new Date(), 12));
+			commonDao.store(user);
+			//赋予用户角色
+			ThornGroup group = (ThornGroup)commonDao.findByQueryUniqueResult("FROM ThornGroup group where group.code=:gc", "gc", gcode);
+			user.setBusinessModel(group.getBusinessModel());
+			user.addGroup(group);
+			List<ThornBaseOrganization> organs = commonDao.findByQuery("FROM ThornBaseOrganization organ where organ.code=:oc", "oc", ocode); //加入组织
+			if(organs.size()>0){
+				for (ThornBaseOrganization organ : organs) {
+					user.addOrgan(organ);
+					user.setCreateOrgan(organ); //创建组织
+				}
+			}
+			ThornRole role = (ThornRole)commonDao.findByQueryUniqueResult("FROM ThornRole role where role.code=:rc", "rc", rcode); //加入角色
+			user.addRole(role);
+			commonDao.store(user);
+			//生成邮件记录
+			createEmailRecord(user,psw);
+		}
+		commonDao.store(supplier);
+		if(null!=user){
+			//生成中间表记录
+			MidSurpplierUser msu = EntityFactory.getEntity(MidSurpplierUser.class);
+			msu.setSid(supplier.getId());
+			msu.setUid(user.getId());
+			commonDao.store(msu);
+		}
+		updateUserInfo(supplier);
+		commonDao.store(supplier);
+	}
+
+	private void updateUserInfo(WmsSupplier supplier) {
+		MidSurpplierUser msu = (MidSurpplierUser)commonDao.findByQueryUniqueResult("FROM MidSurpplierUser msu where msu.sid=:ms", "ms", supplier.getId());
+		if(null!=msu){
+			ThornUser user = commonDao.load(ThornUser.class, msu.getUid());
+			String temp  = EmailHelper.getEmailAddress(supplier);
+			user.setEmail(temp);
+			commonDao.store(user);
+		}
+	}
+	@Transactional
+	private void createEmailRecord(ThornUser user, String psw) {
+		String subject =EmailHelper.getTheme(EmailRecordType.SUPPLIER_ACCOUNT, user.getCode());
+		List<String> infos = new ArrayList<String>();
+		infos.add(user.getName());
+		infos.add(psw);
+		String content = EmailHelper.getEmailContent(EmailRecordType.SUPPLIER_ACCOUNT, infos);
+		
+		//每个邮箱发邮件
+		String emails = user.getEmail();
+		if(null!=emails){
+			String [] ems = emails.split("\\|");
+			for (String em : ems) {
+				//异步发邮件
+				EmailRecordManager emailRecordManager = (EmailRecordManager)applicationContext.getBean("emailRecordManager");
+				emailRecordManager.storeEmailRecordWaitSend(user.getLoginName(),em,subject,content,EmailHelper.getEmailCc(),EmailRecordType.SUPPLIER_ACCOUNT,"");
+			}
+		}
+	}
+
+	private String shaEncodePassword(String painPwd) {
+		painPwd = (painPwd == null) ? "" : painPwd;
+		if (painPwd.length() == 40) {
+			return painPwd;
+		}
+		return DigestUtils.shaHex(painPwd);
+	}
+
+	@Override
+	public void unActiveSurpplier(WmsSupplier surpplier) {
+		surpplier.setStatus("DISABLED");
+		commonDao.store(surpplier);
+		MidSurpplierUser msu = (MidSurpplierUser)commonDao.findByQueryUniqueResult("FROM MidSurpplierUser msu where msu.sid=:ms", "ms", surpplier.getId());
+		if(null!=msu){
+			ThornUser user = commonDao.load(ThornUser.class, msu.getUid());
+			String temp  = EmailHelper.getEmailAddress(surpplier);
+			user.setEmail(temp);
+			user.setStatus(BaseStatus.UNACTIVE);
+			commonDao.store(user);
+		}
+	}
+
+	@Override
+	public void activeSurpplier(WmsSupplier surpplier) {
+		surpplier.setStatus("ENABLED");
+		commonDao.store(surpplier);
+		MidSurpplierUser msu = (MidSurpplierUser)commonDao.findByQueryUniqueResult("FROM MidSurpplierUser msu where msu.sid=:ms", "ms", surpplier.getId());
+		if(null!=msu){
+			ThornUser user = commonDao.load(ThornUser.class, msu.getUid());
+			user.setStatus(BaseStatus.ACTIVE);
+			commonDao.store(user);
+		}
+	}
+	
+	
+	
+	//导入供应商
+	public void importWmsSupplierFile(File file){
+		
+		List<Map<String,Object>> infos = ExcelHelper.parseExcel2List(file);
+    	for(Map<String,Object> info : infos){
+    		String code = (String) info.get("供应商编码");	    
+    		if(code == null || "".equals(code)){
+    			throw new BusinessException("行号"+info.get("EXCEL行号")+"供应商编码不能为空,请维护供应商编码");
+    		}
+    		
+    		String name = (String) info.get("供应商名称");
+    		if(name == null || "".equals(name)){
+    			throw new BusinessException("行号"+info.get("EXCEL行号")+"供应商名称不能为空,请维护供应商名称");
+    		}
+    		String telephone = (String) info.get("电话1");
+    		String mobile = (String) info.get("电话2");
+    		String address = (String) info.get("地址");
+    		String postCode = (String) info.get("邮编");
+    		String accountGroup  = (String) info.get("账户组");
+    		String searchStr  = (String) info.get("检索项");
+    		
+    		String email1  = (String) info.get("邮箱1");
+    		if(email1 == null || "".equals(email1)){
+    			throw new BusinessException("行号"+info.get("EXCEL行号")+"邮箱1不能为空,请维护邮箱1");
+    		}
+    		
+    		String email2  = (String) info.get("邮箱2");
+    		String email3  = (String) info.get("邮箱3");
+    		
+    		WmsSupplier wmsSupplier = (WmsSupplier) commonDao.findByQueryUniqueResult("FROM WmsSupplier w WHERE w.code =:code", "code", code);
+			
+    		if(wmsSupplier == null) {
+    			wmsSupplier = EntityFactory.getEntity(WmsSupplier.class);
+    		}
+    		
+    		
+//    		WmsSupplier  supplier = new WmsSupplier();
+    		Contact contact = new Contact();
+    		contact.setTelephone(telephone);
+    		contact.setMobile(mobile);
+    		contact.setAddress(address);
+    		contact.setPostCode(postCode);
+    		
+    		wmsSupplier.setCode(code);
+    		wmsSupplier.setName(name);
+    		wmsSupplier.setAccountGroup(accountGroup);
+    		wmsSupplier.setSearchStr(searchStr);
+    		wmsSupplier.setEmail1(email1);
+    		wmsSupplier.setEmail2(email2);
+    		wmsSupplier.setEmail3(email3);
+    		wmsSupplier.setContact(contact);
+    		wmsSupplier.setStatus(com.vtradex.wms.server.model.enums.BaseStatus.ENABLED);
+    		
+    		this.storeSurpplier(wmsSupplier);
+    	 
+    	}
+    	
+		
+		
+		 
+		 
+	}
+	 
+}

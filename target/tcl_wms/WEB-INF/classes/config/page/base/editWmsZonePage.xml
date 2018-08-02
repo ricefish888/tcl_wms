@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editWmsZonePage" title="editWmsZonePage" entityClass="com.vtradex.wms.server.model.entity.warehouse.WmsZone" width="400" height="230" onClose="refreshParent">
+        <workflow/>
+        <initListeners/>
+        <inputUIs>
+            <hidden id="zone.id" title="zone.id" reserve="false"/>
+            <text id="zone.code" title="zone.code" row="1" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="uneditable" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <text id="zone.name" title="zone.name" row="1" col="2" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <text id="zone.x_Pos" title="zone.x_Pos" row="2" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" validator="number" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <text id="zone.y_Pos" title="zone.y_Pos" row="2" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" validator="number" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <text id="zone.highTemperature" title="zone.highTemperature" row="3" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <text id="zone.lowTemperature" title="zone.lowTemperature" row="3" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <text id="zone.erpCode" title="zone.erpCode" row="4" col="1" span="1"  readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <text id="zone.description" title="zone.description" row="4" col="2" span="1"  readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+       		<remote id="zone.wmsSapWarehouse.id" title="zone.wmsSapWarehouse.id" row="5" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="" language="false" multiple="false" manualEditable="true" displayColumn="2" percentSignPosition="both" displayedTableHead="序号,代码,名称,工厂编码,工厂名称">
+                   <visibleExpression/>
+                   <hql><![CDATA[SELECT sapWarehouse.id, sapWarehouse.code, sapWarehouse.name, sapFactory.code, sapFactory.name
+FROM WmsSapWarehouse sapWarehouse
+left join sapWarehouse.sapFactory sapFactory
+WHERE (sapWarehouse.code LIKE :param OR sapWarehouse.name LIKE :param OR sapFactory.code LIKE :param OR sapFactory.name LIKE :param)
+AND sapWarehouse.status = 'ENABLED']]></hql>
+                   <eventListeners/>
+            </remote>
+        </inputUIs>
+    </editPage>
+</pages>

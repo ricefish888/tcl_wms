@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--交货输入页面模板 -->
+<RFFormPage id="tclDeliveryRFPage10" title="tclDeliveryRFPage10">
+	<RFDisplay id="deliveryDisplay" load="tclRfDeliveryManager.workDocInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			拣货作业单: {pcode}
+			{itemInfos}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>
+			拣货作业单: {pcode}
+			{itemInfos}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="itemInput" title="itemInput" tip="itemInput" onFoucs="true">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="confirmBt" title="confirmBt" action="tclRfDeliveryManager.confirmItemCode" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

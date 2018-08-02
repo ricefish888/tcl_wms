@@ -1,0 +1,63 @@
+package com.vtradex.edi.server.service.sap;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.jws.WebService;
+import javax.xml.ws.BindingType;
+import javax.xml.ws.soap.SOAPBinding;
+
+import com.vtradex.thorn.server.service.pojo.DefaultBaseManager;
+import com.vtradex.wms.server.service.interf.InterfaceLogManager;
+import com.vtradex.wms.server.service.model.interfaceLog.InterfaceLogTaskType;
+import com.vtradex.wms.server.service.model.interfaceLog.InterfaceLogType;
+import com.vtradex.wms.webservice.model.WsConstants;
+import com.vtradex.wms.webservice.sap.model.SapProductOrderArray;
+import com.vtradex.wms.webservice.sap.model.SapProductOrder;
+import com.vtradex.wms.webservice.sap.model.SapResponse;
+import com.vtradex.wms.webservice.utils.WebServiceHelper;
+import com.vtradex.wms.webservice.utils.XmlObjectConver;
+
+/** 
+* @ClassName:  SAP 生产订单处理
+* @Description: SapWebServiceProductOrderImpl
+* @author <a href="huayang.yuan@tech.vtradex.com">袁华洋</a>  
+* @date 2017-7-7 下午3:37:05  
+*/
+@WebService(targetNamespace =WsConstants.NS_SAP_BASIC)
+@BindingType(value =SOAPBinding.SOAP12HTTP_BINDING)
+public class SapWebServiceProductOrderImpl extends DefaultBaseManager implements SapWebServiceProductOrder{
+	
+	public InterfaceLogManager interfaceLogManager;
+	
+	public SapWebServiceProductOrderImpl(InterfaceLogManager interfaceLogManager) {
+		this.interfaceLogManager = interfaceLogManager;
+	}
+
+	public SapResponse productOrderInfo(SapProductOrderArray spoas) {
+		if(spoas==null) {
+			return WebServiceHelper.getSapFailResponse();
+		}
+		SapProductOrder[] spos = spoas.getSpos();
+		if(spos == null || spos.length==0) {
+			return WebServiceHelper.getSapFailResponse();
+		}
+		String xml = XmlObjectConver.toXML(spoas) ;
+		WebServiceHelper.println(xml);
+		
+		Set<String> infos = new HashSet<String>();
+		for(SapProductOrder spo : spos){
+			infos.add(spo.getAUFNR());
+			
+			System.out.println(spo.getAUFNR()+":::POSNR:::::::::::::::::::::::::::::::::::::"+spo.getPOSNR());
+		}
+		String request = WebServiceHelper.setToString(infos);
+		try {
+			this.interfaceLogManager.createSapToWmsInterfaceLog(InterfaceLogTaskType.RECEIVE_BUSINESS_REQUEST, InterfaceLogType.BUSINESS_PRODUCTORDER_SAP2WMS, xml,request);
+		}
+		catch(Exception e) {
+			return WebServiceHelper.getSapFailResponse();
+		}
+		return WebServiceHelper.getSapSucessResponse();
+		}
+}

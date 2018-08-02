@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editDailyDeliverOrderDetailPage">
+    <main>
+        <process id="dailyDeliverOrderDetailProcess">
+            <formCommit id="save" title="save" process="dailyDeliverOrderDetailProcess.new" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="new">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="ddod.deliverQty" className="double"/>
+                </mappings>
+                <actions>
+                    <action managerName="wmsDeliveryOrderManager" methodName="addDeliverOrderQty" parameter="obj,ddod.deliverQty"/>
+                </actions>            
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="true" editEnabled="false"/>
+                </forwards>
+            </formCommit>       
+        </process>
+    </main>
+    <detail/>
+</page>

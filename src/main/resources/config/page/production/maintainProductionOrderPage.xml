@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainProductionOrderPage" title="maintainProductionOrderPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.production.ProductionOrder" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT po.id,
+po.code,
+po.saleCode,
+po.factory.code,
+po.factory.name,
+po.status,
+po.planQuantity,
+po.finishedQuantity,
+po.canAllocate,
+po.beCreatPt,
+po.beDetailCreatePt,
+po.cpItemCode,
+po.ptype,
+po.productLine,
+po.lineDesc, 
+po.locCode,
+po.beginDate,
+po.endDate,
+po.beginTime,
+po.endTime,
+po.beginHour,
+po.endHour,
+po.remark
+ FROM ProductionOrder po 
+LEFT JOIN po.factory
+WHERE 1=1 ORDER BY po.id DESC]]></datasource>
+        <columns>
+            <column id="po.id" title="po.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="po.code" title="po.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+            <column id="po.saleCode" title="po.saleCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+            <column id="po.factory.code" title="po.factory.code" width="80" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+            <column id="po.factory.name" title="po.factory.name" width="120" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+            <column id="po.status" title="po.status" visible="true" width="60" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="ProductionOrderStatus" />
+            <column id="po.planQuantity" title="po.planQuantity" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" />
+            <column id="po.finishedQuantity" title="po.finishedQuantity" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" />
+            <column id="po.canAllocate" title="po.canAllocate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="enumFormat" formatParam="booleanFormat"/>
+            <column id="po.beCreatPt" title="po.beCreatPt" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="enumFormat" formatParam="booleanFormat"/>
+            <column id="po.beDetailCreatePt" title="po.beDetailCreatePt" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="enumFormat" formatParam="booleanFormat"/>
+            <column id="po.cpItemCode" title="po.cpItemCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+            <column id="po.ptype" title="po.ptype" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />           
+            <column id="po.productLine" title="po.productLine" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+            <column id="po.lineDesc" title="po.lineDesc" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+            <column id="po.locCode" title="po.locCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+            <column id="po.beginDate" title="po.beginDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" format="dateFormat" formatParam="y-m-d" />
+            <column id="po.endDate" title="po.endDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" format="dateFormat" formatParam="y-m-d" />
+            <column id="po.beginTime" title="po.beginTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m" />
+            <column id="po.endTime" title="po.endTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m" />
+            <column id="po.beginHour" title="po.beginHour" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+            <column id="po.endHour" title="po.endHour" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+            <column id="po.remark" title="po.remark" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+        </columns>
+    </maintainPage>
+</pages>

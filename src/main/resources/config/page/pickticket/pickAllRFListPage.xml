@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 标准拣货查询列表页面模板 -->
+<RFListPage id="pickAllRFListPage" title="pickAllRFListPage">
+	<RFSearchUI id="workCodeSearch" text="workCodeSearch" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="workId" title="workId" width="50" enumType="" hidden="true" />
+		<RFTh id="workCode" title="workCode" width="100" enumType="" hidden="false" />
+		<!-- <RFTh id="workRelatedBillCode" title="workRelatedBillCode" width="120" enumType="" hidden="false" /> -->
+		<RFTh id="bName" title="bName" width="80" enumType="" hidden="false" />
+		<RFTh id="productLine" title="productLine" width="50" enumType="" hidden="false" />
+		<RFTh id="userField5" title="userField5" width="80" enumType="" hidden="false" />
+		<RFTh id="productOrderCode" title="productOrderCode" width="100" enumType="" hidden="false" />
+		<RFTh id="qty" title="qty" width="80" enumType="" hidden="false" />
+		<DataSource type="HQL">
+			<statement>
+				<![CDATA[
+				 SELECT 
+				 work.id AS workId,
+				 work.code as workCode,
+				 pick.billType.name as bName,
+				 work.productLine as productLine,
+				 work.userField5 as userField5,
+				 work.productOrderCode as productOrderCode,
+				 work.qty-work.pickedQty AS qty
+					    FROM WmsWorkDoc work ,WmsPickTicket pick
+					    LEFT JOIN work.keeper keeper
+	  				    WHERE 1=1 
+					    AND work.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN} 
+						AND work.status IN ('ENABLED','IN_OPERATION')
+						AND work.type = 'PICKING'
+						AND keeper.id=#{SESSION_USERS}
+						AND work.qty>work.pickedQty
+						AND work.relatedBillCode=pick.code
+					    /~workCodeSearch: 
+					    	AND (work.code = '{workCodeSearch}' 
+					    		or work.productLine='{workCodeSearch}'
+					    		or work.productOrderCode='{workCodeSearch}') ~/
+				ORDER BY work.id asc
+				]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

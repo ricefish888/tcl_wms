@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsSapFactoryPage" title="maintainWmsSapFactoryPage" mainEntrance="true" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.base.WmsSapFactory">
+        <workflow/>
+        <datasource><![CDATA[SELECT sapFactory.id,
+sapFactory.code,
+sapFactory.name,
+sapFactory.type,
+sapFactory.remark,
+sapFactory.status
+ FROM WmsSapFactory sapFactory
+ WHERE 1=1  
+ ORDER BY sapFactory.code]]></datasource>
+        <columns>
+            <column id="sapFactory.id" title="sapFactory.id" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="sapFactory.code" title="sapFactory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="sapFactory.name" title="sapFactory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="sapFactory.type" title="sapFactory.type" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsSapFactoryType"/>
+            <column id="sapFactory.remark" title="sapFactory.remark" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="sapFactory.status" title="sapFactory.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsSapWarehouseStatus"/>
+        </columns>
+    </maintainPage>
+</pages>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC
+        "-//SPRING//DTD BEAN//EN"
+        "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- $Id: telnet-beanRefContext.xml,v 1.2 2012/06/13 07:24:48 ningbo.pan Exp $ -->
+
+<beans>
+	<bean id="com.vtradex.telnet" class="org.springframework.context.support.ClassPathXmlApplicationContext">
+		<constructor-arg index="0">
+			<list>
+				<value>classpath:hibernate/dataSourceContext.xml</value>
+				<value>classpath*:spring/daoContext.xml</value>
+				<value>classpath*:spring/serviceContext.xml</value>
+				<value>classpath*:spring/securityContext.xml</value>
+				<value>classpath*:spring/sequenceContext.xml</value>
+				<value>classpath*:telnet/telnetOverrideContext.xml</value>
+				<value>classpath*:spring/actionContext.xml</value>
+				<value>classpath*:spring/validateContext.xml</value>
+				<value>classpath*:spring/tableContext.xml</value>
+				<value>classpath*:spring/formatContext.xml</value>
+				<value>classpath*:spring/configContext.xml</value>
+				<value>classpath*:spring/valueListContext.xml</value>
+
+				<value>classpath*:telnet/shellContext.xml</value>
+				<value>classpath:telnet/kangarooContext.xml</value>
+			</list>
+		</constructor-arg>
+	</bean>
+</beans>

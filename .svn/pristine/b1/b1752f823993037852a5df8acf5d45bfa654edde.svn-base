@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 盘点增补 -->
+<RFFormPage id="tclCountPlanRFListPage5" title="tclCountPlanRFListPage5">
+	<RFDisplay id="countInsertNumberDisplay" load="tclRfCountPlanManager.showCountInsertNumber">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			 库位:{location}
+		             货品编码:{itemCode}
+		             货品名称:{itemName}
+			
+			 原始数量:{qty}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>	
+			  库位:{location}
+		             货品编码:{itemCode}
+		             货品名称:{itemName}
+			 原始数量:{qty}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+            <RFSelect id="countItemState" title="countItemState"
+				enumType="" onFoucs="true">
+				<hql>
+					<![CDATA[ 
+						SELECT itemState.id,itemState.name
+				 FROM WmsInventoryState itemState
+				 WHERE itemState.masterGroup.id IN (SELECT countPlan.company.masterGroup.id FROM WmsCountPlan countPlan  WHERE countPlan.id = cast(${id} as integer))
+				 AND itemState.status='ENABLED'
+				 ORDER BY itemState.id
+					]]>
+				</hql>
+			</RFSelect>
+			<RFText id="countInsertNumberInput" title="countInsertNumberInput" tip=""
+				 onFoucs="true">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="countInsertNumberScan" title="countInsertNumberScan" action="tclRfCountPlanManager.countInsertNumberCommit" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

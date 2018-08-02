@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.base.Wms2SapInterfaceLog" table="WMS_T_SAPINTERFACELOG">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_WMS_T_SAPINTERFACELOG</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        <property name="type" type="string" column="TYPE" length="100"/>
+        <property name="function" type="string" column="FUNCTION" length="100"/>
+        <property name="fromSYS" type="string" column="FROM_SYS" length="20"/>
+        <property name="toSYS" type="string" column="TO_SYS" length="20"/>
+        <property name="insertTime" column="INSERT_TIME" type="timestamp"/>
+        <property name="request" type="string" column="REQUEST" length="50"/>
+        <property name="requestTime" column="REQUEST_TIME" type="timestamp"/>
+        <property name="requestContent" column="REQUEST_CONTENT" type="org.springframework.orm.hibernate3.support.ClobStringType" length="16777216"/>
+        <property name="requestCnt" type="int" column="REQUEST_CNT"/>
+        <property name="sendStatus" type="string" column="SEND_STATUS" length="20"/>
+        <property name="receiveStatus" type="string" column="RECEIVE_STATUS" length="20"/>
+        <property name="receiveTime" column="RECEIVE_TIME" type="timestamp"/>
+        <property name="dealStatus" type="string" column="DEAL_STATUS" length="20"/>
+        <property name="response" type="string" column="RESPONSE" length="50"/>
+        <property name="responseTime" column="RESPONSE_TIME" type="timestamp"/>
+        <property name="responseContent" column="RESPONSE_CONTENT" type="org.springframework.orm.hibernate3.support.ClobStringType" length="16777216"/>
+        <property name="docId"  type="long" column="DOC_ID" length="20"/>
+        <property name="errorLog" type="string" column="ERROR_LOG" length="500"/>
+        
+        <component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" length="50" column="CREATOR"/>
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" length="50" column="LAST_OPERATOR"/>
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+	 </class>
+</hibernate-mapping>

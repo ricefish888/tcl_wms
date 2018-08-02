@@ -1,0 +1,208 @@
+package com.vtradex.wms.server.model.entity.production;
+
+import com.vtradex.thorn.server.model.VersionalEntity;
+import com.vtradex.wms.server.model.entity.base.WmsSapFactory;
+import com.vtradex.wms.server.model.entity.item.WmsItem;
+import com.vtradex.wms.server.model.entity.item.WmsPackageUnit;
+import com.vtradex.wms.server.model.entity.order.PurchaseOrderDetail;
+import com.vtradex.wms.server.utils.DoubleUtils;
+
+/***
+ * 交货单
+ * @author administrator
+ *
+ */
+public class WmsDeliveryOrderDetail extends VersionalEntity {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7025999983866830743L;
+
+	private WmsDeliveryOrder deliveryOrder;
+
+	/**   行号 */
+	private Integer lineNo;
+	
+	private WmsItem item;
+	
+	private WmsSapFactory factory;
+	
+	/**库存地点 TCL/VMI
+	 * */
+	private String kcdd;
+	
+	/**计划交货数量*/
+	private Double planQuantityBu = 0D;
+	
+	/**已交货数量*/
+	private Double delivedQuantityBu = 0D;
+	
+	/**本次交货数量*/
+	private Double theDeliveryQuantityBu = 0D;
+	
+	/**配货数量*/
+	private Double quantity = 0D;
+	
+	/**
+	 * 采购订单明细
+	 */
+	private PurchaseOrderDetail purchaseOrderDetail;
+	
+	private String poNo;
+	
+	private String poDetailNo;
+	
+	private WmsPackageUnit packageUnit;
+	
+	private String extend1;
+	
+	private String remark;
+	/**
+	 * 行项目
+	 */
+	private String posnr; 
+
+	public String getPosnr() {
+		return posnr;
+	}
+
+	public void setPosnr(String posnr) {
+		this.posnr = posnr;
+	}
+
+	public PurchaseOrderDetail getPurchaseOrderDetail() {
+        return purchaseOrderDetail;
+    }
+
+    public void setPurchaseOrderDetail(PurchaseOrderDetail purchaseOrderDetail) {
+        this.purchaseOrderDetail = purchaseOrderDetail;
+    }
+
+    public WmsDeliveryOrder getDeliveryOrder() {
+		return deliveryOrder;
+	}
+
+	public void setDeliveryOrder(WmsDeliveryOrder deliveryOrder) {
+		this.deliveryOrder = deliveryOrder;
+	}
+
+	public Integer getLineNo() {
+		return lineNo;
+	}
+
+	public void setLineNo(Integer lineNo) {
+		this.lineNo = lineNo;
+	}
+
+	public WmsItem getItem() {
+		return item;
+	}
+
+	public void setItem(WmsItem item) {
+		this.item = item;
+	}
+
+	public WmsSapFactory getFactory() {
+		return factory;
+	}
+
+	public void setFactory(WmsSapFactory factory) {
+		this.factory = factory;
+	}
+
+	public String getKcdd() {
+		return kcdd;
+	}
+
+	public void setKcdd(String kcdd) {
+		this.kcdd = kcdd;
+	}
+
+	public Double getPlanQuantityBu() {
+		return planQuantityBu;
+	}
+
+	public void setPlanQuantityBu(Double planQuantityBu) {
+		this.planQuantityBu = planQuantityBu;
+	}
+
+	public Double getDelivedQuantityBu() {
+		return delivedQuantityBu;
+	}
+
+	public void setDelivedQuantityBu(Double delivedQuantityBu) {
+		this.delivedQuantityBu = delivedQuantityBu;
+	}
+
+	public Double getTheDeliveryQuantityBu() {
+		return theDeliveryQuantityBu;
+	}
+
+	public void setTheDeliveryQuantityBu(Double theDeliveryQuantityBu) {
+		this.theDeliveryQuantityBu = theDeliveryQuantityBu;
+	}
+
+	public String getPoNo() {
+		return poNo;
+	}
+
+	public void setPoNo(String poNo) {
+		this.poNo = poNo;
+	}
+
+	public String getPoDetailNo() {
+		return poDetailNo;
+	}
+
+	public void setPoDetailNo(String poDetailNo) {
+		this.poDetailNo = poDetailNo;
+	}
+
+	public WmsPackageUnit getPackageUnit() {
+		return packageUnit;
+	}
+
+	public void setPackageUnit(WmsPackageUnit packageUnit) {
+		this.packageUnit = packageUnit;
+	}
+
+	public String getExtend1() {
+		return extend1;
+	}
+
+	public void setExtend1(String extend1) {
+		this.extend1 = extend1;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	
+	public void addDelivedQuantityBu(Double delivedQuantityBu){
+        this.delivedQuantityBu = DoubleUtils.add(this.delivedQuantityBu, delivedQuantityBu);
+    }
+	
+	public void addTheDeliveryQuantityBu(Double theDeliveryQuantityBu){
+		this.theDeliveryQuantityBu = DoubleUtils.add(this.theDeliveryQuantityBu, theDeliveryQuantityBu);
+	}
+	
+	
+	
+	public void subDelivedQuantityBu(Double delivedQuantityBu){
+        this.delivedQuantityBu = DoubleUtils.sub(this.delivedQuantityBu, delivedQuantityBu);
+    }
+
+	public Double getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(Double quantity) {
+		this.quantity = quantity;
+	}
+
+}

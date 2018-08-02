@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editWmsTransportOrderDetailPage">
+    <main>
+        <process id="wmsTransportOrderDetailProcess">
+            <formCommit id="save" title="save" process="wmsTransportOrderDetailProcess.save" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="new">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="wmsTransportOrder.id" className="long"/>
+                    <mapping id="wId" className="long"/>
+                    <mapping id="wtod.quantity" className="double"/>
+                </mappings>
+                <actions>
+                    <action managerName="wmsTransportOrderManager" methodName="addDetail" parameter="wmsTransportOrder.id,wId,wtod.quantity,obj"/>
+                </actions>
+                <forwards>
+                    <forward name="resetWindow" newEnabled="true" editEnabled="true"/>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>    
+        </process>
+    </main>
+</page>

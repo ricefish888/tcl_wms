@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editQuickReceiptPage">
+    <main>
+        <process id="wmsASNProcess">
+            <formCommit id="quickReceipt" title="quickReceipt" process="wmsASNProcess.quickReceipt" enableType="none" multiMapping="false" download="false" closeTransactional="false" confirmMessage="confirm.quickReceipt" visibleType="none">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="asn.id" className="long">
+                        <entries/>
+                    </mapping>
+                    <mapping id="workerId" className="long">
+                        <entries/>
+                    </mapping>
+                    <mapping id="status" className="string">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsTclASNManager" methodName="receiveAll" parameter="asn.id,workerId,status"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="closeWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

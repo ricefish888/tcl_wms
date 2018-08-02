@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="modifyWmsPickTicketPage">
+    <main>
+        <process id="pickticketDetailRequireProcess"/>
+        <process id="wmsPickTicketProcess">
+            <formCommit id="new" title="new" process="wmsPickTicketProcess.new" enableType="none" download="false" visibleType="new">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsTclPickticketManager" methodName="storePickTicket" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+            <formCommit id="edit" title="edit" process="wmsPickTicketProcess.edit" enableType="none" download="false" visibleType="edit">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsTclPickticketManager" methodName="storePickTicket" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+    <detail>
+        <process id="wmsPickTicketProcess">
+            <tablePopup id="addDetail" title="addDetail" process="wmsPickTicketProcess.addDetail" enableType="none" containId="false" pageId="editWmsPickTicketDetailPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="editDetail" title="editDetail" process="wmsPickTicketProcess.editDetail" enableType="single" containId="true" pageId="editWmsPickTicketDetailPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="deleteDetail" title="deleteDetail" process="wmsPickTicketProcess.deleteDetail" enableType="multi" closeTransactional="false" confirmMessage="confirm.modifyWmsPickTicketPage.delDetail">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsTclPickticketManager" methodName="removePickTicketDetail" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tablePopup id="modifyLot" title="modifyLot" process="wmsPickTicketProcess.modifyLot" enableType="single" containId="true" pageId="maintainPickTicketDetailRequirePage">
+                <enableExpression/>
+            </tablePopup>
+        </process>
+    </detail>
+</page>

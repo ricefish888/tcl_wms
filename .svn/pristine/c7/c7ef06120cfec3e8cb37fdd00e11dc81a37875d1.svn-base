@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsItemFactoryPage" title="maintainWmsItemFactoryPage" mainEntrance="true" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.base.WmsItemFactory">
+        <workflow/>
+        <datasource><![CDATA[SELECT itemFactory.id,
+factory.code,       
+factory.name,
+item.code,
+item.name,
+itemFactory.updateInfo.updateTime
+ FROM WmsItemFactory itemFactory
+ LEFT JOIN itemFactory.factory factory
+ LEFT JOIN itemFactory.item item 
+ WHERE 1=1  ]]></datasource>
+        <columns>
+            <column id="itemFactory.id" title="itemFactory.id" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="factory.code" title="factory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="factory.name" title="factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+       		<column id="itemFactory.updateInfo.updateTime" title="itemFactory.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+        </columns>
+    </maintainPage>
+</pages>

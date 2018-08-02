@@ -1,0 +1,56 @@
+package com.vtradex.wms.rfserver.service.bol;
+
+import java.util.Map;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import com.vtradex.rf.common.exception.RfBusinessException;
+import com.vtradex.thorn.server.service.BaseManager;
+import com.vtradex.wms.server.model.entity.receiving.WmsASNDetail;
+
+ 
+/**
+ * 订单RF逻辑类
+ * @author admin
+ *
+ */
+public interface TclRfBolManager extends BaseManager{
+	
+	/**
+	 * 扫描交接单号
+	 * @param asnMap
+	 * @return
+	 * @throws RfBusinessException
+	 */
+	@Transactional
+	public Map bolCodeInputCommit(Map bolMap) throws RfBusinessException;
+	
+	/**
+	 * 显示bol信息
+	 * @param bolMap
+	 * @return
+	 * @throws RfBusinessException
+	 */
+	@Transactional
+	public Map bolInfo(Map bolMap) throws RfBusinessException;
+	
+	/**
+	 * 发运确认
+	 * @param bolMap
+	 * @return
+	 * @throws RfBusinessException
+	 */
+	@Transactional
+	public Map bolShipCommit(Map bolMap) throws RfBusinessException;
+	
+	/**
+	 * 取消
+	 * @param bolMap
+	 * @return
+	 * @throws RfBusinessException
+	 */
+	@Transactional
+	public Map cancelShip(Map bolMap) throws RfBusinessException;
+	
+	 
+}

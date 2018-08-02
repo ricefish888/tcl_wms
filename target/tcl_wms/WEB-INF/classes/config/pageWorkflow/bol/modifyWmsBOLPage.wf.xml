@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="modifyWmsBOLPage">
+    <main>
+    	<process id="bolDetailProcess"/>
+        <process id="wmsBOLProcess">
+            <formCommit id="save" title="save" process="wmsBOLProcess.new" enableType="none" download="false" visibleType="new">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsBolManager" methodName="storeBOL" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+            <formCommit id="edit" title="save" process="wmsBOLProcess.edit" enableType="none" download="false" visibleType="edit">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsBolManager" methodName="storeBOL" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+    <detail>
+        <process id="wmsBOLProcess">
+            <tablePopup id="addDetail" title="addDetail" process="wmsBOLProcess.addDetail" enableType="none" containId="false" pageId="maintainAddWmsBolDetailPage">
+                 <enableExpression/>
+            </tablePopup>
+            <tableCommit id="deleteDetail" title="deleteDetail" process="wmsBOLProcess.deleteDetail" enableType="multi" closeTransactional="false">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsBolManager" methodName="deleteBOLDetail" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+        </process>
+    </detail>
+</page>

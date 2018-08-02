@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsFactoryWarehousePage">
+    <main>
+        <process id="wmsFactoryWarehouseProcess">
+            
+            <tablePopup id="view" title="view" process="wmsFactoryWarehouseProcess.view" enableType="single" containId="true" pageId="viewWmsFactoryWarehousePage">
+            </tablePopup>
+            
+            <tablePopup id="new" title="new" process="wmsFactoryWarehouseProcess.new" enableType="none" containId="false" maintain="false" pageId="editWmsFactoryWarehousePage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="edit" title="edit" process="wmsFactoryWarehouseProcess.edit" enableType="single" containId="true" pageId="editWmsFactoryWarehousePage">
+            </tablePopup>
+           
+           
+            <tableCommit id="delete" title="delete" process="wmsFactoryWarehouseProcess.delete" enableType="multi" download="false" confirmMessage="是否确认删除此条记录？">
+                <mappings/>
+                 <actions>
+                    <action managerName="wmsFactoryWarehouseManager" methodName="delete" parameter="obj"/>
+                </actions>  
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+           </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

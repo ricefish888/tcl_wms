@@ -1,0 +1,23 @@
+package com.vtradex.wms.webservice.model;
+
+public interface TaskSubscriber {
+	
+	/**处理interfacelog*/
+	String INTERFACELOG_DEAL = "interfaceLogManager.dealInterfaceLog";
+	
+	/**interfacelog的responsexml传给SAP*/
+	String INTERFACELOG_RESPONSEINFO2SAP="interfaceLogManager.sendResponseToSap"; 
+	
+	/**处理wms2sapinterfacelog*/
+	String WMS2SAPINTERFACELOG_DEAL = "interfaceLogManager.sendWms2SapInterfaceLog";
+	
+	
+	/**发送邮件*/
+	String SEND_EMAIL="interfaceLogManager.sendEmail";
+	
+	/**处理收货取消等待的任务*/
+	String WAITASK = "interfaceLogManager.wait";
+	
+	/**拣配工单导入*/
+	String IMPORTPRODUCTIONORDER ="crontabManager.jpgddr";
+}

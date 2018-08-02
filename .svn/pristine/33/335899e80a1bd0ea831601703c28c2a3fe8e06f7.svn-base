@@ -1,0 +1,11 @@
+maintainWmsJITDownLineRecordPage=JIT\u4e0b\u7ebf\u6599\u6536\u8d27\u4fe1\u606f\u7ba1\u7406
+linerecord.id=\u5e8f\u53f7
+linerecord.asnCode=ASN\u7f16\u7801
+item.code=\u7269\u6599\u7f16\u7801
+item.name=\u7269\u6599\u540d\u79f0
+detail.expectedPackQty=\u8ba1\u5212\u6570\u91cf
+linerecord.backQuantity=\u56de\u4f20\u6570\u91cf
+linerecord.updateInfo.creator=\u521b\u5efa\u4eba
+linerecord.updateInfo.createdTime=\u521b\u5efa\u65f6\u95f4
+linerecord.updateInfo.lastOperator=\u6700\u540e\u4fee\u6539\u4eba
+linerecord.updateInfo.updateTime=\u6700\u540e\u4fee\u6539\u65f6\u95f4

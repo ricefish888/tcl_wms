@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsBarCodeRepPrintRecordPage">
+    <main>
+        <process id="wmsBarCodeRepPrintRecordProcess">
+        
+         <tableDirectPrint id="print" title="print" process="wmsBarCodeRepPrintRecordProcess.print" enableType="multi" multiMapping="true" download="false" closeTransactional="false" raq="printLabel.raq">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="objs" className="list">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsTclASNManager" methodName="print" parameter="objs"/>
+                </actions>
+                <forwards/>
+            </tableDirectPrint>
+        </process>
+    </main>
+    <detail/>
+</page>

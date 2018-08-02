@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsPickingProductionOrderPage">
+    <main>
+        <process id="wmsPickingProductionOrderProcess">
+            <tableCommit id="delete" title="delete" process="wmsPickingProductionOrderProcess.delete" enableType="none" multiMapping="false" download="false" closeTransactional="false" confirmMessage="是否确认删除记录？">
+                <enableExpression></enableExpression>
+                <mappings/>
+                <actions>
+                	<action managerName="productionOrderManager" methodName="deletePickingProductionOrder"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

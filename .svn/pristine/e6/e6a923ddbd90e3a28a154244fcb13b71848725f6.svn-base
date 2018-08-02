@@ -1,0 +1,253 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC
+        "-//SPRING//DTD BEAN//EN"
+        "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<bean id="oracleLobHandler" class="org.springframework.jdbc.support.lob.OracleLobHandler" lazy-init="true">
+		<property name="nativeJdbcExtractor" ref="nativeJdbcExtractor" />
+	</bean>
+	<bean id="nativeJdbcExtractor" class="org.springframework.jdbc.support.nativejdbc.CommonsDbcpNativeJdbcExtractor" lazy-init="true" />
+	    <!-- 邮件管理 -->
+    <bean id="emailRecordHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			<value>com/vtradex/wms/server/model/entity/email/hbm/emailRecord.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	    <!-- 最小包装单位 -->
+    <bean id="wmsMinPackageQtyHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			<value>com/vtradex/wms/server/model/entity/item/hbm/wmsMinPackageQty.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- SAP仓库管理  -->
+	<bean id="wmsSapWarehouseHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			<value>com/vtradex/wms/server/model/entity/base/hbm/wmsSapWarehouse.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- 供应商管理  -->
+	<bean id="wmsSupplierHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			<value>com/vtradex/wms/server/model/entity/base/hbm/wmsSupplier.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- 供应商用户管理  -->
+	<bean id="midSupplierUserHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			<value>com/vtradex/wms/server/model/entity/base/hbm/midSurpplierUser.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- 物料保管员管理  -->
+	<bean id="wmsItemKeeperHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			<value>com/vtradex/wms/server/model/entity/base/hbm/wmsItemKeeper.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- 生产订单 工单 -->
+	<bean id="productionOrderHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			<value>com/vtradex/wms/server/model/entity/production/hbm/productionOrder.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- 工单明细 -->
+	<bean id="productionOrderDetailHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			<value>com/vtradex/wms/server/model/entity/production/hbm/productionOrderDetail.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- sap工厂 -->
+	<bean id="wmsSapFactoryHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			<value>com/vtradex/wms/server/model/entity/base/hbm/wmsSapFactory.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	
+	<!--采购订单  -->
+	<bean id="purchaseOrderHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			<value>com/vtradex/wms/server/model/entity/order/hbm/purchaseOrder.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!--采购订单明细  -->
+	<bean id="purchaseOrderDetailHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			<value>com/vtradex/wms/server/model/entity/order/hbm/purchaseOrderDetail.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	
+    <!-- 物料工厂映射关系  -->
+	<bean id="wmsItemFactoryHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			<value>com/vtradex/wms/server/model/entity/base/hbm/wmsItemFactory.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	
+	<!-- 交货单 -->
+	<bean id="wmsDeliveryOrderHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/production/hbm/wmsDeliveryOrder.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	
+	<!-- 交货单明细 -->
+	<bean id="wmsDeliveryOrderDetailHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/production/hbm/wmsDeliveryOrderDetail.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	
+	<!-- 配货单 -->
+	<bean id="wmsTransportOrderHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/order/hbm/wmsTransportOrder.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	
+	<!-- 配货单明细 -->
+	<bean id="wmsTransportOrderDetailHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/order/hbm/wmsTransportOrderDetail.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- WMS2SAPInterfaceLog -->
+	<bean id="wms2SapInterfaceLogHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/base/hbm/wms2SapInterfaceLog.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	
+	<!--仓库映射关系 -->
+	<bean id="wmsFactoryWarehouseHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/base/hbm/wmsFactoryWarehouse.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	
+	
+	<!--预留单 -->
+	<bean id="wmsReservedOrderHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>    
+			 <value>com/vtradex/wms/server/model/entity/production/hbm/wmsReservedOrder.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	
+	<!--预留单明细 -->
+	<bean id="wmsReservedOrderDetailHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>             
+			 <value>com/vtradex/wms/server/model/entity/production/hbm/wmsReservedOrderDetail.hbm.xml</value>
+		</constructor-arg>
+	</bean>	
+	
+	<!-- 对账单 -->
+	<bean id="wmsCheckOrderHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/order/hbm/wmsCheckOrder.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	
+	<!-- 对账单 -->
+	<bean id="productionOrderDetailPtDetailHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/production/hbm/productionOrderDetailPtDetail.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- 预警管理 -->
+	<bean id="wmsWarningHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/base/hbm/wmsWarning.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- 日结库存 -->
+	<bean id="wmsStorageDailyHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/inventory/hbm/wmsStorageDaily.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- 库存台账 -->
+	<bean id="tclWmsInventoryLedgerHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/inventory/hbm/tclWmsInventoryLedger.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- 账单关闭日期表 -->
+	<bean id="wmsAccountCloseDayHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/base/hbm/wmsAccountCloseDay.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	
+	<!-- ASNDetail 对应生成的条码 -->
+	<bean id="wmsASNDetailBarCodeHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/receiving/hbm/wmsASNDetailBarCode.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- 洗衣机仓库不可拆分物料零头量 -->
+	<bean id="wmsProductionOrderDetailExtendHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/base/hbm/wmsProductionOrderDetailExtend.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- 成本中心-->
+	<bean id="wmsCostCenterHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/base/hbm/wmsCostCenter.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	
+	<!--生产订单齐套性-->
+	<bean id="wmsProductionOrderMeetInfoHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/order/hbm/wmsProductionOrderMeetInfo.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- 到货交货单 -->
+	<bean id="wmsArrivalDeliveryHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/order/hbm/wmsArrivalDelivery.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- 工单物料校验 -->
+	<bean id="wmsProductionOrderCheckHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/base/hbm/wmsProductionOrderCheck.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	
+	<!-- 条码补打记录-->
+	<bean id="wmsBarCodeRepPrintRecordHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/base/hbm/wmsBarCodeRepPrintRecord.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	
+	<!-- 预留拣货对应关系表 -->
+	<bean id="reservedOrderDetailPtDetailHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/production/hbm/reservedOrderDetailPtDetail.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- 交货单明细 与 拣货单明细对应表 -->
+	<bean id="deliveryOrderDetailPtDetailHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/production/hbm/deliveryOrderDetailPtDetail.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+
+		<!-- 出库批次追踪-->
+	<bean id="wmsShippingLotTruckHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/base/hbm/wmsShippingLotTruck.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+	<!-- 工单退料记录表 -->
+	<bean id="wmProOrderBackRfRecordHibernateMappingResource" class="com.vtradex.thorn.server.dao.hibernate.HibernateMappingResource">
+		<constructor-arg>
+			 <value>com/vtradex/wms/server/model/entity/base/hbm/wmsProOrderBackRfRecord.hbm.xml</value>
+		</constructor-arg>
+	</bean>
+
+	
+
+</beans>

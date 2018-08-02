@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsZonePage" title="maintainWmsZonePage" mainEntrance="true" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.warehouse.WmsZone">
+        <workflow/>
+        <datasource><![CDATA[SELECT zone.id,
+zone.code,
+zone.name,
+warehouse.name,
+wmsSapWarehouse.code,
+wmsSapWarehouse.name,
+sapFactory.code,
+sapFactory.name,
+zone.erpCode,
+zone.lowTemperature,
+zone.highTemperature,
+zone.description,
+zone.x_Pos,
+zone.y_Pos,
+zone.updateInfo.lastOperator,
+zone.updateInfo.updateTime,
+zone.status
+ FROM WmsZone zone
+ LEFT JOIN zone.warehouse warehouse
+ LEFT JOIN zone.wmsSapWarehouse wmsSapWarehouse
+ LEFT JOIN zone.wmsSapWarehouse.sapFactory sapFactory
+ WHERE 1=1  
+ AND zone.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}
+ ORDER BY zone.code]]></datasource>
+        <columns>
+            <column id="zone.id" title="zone.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="zone.code" title="zone.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="zone.name" title="zone.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="warehouse.name" title="warehouse.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wmsSapWarehouse.code" title="wmsSapWarehouse.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wmsSapWarehouse.name" title="wmsSapWarehouse.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="sapFactory.code" title="sapFactory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="sapFactory.name" title="sapFactory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="zone.erpCode" title="zone.erpCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="zone.lowTemperature" title="zone.lowTemperature" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="zone.highTemperature" title="zone.highTemperature" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="zone.description" title="zone.description" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>   
+            <column id="zone.x_Pos" title="zone.x_Pos" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>       
+            <column id="zone.y_Pos" title="zone.y_Pos" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+            <column id="zone.updateInfo.lastOperator" title="zone.updateInfo.lastOperator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="zone.updateInfo.updateTime" title="zone.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="zone.status" title="zone.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="BaseStatus"/>
+        </columns>
+    </maintainPage>
+</pages>

@@ -1,0 +1,144 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<link rel="stylesheet" type="text/css" href="css/ext-all.css">
+		<style type="text/css">
+			<!--
+			body {
+				margin:10px;
+				background-color:#FFFFFF;
+				font-family:宋体;
+				font-size:12px;
+			}
+			td {
+				font-family:宋体;
+				font-size:12px;
+				color:#666666;
+			}
+			input {
+				font:400 12px/16px "Open Sans", Helvetica, Arial, sans-serif;
+				border: 1px solid #AAA;
+				padding: 8px;
+			}
+			input.buttonface {
+				color:#24262B;
+				padding-left:6px;
+				padding-right:6px;
+				padding-top:1px;
+				padding-bottom:0px;
+			}
+			-->
+			#ctx {
+				height: 300px;
+    			overflow-y: auto;
+			}
+		</style>
+	</head>
+	<body style="background-color:#B4CDF0;">
+	<table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
+	  <tr>
+	    <td align="center" valign="middle" style="padding:50px;">
+	    	<div style="border-radius:5px;padding-top:30px;width:350px;height:400px;background-color: #fff;">
+	    		<table>
+	    			<tr><td>
+						<input id="searchName" placeholder="组织名" style="border-radius:5px;"/>
+			    	<input id="searchBtn" type="button" value="查询" style=" border-radius:5px; font-weight: bold;border:none; color:#fff;background-color:#B4CDF0;"/>
+			    	<input id="in" type="button" value="进入" style="border-radius:5px;font-weight: bold;border:none;color:#fff;background-color:#B4CDF0;"/>
+			    	<br/>
+			    	<br/>
+			    	<br/>
+			    	<br/>
+			    	<div id="ctx">
+			    		
+			    	</div>    			
+	    			</td></tr>
+			    </table>	    		
+	    		</div>
+	    	</div>
+	    </td>
+	  </tr>
+	</table>
+		<script type="text/javascript" src="scripts/ext-base.js"></script>
+		<script type="text/javascript" src="scripts/ext-all.js"></script>
+		<script type="text/javascript" src="scripts/ext-lang-zh_CN.js"></script>
+		<script type="text/javascript">
+			Ext.getBody().hide();
+			var a=true;
+			function search(){
+				Ext.Ajax.request({
+					url:'OrganBusinessModelServlet',
+					params:{searchName:Ext.getDom('searchName').value},
+					success:function(ret){
+						ret=eval(ret.responseText);
+						if(a&&ret.length==1){
+							Ext.Ajax.request({
+								  url:'BussinessModeChooseServlet',
+								  params:{baseOrgan:ret[0].id},
+								  success:function(ret){
+									  if(ret.responseText==='success'){
+										  (function(){
+											  if(parent.gwtState===false){
+												  setTimeout(arguments.callee,500);
+											  }else{
+												  parent.foo();
+											  }
+										  }());
+									  }
+								  }
+							  });
+						}else{
+							Ext.getBody().show();							
+							var html=[];
+							for(var i=0;i<ret.length;i++){
+								html.push(
+									'<label style="cursor:pointer;font-size:15px;" for="'+ret[i].id+'">',	
+									'<input type="radio" name="radio" '+(i==0?'checked="checked"':'') +' id="'+ret[i].id+'" value="'+ret[i].id+'"/>',
+									'&nbsp;&nbsp;',
+									ret[i].name,
+									'</label>',
+									'<br/>',
+									'<br/>'
+								);
+							}
+							Ext.getDom('ctx').innerHTML=html.join('');
+						}
+						a=false;
+					}
+				});					
+			}
+			Ext.onReady(function(){
+				search();
+				Ext.get('searchBtn').on('click',function(){
+					search();
+				});
+				var click=function(){
+					Ext.get('in').un('click',click);
+					var self=arguments.callee;
+					var a=Ext.query('input:checked');
+					if(a.length==0){
+						alert('请先选择一个组织');
+						Ext.get('in').on('click',click);
+					}else{
+						Ext.Ajax.request({
+							  url:'BussinessModeChooseServlet',
+							  params:{baseOrgan:a[0].id},
+							  success:function(ret){
+								  if(ret.responseText==='success'){
+									  self=function(){};
+									  (function(){
+										  if(parent.gwtState===false){
+											  setTimeout(arguments.callee,500);
+										  }else{
+											  parent.foo();
+										  }
+									  }());
+								  }
+							  }
+						  });
+					}
+				}
+				Ext.get('in').on('click',click);
+			});
+		</script>
+	</body>
+</html>

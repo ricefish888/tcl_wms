@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 按SKU上架|查询列表页面模板 -->
+<RFListPage id="skuPutawayAllRFListPage" title="skuPutawayAllRFListPage">
+	<RFSearchUI id="workDocCodeSearch" text="workDocCodeSearch" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="workDocId" title="workDocId" width="50" enumType="" hidden="true" />
+		<RFTh id="workDocCode" title="workDocCode" width="120" enumType="" hidden="false" />
+		<RFTh id="relatedBillCode" title="relatedBillCode" width="120" enumType="" hidden="false" />
+		<RFTh id="workDocStatus" title="workDocStatus" width="80" enumType="WmsWorkDocStatus" hidden="false" />
+		<RFTh id="workDocQtyTotal" title="workDocQtyTotal" width="80" enumType="" hidden="false" />
+		<DataSource type="HQL">
+			<statement>
+				<![CDATA[
+				 SELECT workDoc.id as workDocId,
+					workDoc.code as workDocCode,
+					workDoc.relatedBillCode as relatedBillCode,
+					workDoc.status as workDocStatus,
+					CONCAT(CONCAT(cast(workDoc.putawayQty,string), '/'), cast(workDoc.qty,string)) AS workDocQtyTotal
+					 FROM WmsWorkDoc workDoc
+					 WHERE 1=1
+					 AND workDoc.type='PUTAWAY'
+					 AND (workDoc.keeper.id =#{SESSION_USERS} OR workDoc.keeper.id IS NULL)
+					 AND workDoc.warehouse.baseOrganization.id = #{SESSION_BASE_ORGAN}
+					 AND workDoc.status IN ('ENABLED','IN_OPERATION')
+					    /~ workDocCodeSearch: AND ( workDoc.code like '%{workDocCodeSearch}%' or workDoc.relatedBillCode like '%{workDocCodeSearch}%' ) ~/
+					 ORDER BY workDoc.updateInfo.createdTime asc
+				]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

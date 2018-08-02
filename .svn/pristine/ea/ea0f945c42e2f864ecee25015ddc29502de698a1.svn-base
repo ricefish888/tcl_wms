@@ -1,0 +1,800 @@
+package com.vtradex.wms.server.service.interf.pojo;
+
+import java.util.Date;
+import java.util.List;
+
+import com.vtradex.thorn.server.exception.BusinessException;
+import com.vtradex.thorn.server.model.EntityFactory;
+import com.vtradex.thorn.server.model.interfaceLog.InterfaceLog;
+import com.vtradex.thorn.server.model.message.Task;
+import com.vtradex.thorn.server.service.pojo.DefaultBaseManager;
+import com.vtradex.wms.server.model.entity.base.Wms2SapInterfaceLog;
+import com.vtradex.wms.server.model.entity.base.Wms2SapInterfaceLogType;
+import com.vtradex.wms.server.model.entity.email.EmailRecord;
+import com.vtradex.wms.server.model.entity.email.EmailRecordType;
+import com.vtradex.wms.server.model.entity.order.PurchaseOrderDetail;
+import com.vtradex.wms.server.model.entity.production.WmsDeliveryOrder;
+import com.vtradex.wms.server.model.entity.production.WmsDeliveryOrderDetail;
+import com.vtradex.wms.server.service.emailrecord.EmailRecordManager;
+import com.vtradex.wms.server.service.interf.InterfaceLogManager;
+import com.vtradex.wms.server.service.model.interfaceLog.InterfaceLogFunction;
+import com.vtradex.wms.server.service.model.interfaceLog.InterfaceLogStatus;
+import com.vtradex.wms.server.service.model.interfaceLog.InterfaceLogTaskType;
+import com.vtradex.wms.server.service.model.interfaceLog.InterfaceLogType;
+import com.vtradex.wms.server.service.sap.SapDataDealManager;
+import com.vtradex.wms.server.utils.DateUtils;
+import com.vtradex.wms.server.utils.StringHelper;
+import com.vtradex.wms.webservice.client.sap.commcallback.ZRFCWMSMSGRETURNResponse;
+import com.vtradex.wms.webservice.client.sap.delivery.DTRetMsg;
+import com.vtradex.wms.webservice.model.InterfaceLogSys;
+import com.vtradex.wms.webservice.model.TaskSubscriber;
+import com.vtradex.wms.webservice.sap.base.SapCommonCallback;
+import com.vtradex.wms.webservice.sap.model.Wms2SapDeliveryOrder;
+import com.vtradex.wms.webservice.sap.model.Wms2SapEInventory;
+import com.vtradex.wms.webservice.sap.model.Wms2SapEInventoryArray;
+import com.vtradex.wms.webservice.sap.model.Wms2SapInventoryLedger;
+import com.vtradex.wms.webservice.sap.model.Wms2SapItemAttr;
+import com.vtradex.wms.webservice.sap.model.Wms2SapSupplierDocStatus;
+import com.vtradex.wms.webservice.sap.model.Wms2SapSupplierDocType;
+import com.vtradex.wms.webservice.sap.model.Wms2SapSupplierStatus;
+import com.vtradex.wms.webservice.utils.CallSapWebService;
+import com.vtradex.wms.webservice.utils.CommonHelper;
+import com.vtradex.wms.webservice.utils.XMLHelper;
+import com.vtradex.wms.webservice.utils.XmlObjectConver;
+
+public class DefaultInterfaceLogManager extends DefaultBaseManager implements InterfaceLogManager {
+	
+	protected SapDataDealManager sapDataDealManager;
+	
+	protected EmailRecordManager emailRecordManager;
+	
+	public DefaultInterfaceLogManager(SapDataDealManager sapDataDealManager,EmailRecordManager emailRecordManager) {
+		this.sapDataDealManager = sapDataDealManager;
+		this.emailRecordManager = emailRecordManager;
+	}
+
+	public InterfaceLog getInterfaceLog(Long id) {
+		return commonDao.load(InterfaceLog.class, id);
+	}
+
+	public  void dealInterfaceLog(Long interfaceLogId) {
+		
+		InterfaceLog log = commonDao.load(InterfaceLog.class, interfaceLogId);
+		if(!InterfaceLogFunction.ASYNC.equals(log.getFunction())) { //异步模式
+			throw new BusinessException("非异步模式不能用异步方式执行!");
+		}
+
+		if(InterfaceLogType.BASIC_ITEM_SAP2WMS.equals(log.getType()) ) { //物料
+			sapDataDealManager.dealSapItem(log);
+			//WMS处理完成后  需要将处理结果返回给SAP
+		}
+		else if(InterfaceLogType.BASIC_SUPPLIER_SAP2WMS.equals(log.getType())) { //供应商
+			//执行。
+			sapDataDealManager.dealSapSupplier(log);
+		    //WMS处理完成后  需要将处理结果返回给SAP
+		}
+		else if(InterfaceLogType.BASIC_WAREHOUSE_SAP2WMS.equals(log.getType())) { //SAP仓库
+		    sapDataDealManager.dealSapWarehouse(log);
+			//WMS处理完成后  需要将处理结果返回给SAP
+		}
+		else if(InterfaceLogType.BUSINESS_PO_SAP2WMS.equals(log.getType())) {//采购订单PO
+			//执行。
+			sapDataDealManager.dealSapPoOrder(log);
+			//WMS处理完成后  需要将处理结果返回给SAP
+			
+		}
+		else if(InterfaceLogType.BUSINESS_DELIVERYORDER_SAP2WMS.equals(log.getType())) {//采购交货单DeliveryOrder
+			//执行。
+			sapDataDealManager.dealSapDeliveryOrder(log);
+			//WMS处理完成后  需要将处理结果返回给SAP
+			
+		}
+		else if(InterfaceLogType.BUSINESS_ORDERCODE_SAP2WMS.equals(log.getType())) {//SAP根据WMS回传的交货单信息创建他们自己的交货单并把SAP交货单单号回传给WMS
+			//执行。
+			sapDataDealManager.dealSapDeliveryCode(log);
+			//WMS处理完成后  需要将处理结果返回给SAP
+		}
+		else if(InterfaceLogType.BUSINESS_PRODUCTORDER_SAP2WMS.equals(log.getType())) {//生产订单ProductOrder
+			//执行。
+			sapDataDealManager.dealSapProductOrder(log);
+			//WMS处理完成后  需要将处理结果返回给SAP
+		}
+		else if(InterfaceLogType.BUSINESS_RESERVEDDATA_SAP2WMS.equals(log.getType())) {//预留主数据
+			//执行。
+			sapDataDealManager.dealSapReservedData(log);
+			//WMS处理完成后  需要将处理结果返回给SAP
+		}
+		else if(InterfaceLogType.BUSINESS_SALEOUTDELIVERY_SAP2WMS.equals(log.getType())) {//销售外向交货单
+			//执行。
+			sapDataDealManager.dealSapSaleOutDelivery(log);
+			//WMS处理完成后  需要将处理结果返回给SAP
+		}
+		else if(InterfaceLogType.BUSINESS_POCHECKORDER_SAP2WMS.equals(log.getType())) {//标准对账单
+			//执行。
+			sapDataDealManager.dealSapCheckOrder(log);
+			//WMS处理完成后  需要将处理结果返回给SAP
+		}
+		else if(InterfaceLogType.BUSINESS_POJSCHECKORDER_SAP2WMS.equals(log.getType())) {//寄售对账单
+			//执行。
+			sapDataDealManager.dealSapJSCheckOrder(log);
+			//WMS处理完成后  需要将处理结果返回给SAP
+		}
+		else if(InterfaceLogType.BUSINESS_PRODUCTORDER_IN.equals(log.getType())) {//生产订单入库接口
+			//执行。
+			sapDataDealManager.dealSapProductOrderIn(log);
+			//WMS处理完成后  需要将处理结果返回给SAP
+		}
+		else if(InterfaceLogType.BASIC_COSTCENTER_SAP2WMS.equals(log.getType())){// 成本中心主数据接口
+			sapDataDealManager.dealSapCostCenter(log);
+		}
+	}
+	 
+    /**将wms的处理结果从interface的responseContent字段通过接口传到sap*/
+	@SuppressWarnings("unused")
+	public void sendResponseToSap(Long interfaceLogId) {
+		InterfaceLog log = commonDao.load(InterfaceLog.class, interfaceLogId);
+		String xml = log.getResponseContent();
+		SapCommonCallback sapCommonCallback = (SapCommonCallback)XmlObjectConver.fromXML(new SapCommonCallback(), xml);
+		ZRFCWMSMSGRETURNResponse response = null;
+		String callErrorMsg = "";
+		try {
+			response = CallSapWebService.callCommCallBack(sapCommonCallback);
+			updateInterfaceLogDeailInfo(log);
+			if(StringHelper.isNullOrEmpty(log.getErrorLog())){
+				log.setStatus(InterfaceLogStatus.STAT_FINISH);
+				log.setErrorLog("");
+			}else{
+				log.setStatus(InterfaceLogStatus.STAT_FAIL);
+			}
+			sapDataDealManager.store(log);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			updateInterfaceLogDeailInfo(log);
+			log.setStatus(InterfaceLogStatus.STAT_FAIL);
+			callErrorMsg=CommonHelper.getErrorMessageByException(e);
+			callErrorMsg = StringHelper.substring(callErrorMsg, 100);
+			log.setErrorLog(callErrorMsg);
+			sapDataDealManager.store(log);
+		}
+
+		if(log.getStatus().equals(InterfaceLogStatus.STAT_FAIL)) {
+			throw new BusinessException(callErrorMsg);//如果回调失败  则抛出异常，让thorn_task也失败。
+		}
+//		return response;
+	}
+	
+	
+	
+	/**wms异步传输单据给sap
+	 * 此方法不能加事务
+	 * */
+	@SuppressWarnings("unused")
+	public void sendWms2SapInterfaceLog(Long wms2SapInterfaceLog) {
+		Wms2SapInterfaceLog log = commonDao.load(Wms2SapInterfaceLog.class, wms2SapInterfaceLog);
+		String xml = log.getRequestContent();
+		String type = log.getType();
+		String callErrorMsg = "";
+		if(Wms2SapInterfaceLogType.DELIVERY_DOC.equals(type)) {
+			
+			Wms2SapDeliveryOrder wms2SapDeliveryOrder =   (Wms2SapDeliveryOrder)XmlObjectConver.fromXML(new Wms2SapDeliveryOrder(), xml);
+			
+			DTRetMsg response = null;
+			
+			try {
+				response = CallSapWebService.callSapDelivery(wms2SapDeliveryOrder);
+				
+				log.setSendStatus(InterfaceLogStatus.STAT_FINISH);
+				log.setReceiveTime(new Date());
+				log.setRequestCnt(log.getRequestCnt()==null ? 0 : log.getRequestCnt()+1);
+				if("E".equals(response.getRET())){
+					log.setResponseContent(response.getMSG());
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+					log.setErrorLog(response.getMSG());
+				}else{
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FINISH);
+					log.setErrorLog("");
+				}
+				sapDataDealManager.store(log);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+				log.setSendStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveTime(new Date());
+				callErrorMsg=CommonHelper.getErrorMessageByException(e);
+				callErrorMsg = StringHelper.substring(callErrorMsg, 100);
+				log.setErrorLog(callErrorMsg);
+				sapDataDealManager.store(log);
+			}
+		}else if(Wms2SapInterfaceLogType.SURPPLIERBUSINESSBACK.equals(type)){
+			Wms2SapSupplierDocStatus wsds = (Wms2SapSupplierDocStatus)XmlObjectConver.fromXML(new Wms2SapSupplierDocStatus(),xml);
+				
+			com.vtradex.wms.webservice.client.sap.supplier.DTRetMsg response = null;
+			try {
+				response = CallSapWebService.callSapSupplier(wsds);
+				log.setSendStatus(InterfaceLogStatus.STAT_FINISH);
+				log.setReceiveTime(new Date());
+				log.setRequestCnt(log.getRequestCnt()==null ? 0 : log.getRequestCnt()+1);
+				if("E".equals(response.getRET())){
+					log.setResponseContent(response.getMSG());
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+					log.setErrorLog(response.getMSG());
+				}else{
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FINISH);
+					log.setErrorLog("");
+				}
+				sapDataDealManager.store(log);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+				log.setSendStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveTime(new Date());
+				callErrorMsg=CommonHelper.getErrorMessageByException(e);
+				callErrorMsg = StringHelper.substring(callErrorMsg, 100);
+				log.setErrorLog(callErrorMsg);
+				sapDataDealManager.store(log);
+			}
+		}
+		else if(Wms2SapInterfaceLogType.ITEMPROPERTY.equals(type)){
+			Wms2SapItemAttr wia = (Wms2SapItemAttr) XmlObjectConver.fromXML(new Wms2SapItemAttr(),xml);
+			
+			com.vtradex.wms.webservice.client.sap.item.DTRetMsg response = null;
+			
+			try {
+				response = CallSapWebService.callSapItem(wia);
+				log.setSendStatus(InterfaceLogStatus.STAT_FINISH);
+				log.setRequestCnt(log.getRequestCnt()==null ? 0 : log.getRequestCnt()+1);
+				log.setReceiveTime(new Date());
+				if("E".equals(response.getRET())){
+					log.setResponseContent(response.getMSG());
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+					log.setErrorLog(response.getMSG());
+				}else{
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FINISH);
+					log.setErrorLog("");
+				}
+				sapDataDealManager.store(log);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+				log.setSendStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveTime(new Date());
+				callErrorMsg=CommonHelper.getErrorMessageByException(e);
+				callErrorMsg = StringHelper.substring(callErrorMsg, 100);
+				log.setErrorLog(callErrorMsg);
+				sapDataDealManager.store(log);
+			}
+		}
+		else if(Wms2SapInterfaceLogType.DAYLYINVENTORY.equals(type)){
+			Wms2SapEInventoryArray wsias = (Wms2SapEInventoryArray) XmlObjectConver.fromXML(new Wms2SapEInventoryArray(), xml);
+			com.vtradex.wms.webservice.client.sap.inv.DTRetMsg response = null;
+			try{
+				response = CallSapWebService.callSapInventory(wsias);
+				log.setSendStatus(InterfaceLogStatus.STAT_FINISH);
+				log.setReceiveTime(new Date());
+				log.setRequestCnt(log.getRequestCnt()==null ? 0 : log.getRequestCnt()+1);
+				if("E".equals(response.getRET())){
+					log.setResponseContent(response.getMSG());
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+					log.setErrorLog(response.getMSG());
+				}else{
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FINISH);
+					log.setErrorLog("");
+				}
+				sapDataDealManager.store(log);
+			}catch(Exception e) {
+				e.printStackTrace();
+				log.setSendStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveTime(new Date());
+				callErrorMsg=CommonHelper.getErrorMessageByException(e);
+				callErrorMsg = StringHelper.substring(callErrorMsg, 100);
+				log.setErrorLog(callErrorMsg);
+				sapDataDealManager.store(log);
+			}
+		}
+		else if(Wms2SapInterfaceLogType.CANCELRECEIVEINFO.equals(type)){
+			Wms2SapInventoryLedger ledger = (Wms2SapInventoryLedger) XmlObjectConver.fromXML(new Wms2SapInventoryLedger(), xml);
+			com.vtradex.wms.webservice.client.sap.cancelreceive.DTRetMsg response = null;
+			try{
+				response = CallSapWebService.callSapCancelReceive(ledger);
+				log.setSendStatus(InterfaceLogStatus.STAT_FINISH);
+				log.setReceiveTime(new Date());
+				log.setRequestCnt(log.getRequestCnt()==null ? 0 : log.getRequestCnt()+1);
+				if("E".equals(response.getRET())){
+					log.setResponseContent(response.getMSG());
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+					log.setErrorLog(response.getMSG());
+				}else{
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FINISH);
+					log.setErrorLog("");
+				}
+				sapDataDealManager.store(log);
+			}catch(Exception e){
+				e.printStackTrace();
+				log.setSendStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveTime(new Date());
+				callErrorMsg=CommonHelper.getErrorMessageByException(e);
+				callErrorMsg = StringHelper.substring(callErrorMsg, 100);
+				log.setErrorLog(callErrorMsg);
+				sapDataDealManager.store(log);
+			}
+		}
+		else if(Wms2SapInterfaceLogType.PICKCONFIRMINFO.equals(type)){
+			Wms2SapInventoryLedger ledger = (Wms2SapInventoryLedger) XmlObjectConver.fromXML(new Wms2SapInventoryLedger(), xml);
+			com.vtradex.wms.webservice.client.sap.returnback.DTRetMsg response = null;
+			try{
+				response = CallSapWebService.callSapReturn(ledger);
+				log.setSendStatus(InterfaceLogStatus.STAT_FINISH);
+				log.setReceiveTime(new Date());
+				log.setRequestCnt(log.getRequestCnt()==null ? 0 : log.getRequestCnt()+1);
+				if("E".equals(response.getRET())){
+					log.setResponseContent(response.getMSG());
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+					log.setErrorLog(response.getMSG());
+				}else{
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FINISH);
+					log.setErrorLog("");
+				}
+				sapDataDealManager.store(log);
+			}catch(Exception e){
+				e.printStackTrace();
+				log.setSendStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveTime(new Date());
+				callErrorMsg=CommonHelper.getErrorMessageByException(e);
+				callErrorMsg = StringHelper.substring(callErrorMsg, 100);
+				log.setErrorLog(callErrorMsg);
+				sapDataDealManager.store(log);
+			}
+		}
+		else if(Wms2SapInterfaceLogType.QCRECORDINFO.equals(type)){
+			Wms2SapInventoryLedger ledger = (Wms2SapInventoryLedger) XmlObjectConver.fromXML(new Wms2SapInventoryLedger(), xml);
+			com.vtradex.wms.webservice.client.sap.quality.DTRetMsg response = null;
+			try{
+				response = CallSapWebService.callSapQuality(ledger);
+				log.setSendStatus(InterfaceLogStatus.STAT_FINISH);
+				log.setReceiveTime(new Date());
+				log.setRequestCnt(log.getRequestCnt()==null ? 0 : log.getRequestCnt()+1);
+				if("E".equals(response.getRET())){
+					log.setResponseContent(response.getMSG());
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+					log.setErrorLog(response.getMSG());
+				}else{
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FINISH);
+					log.setErrorLog("");
+				}
+				sapDataDealManager.store(log);
+			}catch(Exception e){
+				e.printStackTrace();
+				log.setSendStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveTime(new Date());
+				callErrorMsg=CommonHelper.getErrorMessageByException(e);
+				callErrorMsg = StringHelper.substring(callErrorMsg, 100);
+				log.setErrorLog(callErrorMsg);
+				sapDataDealManager.store(log);
+			}
+		}
+		else if(Wms2SapInterfaceLogType.RECEIVEINFO.equals(type)){
+			Wms2SapInventoryLedger ledger = (Wms2SapInventoryLedger) XmlObjectConver.fromXML(new Wms2SapInventoryLedger(), xml);
+			com.vtradex.wms.webservice.client.sap.receiveinfo.DTRetMsg response = null;
+			try{
+				response = CallSapWebService.callSapReceive(ledger);
+				log.setSendStatus(InterfaceLogStatus.STAT_FINISH);
+				log.setReceiveTime(new Date());
+				log.setRequestCnt(log.getRequestCnt()==null ? 0 : log.getRequestCnt()+1);
+				if("E".equals(response.getRET())){
+					log.setResponseContent(response.getMSG());
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+					log.setErrorLog(response.getMSG());
+				}else{
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FINISH);
+					log.setErrorLog("");
+				}
+				sapDataDealManager.store(log);
+			}catch(Exception e){
+				e.printStackTrace();
+				log.setSendStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveTime(new Date());
+				callErrorMsg=CommonHelper.getErrorMessageByException(e);
+				callErrorMsg = StringHelper.substring(callErrorMsg, 100);
+				log.setErrorLog(callErrorMsg);
+				sapDataDealManager.store(log);
+			}
+		}
+		else if(Wms2SapInterfaceLogType.RESINFO.equals(type)){
+			Wms2SapInventoryLedger ledger = (Wms2SapInventoryLedger) XmlObjectConver.fromXML(new Wms2SapInventoryLedger(), xml);
+			com.vtradex.wms.webservice.client.sap.resdata.DTRetMsg response = null;
+			try{
+				response = CallSapWebService.callSapResData(ledger);
+				log.setSendStatus(InterfaceLogStatus.STAT_FINISH);
+				log.setReceiveTime(new Date());
+				log.setRequestCnt(log.getRequestCnt()==null ? 0 : log.getRequestCnt()+1);
+				if("E".equals(response.getRET())){
+					log.setResponseContent(response.getMSG());
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+					log.setErrorLog(response.getMSG());
+				}else{
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FINISH);
+					log.setErrorLog("");
+				}
+				sapDataDealManager.store(log);
+			}catch(Exception e){
+				e.printStackTrace();
+				log.setSendStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveTime(new Date());
+				callErrorMsg=CommonHelper.getErrorMessageByException(e);
+				callErrorMsg = StringHelper.substring(callErrorMsg, 100);
+				log.setErrorLog(callErrorMsg);
+				sapDataDealManager.store(log);
+			}
+		}
+		else if(Wms2SapInterfaceLogType.PRODUCTIONINFO.equals(type) || Wms2SapInterfaceLogType.PRDRETURNINFO.equals(type)){
+			Wms2SapInventoryLedger ledger = (Wms2SapInventoryLedger) XmlObjectConver.fromXML(new Wms2SapInventoryLedger(), xml);
+			com.vtradex.wms.webservice.client.sap.prdmove.DTRetMsg response = null;
+			try{
+				response = CallSapWebService.callSapPrdMove(ledger);
+				log.setSendStatus(InterfaceLogStatus.STAT_FINISH);
+				log.setReceiveTime(new Date());
+				log.setRequestCnt(log.getRequestCnt()==null ? 0 : log.getRequestCnt()+1);
+				if("E".equals(response.getRET())){
+					log.setResponseContent(response.getMSG());
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+					log.setErrorLog(response.getMSG());
+				}else{
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FINISH);
+					log.setErrorLog("");
+				}
+				sapDataDealManager.store(log);
+			}catch(Exception e){
+				e.printStackTrace();
+				log.setSendStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveTime(new Date());
+				callErrorMsg=CommonHelper.getErrorMessageByException(e);
+				callErrorMsg = StringHelper.substring(callErrorMsg, 100);
+				log.setErrorLog(callErrorMsg);
+				sapDataDealManager.store(log);
+			}
+		}
+		else if(Wms2SapInterfaceLogType.OTHEROUTINFO.equals(type) || Wms2SapInterfaceLogType.OTHERININFO.equals(type) ){
+			Wms2SapInventoryLedger ledger = (Wms2SapInventoryLedger) XmlObjectConver.fromXML(new Wms2SapInventoryLedger(), xml);
+			com.vtradex.wms.webservice.client.sap.othership.DTRetMsg response = null;
+			try{
+				response = CallSapWebService.callSapOtherMove(ledger);
+				log.setSendStatus(InterfaceLogStatus.STAT_FINISH);
+				log.setReceiveTime(new Date());
+				log.setRequestCnt(log.getRequestCnt()==null ? 0 : log.getRequestCnt()+1);
+				if("E".equals(response.getRET())){
+					log.setResponseContent(response.getMSG());
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+					log.setErrorLog(response.getMSG());
+				}else{
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FINISH);
+					log.setErrorLog("");
+				}
+				sapDataDealManager.store(log);
+			}catch(Exception e){
+				e.printStackTrace();
+				log.setSendStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveTime(new Date());
+				callErrorMsg=CommonHelper.getErrorMessageByException(e);
+				callErrorMsg = StringHelper.substring(callErrorMsg, 100);
+				log.setErrorLog(callErrorMsg);
+				sapDataDealManager.store(log);
+			}
+		}
+		else if(Wms2SapInterfaceLogType.BFOUTORININFO.equals(type)){
+			Wms2SapInventoryLedger ledger = (Wms2SapInventoryLedger) XmlObjectConver.fromXML(new Wms2SapInventoryLedger(), xml);
+			com.vtradex.wms.webservice.client.sap.bfck.DTRetMsg response = null;
+			try{
+				response = CallSapWebService.callSapBFCK(ledger);
+				log.setSendStatus(InterfaceLogStatus.STAT_FINISH);
+				log.setReceiveTime(new Date());
+				log.setRequestCnt(log.getRequestCnt()==null ? 0 : log.getRequestCnt()+1);
+				if("E".equals(response.getRET())){
+					log.setResponseContent(response.getMSG());
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+					log.setErrorLog(response.getMSG());
+				}else{
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FINISH);
+					log.setErrorLog("");
+				}
+				sapDataDealManager.store(log);
+			}catch(Exception e){
+				e.printStackTrace();
+				log.setSendStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveTime(new Date());
+				callErrorMsg=CommonHelper.getErrorMessageByException(e);
+				callErrorMsg = StringHelper.substring(callErrorMsg, 100);
+				log.setErrorLog(callErrorMsg);
+				sapDataDealManager.store(log);
+			}
+		}
+		else if(Wms2SapInterfaceLogType.KNDBINFO.equals(type) || Wms2SapInterfaceLogType.DBCKINFO.equals(type)){
+			Wms2SapInventoryLedger ledger = (Wms2SapInventoryLedger) XmlObjectConver.fromXML(new Wms2SapInventoryLedger(), xml);
+			com.vtradex.wms.webservice.client.sap.invmove.DTRetMsg response = null;
+			try{
+				response = CallSapWebService.callSapInvMove(ledger);
+				log.setSendStatus(InterfaceLogStatus.STAT_FINISH);
+				log.setReceiveTime(new Date());
+				log.setRequestCnt(log.getRequestCnt()==null ? 0 : log.getRequestCnt()+1);
+				if("E".equals(response.getRET())){
+					log.setResponseContent(response.getMSG());
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+					log.setErrorLog(response.getMSG());
+				}else{
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FINISH);
+					log.setErrorLog("");
+				}
+				sapDataDealManager.store(log);
+			}catch(Exception e){
+				e.printStackTrace();
+				log.setSendStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveTime(new Date());
+				callErrorMsg=CommonHelper.getErrorMessageByException(e);
+				callErrorMsg = StringHelper.substring(callErrorMsg, 100);
+				log.setErrorLog(callErrorMsg);
+				sapDataDealManager.store(log);
+			}
+		}
+		else if(Wms2SapInterfaceLogType.XSJHDINFO.equals(type)){
+			Wms2SapInventoryLedger ledger = (Wms2SapInventoryLedger) XmlObjectConver.fromXML(new Wms2SapInventoryLedger(), xml);
+			com.vtradex.wms.webservice.client.sap.saleoutdelivery.DTRetMsg response = null;
+			try{
+				response = CallSapWebService.callSapOutDelivery(ledger);
+				log.setSendStatus(InterfaceLogStatus.STAT_FINISH);
+				log.setReceiveTime(new Date());
+				log.setRequestCnt(log.getRequestCnt()==null ? 0 : log.getRequestCnt()+1);
+				if("E".equals(response.getRET())){
+					log.setResponseContent(response.getMSG());
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+					log.setErrorLog(response.getMSG());
+				}else{
+					log.setReceiveStatus(InterfaceLogStatus.STAT_FINISH);
+					log.setErrorLog("");
+				}
+				sapDataDealManager.store(log);
+			}catch(Exception e){
+				e.printStackTrace();
+				log.setSendStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveStatus(InterfaceLogStatus.STAT_FAIL);
+				log.setReceiveTime(new Date());
+				callErrorMsg=CommonHelper.getErrorMessageByException(e);
+				callErrorMsg = StringHelper.substring(callErrorMsg, 100);
+				log.setErrorLog(callErrorMsg);
+				sapDataDealManager.store(log);
+			}
+		}
+		if(log.getSendStatus().equals(InterfaceLogStatus.STAT_FAIL)) {
+			throw new BusinessException(callErrorMsg);//如果回调失败  则抛出异常，让thorn_task也失败。
+		}
+	}
+	/**发邮件*/
+	public void sendEmail(Long emailRecordId) {
+		
+		try {
+			emailRecordManager.sendEmail(emailRecordId);
+			emailRecordManager.updateEmailRecordToSucess(emailRecordId);
+			createSupplier2SapInterfacelog(emailRecordId);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			emailRecordManager.updateEmailRecordToFail(emailRecordId,CommonHelper.getErrorMessageByException(e));
+			throw new BusinessException(e);
+		}
+		
+		
+	}
+	
+
+	private void updateInterfaceLogDeailInfo(InterfaceLog log) {
+		log.setDealTime(new Date());
+		
+		//增加处理次数
+		String cnt = log.getFileType(); // 这个是处理次数
+		if(StringHelper.isNullOrEmpty(cnt)) {
+			log.setFileType("0");
+		}
+		cnt = log.getFileType(); // 这个是处理次数
+		Integer deal_cnt =0;
+		try {
+			deal_cnt = Integer.valueOf(cnt);
+	 
+		}
+		catch(Exception e) {
+			deal_cnt =0;
+		}
+		deal_cnt=deal_cnt+1;
+		log.setFileType(deal_cnt+"");
+	}
+	
+ 
+	
+	public InterfaceLog createSapToWmsInterfaceLog(String taskType, String type, String requestXml,String request){
+		return this.createInterfaceLog(taskType, type, InterfaceLogFunction.ASYNC, InterfaceLogSys.SAP_SYS, InterfaceLogSys.WMS_SYS, requestXml,request);
+	}
+	/**
+     * 创建报文
+     * 
+     * @param taskType {@link InterfaceLogTaskType}
+     * @param type {@link InterfaceLogType}
+     * @param function {@link InterfaceLogFunction}
+     * @param fromSys {@link InterfaceLogSys}
+     * @param toSys {@link InterfaceLogSys}
+     * @param requestXml
+     */
+    public InterfaceLog createInterfaceLog(String taskType, String type, String function, String fromSys, String toSys, String requestXml, String request) {
+        try {
+            InterfaceLog interfaceLog = EntityFactory.getEntity(InterfaceLog.class);
+            interfaceLog.setType(type);
+            interfaceLog.setFunction(function);
+            interfaceLog.setFromSYS(fromSys);
+            interfaceLog.setToSYS(toSys);
+            
+            interfaceLog.setRequest(StringHelper.substring(request, 100)); //关键信息 
+            interfaceLog.setRequestContent(XMLHelper.prettyXML(requestXml)); //格式化
+            interfaceLog.setRequestTime(new Date());
+            commonDao.store(interfaceLog);
+            
+            if(InterfaceLogFunction.ASYNC.equals(function)) { //异步方式
+            	createInterfaceLogTask(taskType, interfaceLog.getId(),TaskSubscriber.INTERFACELOG_DEAL); //保存执行报文任务
+            }
+            return interfaceLog;
+        } catch (Exception e) {
+            logger.error("", e);
+            throw new BusinessException("保存报文失败");
+        }
+    }
+    
+    /**更新interfaceLog成成功*/
+    public InterfaceLog updateInterfaceLogToSucess(Long id,String responseXml,String info) {
+        return updateInterfaceLog(id,responseXml,InterfaceLogStatus.STAT_FINISH,info);
+    }
+    
+    /**更新interfaceLog成失败*/
+    public InterfaceLog updateInterfaceLogToFail(Long id,String responseXml,String info) {
+        return updateInterfaceLog(id,responseXml,InterfaceLogStatus.STAT_FAIL,info);
+    }
+    private InterfaceLog updateInterfaceLog(Long id,String responseXml,String status,String info) {
+        InterfaceLog log = commonDao.load(InterfaceLog.class, id);
+        if(log != null) {
+            log.setStatus(status);
+            log.setResponseContent(responseXml);
+            log.setResponseTime(new Date());
+            log.setReference(StringHelper.substring(info, 255)); //关键信息
+        }
+        return log;
+    }
+	
+    /**
+     * 创建报文执行任务
+     * 
+     * @param taskType {@link InterfaceLogTaskType}
+     * @param interfaceLogId
+     */
+    private Task createInterfaceLogTask(String taskType, Long interfaceLogId,String subscriber) {
+        try {
+            Task task = new Task(taskType, subscriber, interfaceLogId);//sub不能为空
+            commonDao.store(task);
+            return task;
+        } catch (Exception e) {
+            logger.error("", e);
+            throw new BusinessException("保存报文执行任务失败");
+        }
+    }
+
+	@Override
+	public Wms2SapInterfaceLog createWmsToSapInterfaceLog(String taskType,String type, String requestXml, Long refrenceId,String request) {
+		return this.createInterfaceLog(taskType, type, InterfaceLogFunction.ASYNC, InterfaceLogSys.WMS_SYS, InterfaceLogSys.SAP_SYS, requestXml,refrenceId,request);
+	}
+
+	private Wms2SapInterfaceLog createInterfaceLog(String taskType,String type, String function, String fromSys, String toSys,String requestXml, Long refrenceId,String request) {
+		try {
+			Wms2SapInterfaceLog interfaceLog = EntityFactory.getEntity(Wms2SapInterfaceLog.class);
+            interfaceLog.setType(type);
+            interfaceLog.setFunction(function);
+            interfaceLog.setFromSYS(fromSys);
+            interfaceLog.setToSYS(toSys);
+            interfaceLog.setRequest(request);
+            interfaceLog.setDocId(refrenceId);//单据对象ID
+            interfaceLog.setRequestContent(XMLHelper.prettyXML(requestXml)); //格式化
+            interfaceLog.setRequestTime(new Date());
+            commonDao.store(interfaceLog);
+            
+            if(InterfaceLogFunction.ASYNC.equals(function)) { //异步方式
+            	createInterfaceLogTask(taskType, interfaceLog.getId(),TaskSubscriber.WMS2SAPINTERFACELOG_DEAL); //保存执行报文任务
+            }
+            return interfaceLog;
+        } catch (Exception e) {
+            logger.error("", e);
+            throw new BusinessException("保存报文失败");
+        }
+	}
+    //创建wms2sapDeliveryOrder
+    @SuppressWarnings("unchecked")
+	public void createWms2SapDeliveryOrder(Long deliveryOrderId){
+    	WmsDeliveryOrder deliveryOrder = commonDao.load(WmsDeliveryOrder.class, deliveryOrderId);
+    	String hql = "from WmsDeliveryOrderDetail detail where detail.deliveryOrder.id =:deliveryOrderId ";
+    	List<WmsDeliveryOrderDetail> details = commonDao.findByQuery(hql, "deliveryOrderId", deliveryOrder.getId());
+    	for(WmsDeliveryOrderDetail dod : details){
+//    		PurchaseOrderDetail pod = commonDao.load(PurchaseOrderDetail.class, dod.getPurchaseOrderDetail().getId());
+    		//创建交货单回传sap报文
+            Wms2SapDeliveryOrder wms2SapDeliveryOrder = new Wms2SapDeliveryOrder();
+            wms2SapDeliveryOrder.setLineNo("1");
+            wms2SapDeliveryOrder.setDoNo(deliveryOrder.getCode());
+            wms2SapDeliveryOrder.setCount("1");
+            wms2SapDeliveryOrder.setCommond(null);
+            wms2SapDeliveryOrder.setDoLineNo(dod.getLineNo()+"");
+            wms2SapDeliveryOrder.setPoNo(dod.getPoNo());
+            wms2SapDeliveryOrder.setPoLineNo(dod.getPoDetailNo());
+            wms2SapDeliveryOrder.setItemCode(dod.getItem().getCode());
+            wms2SapDeliveryOrder.setQuantity(dod.getPlanQuantityBu()+"");
+            wms2SapDeliveryOrder.setUnit(dod.getPackageUnit().getUnit());
+            wms2SapDeliveryOrder.setFactoryCode(dod.getFactory().getCode());
+            wms2SapDeliveryOrder.setLFDAT(DateUtils.getDateStr(deliveryOrder.getDeliveryDate(), "yyyyMMdd"));
+            String xml = XmlObjectConver.toXML(wms2SapDeliveryOrder);
+            createWms2SapInterfaceLog(deliveryOrder.getCode(),InterfaceLogTaskType.SEND_DELIVERY, Wms2SapInterfaceLogType.DELIVERY_DOC, InterfaceLogFunction.ASYNC, InterfaceLogSys.WMS_SYS,InterfaceLogSys.SAP_SYS, xml);
+    	}
+    }
+    
+    public Wms2SapInterfaceLog createWms2SapInterfaceLog(String code,String taskType, String type, String function, String fromSys, String toSys, String requestXml) {
+        try {
+        	Wms2SapInterfaceLog interfaceLog = EntityFactory.getEntity(Wms2SapInterfaceLog.class);
+            interfaceLog.setType(type);
+            interfaceLog.setFunction(function);
+            interfaceLog.setFromSYS(fromSys);
+            interfaceLog.setToSYS(toSys);
+            interfaceLog.setRequestContent(XMLHelper.prettyXML(requestXml)); //格式化
+            interfaceLog.setRequestTime(new Date());
+            interfaceLog.setRequest(code);
+            commonDao.store(interfaceLog);
+            
+            if(InterfaceLogFunction.ASYNC.equals(function)) { //异步方式
+            	createInterfaceLogTask(taskType, interfaceLog.getId(),TaskSubscriber.WMS2SAPINTERFACELOG_DEAL); //保存执行报文任务
+            }
+            return interfaceLog;
+        } catch (Exception e) {
+            logger.error("", e);
+            throw new BusinessException("保存报文失败");
+        }
+    }
+    public void createSupplier2SapInterfacelog(Long emailRecordId){
+    	EmailRecord email = commonDao.load(EmailRecord.class, emailRecordId);
+    	String code = email.getRealateCode();
+    	if(EmailRecordType.PO2SUPPLIER.equals(email.getEmailType())){
+    		Wms2SapSupplierDocStatus wsds = new Wms2SapSupplierDocStatus();
+        	wsds.setType(Wms2SapSupplierDocType.PO);
+        	wsds.setOrderNo(code);
+        	wsds.setStatus(Wms2SapSupplierStatus.SEND);
+        	String xml = XmlObjectConver.toXML(wsds) ;
+        	createWms2SapInterfaceLog(code, InterfaceLogTaskType.SEND_SURPPLIERBUSINESS, Wms2SapInterfaceLogType.SURPPLIERBUSINESSBACK, InterfaceLogFunction.ASYNC, InterfaceLogSys.WMS_SYS, InterfaceLogSys.SAP_SYS, xml);
+    	}
+    	if(EmailRecordType.DELIVERY2SUPPLIER.equals(email.getEmailType())){
+    		Wms2SapSupplierDocStatus wsds = new Wms2SapSupplierDocStatus();
+        	wsds.setType(Wms2SapSupplierDocType.DELIVERY);
+        	wsds.setOrderNo(code);
+        	wsds.setStatus(Wms2SapSupplierStatus.SEND);
+        	String xml = XmlObjectConver.toXML(wsds) ;
+        	createWms2SapInterfaceLog(code, InterfaceLogTaskType.SEND_SURPPLIERBUSINESS, Wms2SapInterfaceLogType.SURPPLIERBUSINESSBACK, InterfaceLogFunction.ASYNC, InterfaceLogSys.WMS_SYS, InterfaceLogSys.SAP_SYS, xml);
+    	}
+    	if(EmailRecordType.CHECKBZSUPPLIER.equals(email.getEmailType()) || EmailRecordType.CHECKJSSUPPLIER.equals(email.getEmailType())){
+    		Wms2SapSupplierDocStatus wsds = new Wms2SapSupplierDocStatus();
+        	wsds.setType(Wms2SapSupplierDocType.CHECKORDER);
+        	wsds.setOrderNo(code);
+        	wsds.setStatus(Wms2SapSupplierStatus.SEND);
+        	String xml = XmlObjectConver.toXML(wsds) ;
+        	createWms2SapInterfaceLog(code, InterfaceLogTaskType.SEND_SURPPLIERBUSINESS, Wms2SapInterfaceLogType.SURPPLIERBUSINESSBACK, InterfaceLogFunction.ASYNC, InterfaceLogSys.WMS_SYS, InterfaceLogSys.SAP_SYS, xml);
+    	}
+    }
+}

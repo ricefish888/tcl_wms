@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsProductionOrderMeetInfoPage" title="maintainWmsProductionOrderMeetInfoPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.order.WmsProductionOrderMeetInfo" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT 
+meetInfo.id,
+meetInfo.warehouse.name,
+meetInfo.checkDate,
+meetInfo.type,
+meetInfo.beMeet,
+meetInfo.status,
+meetInfo.isNewFlag,
+meetInfo.orderCode,
+meetInfo.item.code,
+meetInfo.item.name,
+meetInfo.planQty,
+meetInfo.shipQty,
+meetInfo.invQty,
+meetInfo.shortQty,
+meetInfo.beginDate,
+meetInfo.endDate,
+meetInfo.detailId,
+meetInfo.factory.code,
+meetInfo.factory.name,
+meetInfo.packageUnit.unit,
+meetInfo.reservedOrder,
+meetInfo.reservedProject,
+meetInfo.productLine,
+meetInfo.lineDesc
+FROM WmsProductionOrderMeetInfo meetInfo
+LEFT JOIN meetInfo.item
+LEFT JOIN meetInfo.factory
+LEFT JOIN meetInfo.packageUnit
+LEFT JOIN meetInfo.warehouse
+ WHERE 1=1 
+ AND meetInfo.warehouse.baseOrganization.id = #{SESSION_BASE_ORGAN}
+ ORDER BY meetInfo.id DESC
+ ]]></datasource>
+        <columns>
+            <column id="meetInfo.id" title="meetInfo.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="meetInfo.warehouse.name" title="meetInfo.warehouse.name" width="80" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>              
+            <column id="meetInfo.checkDate" title="meetInfo.checkDate" visible="true"  width="90"  sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="meetInfo.type" title="meetInfo.type" width="80" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsProductionOrderMeetInfoType"/>
+            <column id="meetInfo.beMeet" title="meetInfo.beMeet" width="80" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="booleanFormat"/>
+            <column id="meetInfo.status" title="meetInfo.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="ProductionOrderMeetInfoStatus"/>
+            <column id="meetInfo.isNewFlag" title="meetInfo.isNewFlag" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="booleanFormat"/>           
+            <column id="meetInfo.orderCode" title="meetInfo.orderCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="meetInfo.item.code" title="meetInfo.item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="meetInfo.item.name" title="meetInfo.item.name" width="250"  visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>   
+            <column id="meetInfo.planQty" title="meetInfo.planQty" width="80" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="meetInfo.shipQty" title="meetInfo.shipQty" width="80" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="meetInfo.invQty" title="meetInfo.invQty" width="80" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="meetInfo.shortQty" title="meetInfo.shortQty" width="80" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="meetInfo.beginDate" title="meetInfo.beginDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m"/>
+            <column id="meetInfo.endDate" title="meetInfo.endDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m"/>
+            <column id="meetInfo.detailId" title="meetInfo.detailId" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="meetInfo.factory.code" title="meetInfo.factory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="meetInfo.factory.name" title="meetInfo.factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>      
+            <column id="meetInfo.packageUnit.unit" title="meetInfo.packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="meetInfo.reservedOrder" title="meetInfo.reservedOrder" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="meetInfo.reservedProject" title="meetInfo.reservedProject" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="meetInfo.productLine" title="meetInfo.productLine" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="meetInfo.lineDesc" title="meetInfo.lineDesc" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+        </columns>
+    </maintainPage>
+</pages>

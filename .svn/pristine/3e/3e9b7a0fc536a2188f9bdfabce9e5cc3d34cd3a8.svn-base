@@ -1,0 +1,41 @@
+package com.vtradex.wms.server.service.pickticket;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import com.vtradex.wms.server.model.entity.pickticket.WmsPickTicket;
+
+public interface WmsTclPickticketManager {
+	
+	@Transactional
+	void pickTicketconvertWarehouse(WmsPickTicket wmsPickTicket);
+	
+	
+	
+	
+	/**
+	 * 
+	 * @Title: supplyWarehouseReplenish
+	 * 
+	 * @Description: 供货仓拉动补货
+	 * 
+	 * @return void    
+	 *
+	 * @throws 
+	 *
+	 * @author <a href="mailto:xu.feng@vtradex.com"/>冯旭/a>
+	 *
+	 * @date 2017年6月20日 10:08:56
+	 */
+	@Transactional
+	void supplyWarehouseReplenish(WmsPickTicket wmsPickTicket);
+	
+	  
+	/**
+	 * 保存拣货单
+	 * xiang.li 2017年8月7日11:16:51
+	 */
+	@Transactional
+	void storePickTicket(WmsPickTicket pickTicket);
+	
+
+}

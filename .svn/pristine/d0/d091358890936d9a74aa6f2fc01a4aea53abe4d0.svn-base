@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsShippingLotTruckPage" title="maintainWmsShippingLotTruckPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.base.WmsShippingLotTruck" width="500" height="300" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT 
+wslt.id,
+wslt.location.code,
+wslt.company.name,
+wslt.warehouse.name,
+wslt.item.code,
+wslt.item.name,
+wslt.packageUnit.unit,
+wslt.billType,
+wslt.relateCode,
+wslt.realteId,
+wslt.subRelateId,
+wslt.lineNo,
+wslt.qty,
+wslt.returnQty,
+wslt.inventoryStatus,
+wslt.lotInfo.storageDate,
+wslt.lotInfo.productDate,
+wslt.lotInfo.expireDate,
+wslt.lotInfo.qaDate,
+wslt.lotInfo.lot,
+wslt.lotInfo.supplierCode,
+wslt.lotInfo.extendPropC9,
+wslt.lotInfo.extendPropC8,
+wslt.lotInfo.extendPropC10,
+wslt.lotInfo.extendPropC11,
+wslt.lotInfo.extendPropC12,
+wslt.lotInfo.extendPropC17,
+wslt.updateInfo.creator,
+wslt.updateInfo.createdTime,
+wslt.updateInfo.lastOperator,
+wslt.updateInfo.updateTime
+FROM WmsShippingLotTruck wslt
+LEFT JOIN  wslt.warehouse
+LEFT JOIN  wslt.company
+LEFT JOIN  wslt.location
+LEFT JOIN  wslt.item
+LEFT JOIN  wslt.packageUnit
+WHERE 1=1
+ORDER BY wslt.id DESC]]></datasource>
+        <columns>
+            <column id="wslt.id" title="wslt.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="wslt.location.code" title="wslt.location.code" width="80" visible="true" sortable="true" horizonAlign="center" dataType="string"/>
+            <column id="wslt.company.name" title="wslt.company.name" visible="false" sortable="true" horizonAlign="center" dataType="string"/>
+            <column id="wslt.warehouse.name" title="wslt.warehouse.name" width="80" visible="true" sortable="true" horizonAlign="center" dataType="string"/>
+            <column id="wslt.item.code" title="wslt.item.code" visible="true" sortable="true" horizonAlign="center" dataType="string"/> 
+            <column id="wslt.item.name" title="wslt.item.name" visible="true" sortable="true" horizonAlign="center" dataType="string"/>
+            <column id="wslt.packageUnit.unit" title="wslt.packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wslt.billType" title="wslt.billType" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsShippingLotTruckBillType"/>
+            <column id="wslt.relateCode" title="wslt.relateCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/> 
+            <column id="wslt.realteId" title="wslt.realteId" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="wslt.subRelateId" title="wslt.subRelateId" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>           
+            <column id="wslt.lineNo" title="wslt.lineNo" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wslt.qty" title="wslt.qty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>        
+            <column id="wslt.returnQty" title="wslt.returnQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>    
+            <column id="wslt.inventoryStatus" title="wslt.inventoryStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>            
+            <column id="wslt.lotInfo.storageDate" title="wslt.lotInfo.storageDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="wslt.lotInfo.productDate" title="wslt.lotInfo.productDate" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="wslt.lotInfo.expireDate" title="wslt.lotInfo.expireDate" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="wslt.lotInfo.qaDate" title="wslt.lotInfo.qaDate" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>           
+            <column id="wslt.lotInfo.lot" title="wslt.lotInfo.lot" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wslt.lotInfo.supplierCode" title="wslt.lotInfo.supplierCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wslt.lotInfo.extendPropC9" title="wslt.lotInfo.extendPropC9" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wslt.lotInfo.extendPropC8" title="wslt.lotInfo.extendPropC8" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsFactoryXmlb"/>
+            <column id="wslt.lotInfo.extendPropC10" title="wslt.lotInfo.extendPropC10" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wslt.lotInfo.extendPropC11" title="wslt.lotInfo.extendPropC11" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wslt.lotInfo.extendPropC12" title="wslt.lotInfo.extendPropC12" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>           
+            <column id="wslt.lotInfo.extendPropC17" title="wslt.lotInfo.extendPropC17" width="210" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>            
+            <column id="wslt.updateInfo.creator" title="wslt.updateInfo.creator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wslt.updateInfo.createdTime" title="wslt.updateInfo.createdTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="wslt.updateInfo.lastOperator" title="wslt.updateInfo.lastOperator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wslt.updateInfo.updateTime" title="wslt.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+          </columns>
+    </maintainPage>
+</pages>

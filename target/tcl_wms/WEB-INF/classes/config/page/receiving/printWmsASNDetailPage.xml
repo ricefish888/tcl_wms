@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="printWmsASNDetailPage" title="printWmsASNDetailPage" entityClass="com.vtradex.wms.server.model.entity.receiving.WmsASNDetail" width="230" height="250">
+        <workflow/>
+         <initListeners>
+            <initListener id="printNumber" managerName="wmsTclASNManager" methodName="getQuantity" newEnabled="false" editEnabled="true"/>
+        </initListeners>
+        <inputUIs>
+            <hidden id="asnDetail.id" title="asnDetail.id" reserve="false"/>
+            <numberText id="printNumber" title="printNumber"  span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" validator="nonNegativeNumber" returnType="Integer">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </numberText>
+        </inputUIs>
+    </editPage>
+</pages>

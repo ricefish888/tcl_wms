@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainQCRegPage">
+    <main>
+        <process id="wmsASNProcess">
+            <tablePopup id="qcConfirm" title="qcConfirm" process="wmsASNProcess.qcConfirm" enableType="single" containId="true" pageId="editQCInvStaRegPage">
+                <enableExpression/>
+            </tablePopup>
+        </process>
+    </main>
+    <detail/>
+</page>

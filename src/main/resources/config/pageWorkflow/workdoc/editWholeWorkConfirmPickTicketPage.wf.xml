@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editWholeWorkConfirmPickTicketPage">
+    <main>
+        <process id="wmsPutawayWorkDocProcess">
+            <formCommit id="confirm" title="confirm" process="wmsPutawayWorkDocProcess.confirm" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="none">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="maintainPickTicketWorkDocPage.ids" className="string">
+                        <entries/>
+                    </mapping>
+                    <mapping id="workerId" className="long">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsTclWorkDocManager" methodName="confirmAllPortal" parameter="maintainPickTicketWorkDocPage.ids,workerId"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="false" editEnabled="true"/>
+                    <forward name="closeWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 显示作业单信息 -->
+<RFFormPage id="tclCreateQuickShippingPage3" title="tclCreateQuickShippingPage3">
+	<RFDisplay id="workDocItemDisplay" load="tclRfBolManager.bolInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			交接单号：{bolCode}
+			类型:{bolType}
+			{itemInfos}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>	
+		   	交接单号：{bolCode}
+		   	类型:{bolType}
+			{itemInfos}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<buttons>
+			<RFButton id="createQuickShippingScan" title="createQuickShippingScan" action="tclRfBolManager.createQuickShippingByBol" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

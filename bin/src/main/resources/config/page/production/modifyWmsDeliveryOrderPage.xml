@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <modifyDetailPage id="modifyWmsDeliveryOrderPage" title="modifyWmsDeliveryOrderPage" entityClass="com.vtradex.wms.server.model.entity.production.WmsDeliveryOrder" onClose="refreshParent" width="850" height="650">
+        <initListeners/>
+        <modify>
+            <inputUIs>
+                <hidden id="deliveryOrder.id" reserve="false"/>
+                <text id="deliveryOrder.code" title="deliveryOrder.code" row="1" col="1" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <remote id="deliveryOrder.warehouse.id" title="deliveryOrder.warehouse.id" row="1" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="仓库ID,仓库编码,仓库名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[ select w.id,
+ w.code,
+ w.name
+ from WmsWarehouse w 
+ where w.name like:param  
+ ]]></hql>
+                    <eventListeners/>
+                </remote>
+                <remote id="deliveryOrder.supplier.id" title="deliveryOrder.supplier.id" row="1" col="3" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="供应商ID,供应商编码,供应商名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[ select w.id,
+ w.code,
+ w.name
+ from WmsSupplier w 
+ where w.name like:param  
+ ]]></hql>
+                    <eventListeners/>
+                </remote>
+                <text id="deliveryOrder.project" title="deliveryOrder.project" row="1" col="4" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <date id="deliveryOrder.deliveryDate" title="deliveryOrder.deliveryDate" row="1" col="5" span="1" width="120" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" showTime="false" manualEditable="true" defaultCurrentDate="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </date>
+            </inputUIs>
+        </modify>
+        <detail entityClass="com.vtradex.wms.server.model.entity.production.WmsDeliveryOrderDetail">
+            <datasource><![CDATA[SELECT wdod.id,wdod.lineNo,purchaseOrder.code,item.code,item.name,factory.code,factory.name,wdod.kcdd,wdod.planQuantityBu,wdod.delivedQuantityBu,wdod.theDeliveryQuantityBu,packageUnit.unit,wdod.remark  FROM WmsDeliveryOrderDetail wdod
+ LEFT JOIN wdod.deliveryOrder deliveryOrder
+ LEFT JOIN wdod.purchaseOrderDetail.purchaseOrder purchaseOrder
+ LEFT JOIN wdod.item item
+ LEFT JOIN wdod.factory factory
+ LEFT JOIN wdod.packageUnit packageUnit
+ WHERE 1=1 AND  wdod.deliveryOrder.id = {deliveryOrder.id}]]></datasource>
+            <columns>
+                <column id="wdod.id" title="wdod.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+                <column id="wdod.lineNo" title="wdod.lineNo" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+                <column id="purchaseOrder.code" title="purchaseOrder.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="factory.code" title="factory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="factory.name" title="factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="wdod.kcdd" title="wdod.kcdd" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="wdod.planQuantityBu" title="wdod.planQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="wdod.delivedQuantityBu" title="wdod.delivedQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="wdod.theDeliveryQuantityBu" title="wdod.theDeliveryQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="packageUnit.unit" title="packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="wdod.remark" title="wdod.remark" visible="true" sortable="true" horizonAlign="center" verticalAlign="string"/>
+            </columns>
+        </detail>
+    </modifyDetailPage>
+</pages>

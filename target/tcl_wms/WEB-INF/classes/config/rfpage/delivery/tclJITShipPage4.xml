@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--输入页面模板 -->
+<RFFormPage id="tclJITShipPage4" title="tclJITShipPage4">
+	<RFDisplay id="deliveryDisplay" load="tclRfBolManager.showPodInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			工单号:{poCode}
+			物料编码:{itemCode}
+			物料名称:{itemName}
+			计划数量:{planQty}
+			待分配数量:{allocatedQty}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>
+			工单号:{poCode}
+			物料编码:{itemCode}
+			物料名称:{itemName}
+			计划数量:{planQty}
+			待分配数量:{allocatedQty}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="allocatedQtyInput" title="allocatedQtyInput" tip="allocatedQtyInput" onFoucs="true">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="addDetailBt" title="addDetailBt" action="tclRfBolManager.addPodDetail" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Delivery交货输入页面模板 -->
+<RFFormPage id="tclDeliveryAllOutRFPage" title="tclDeliveryAllOutRFPage">
+	<RFForm>
+		<inputs> 
+			<RFText id="deliveryCodeInput" title="deliveryCodeInput" tip="deliveryCodeInput" onFoucs="false">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="deliveryCodeScanBt" title="deliveryCodeScanBt" action="tclRfBolManager.deliveryCodeInputCommit" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>
+	

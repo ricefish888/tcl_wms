@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsItemKeeperPage" title="maintainWmsItemKeeperPage" mainEntrance="true" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.base.WmsItemKeeper">
+        <workflow/>
+        <datasource><![CDATA[SELECT keep.id,
+warehouse.name,         
+item.code,        
+item.name, 
+factory.code,
+factory.name,
+keeper.name, 
+keep.status
+ FROM WmsItemKeeper keep
+ LEFT JOIN keep.item item
+ LEFT JOIN keep.warehouse warehouse
+ LEFT JOIN keep.factory factory
+ LEFT JOIN keep.keeper keeper
+ WHERE 1=1  
+ ]]></datasource>
+        <columns>
+            <column id="keep.id" title="keep.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="warehouse.name" title="warehouse.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>            
+            <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.name" title="item.name" width="250" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="factory.code" title="factory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="factory.name" title="factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="keeper.name" title="keeper.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="keep.status" title="keep.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsSapWarehouseStatus"/>
+        </columns>
+    </maintainPage>
+</pages>

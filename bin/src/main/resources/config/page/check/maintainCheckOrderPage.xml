@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainCheckOrderPage" title="maintainCheckOrderPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.order.WmsCheckOrder" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT checkOrder.id,
+supplier.name,
+checkOrder.code,
+checkOrder.xmlb,
+checkOrder.filename,
+checkOrder.filepath,
+checkOrder.status,
+checkOrder.updateInfo.creator,
+checkOrder.updateInfo.createdTime,
+checkOrder.updateInfo.lastOperator,
+checkOrder.updateInfo.updateTime,
+checkOrder.confirmor,
+checkOrder.confrimTime
+ FROM WmsCheckOrder checkOrder 
+ LEFT JOIN checkOrder.supplier supplier
+ WHERE 1=1 
+ ORDER BY checkOrder.id DESC
+ ]]></datasource>
+        <columns>
+            <column id="checkOrder.id" title="checkOrder.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="supplier.name" title="supplier.name" visible="true" width="200" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="checkOrder.code" title="checkOrder.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="checkOrder.xmlb" title="checkOrder.xmlb" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsFactoryXmlb"/>
+            <column id="checkOrder.filename" title="checkOrder.filename" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="checkOrder.filepath" title="checkOrder.filepath" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="checkOrder.status" title="checkOrder.status" width="150" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsCheckOrderStatus"/>
+            <column id="checkOrder.updateInfo.creator" title="checkOrder.updateInfo.creator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="checkOrder.updateInfo.createdTime" title="checkOrder.updateInfo.createdTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="checkOrder.updateInfo.lastOperator" title="checkOrder.updateInfo.lastOperator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="checkOrder.updateInfo.updateTime" title="checkOrder.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="checkOrder.confirmor" title="checkOrder.confirmor" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="checkOrder.confrimTime" title="checkOrder.confrimTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+        </columns>
+    </maintainPage>
+</pages>

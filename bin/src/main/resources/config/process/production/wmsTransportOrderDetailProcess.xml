@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="wmsTransportOrderDetailProcess" control="-">
+
+	<task id="new" title="新建">		
+	</task>
+	
+	<task id="edit" title="修改">
+	</task>
+
+	<task id="save" title="保存">	
+	</task>
+	
+
+	<task id="delete" title="删除">		
+	</task>
+
+</process>

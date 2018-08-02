@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <modifyDetailPage id="editWmsItemPage" title="editWmsItemPage" entityClass="com.vtradex.wms.server.model.entity.item.WmsItem" width="680" height="530">
+        <initListeners>
+            <initListener id="companyId" managerName="wmsItemManager" methodName="getCompany" editEnabled="true"/>
+        </initListeners>
+        <modify>
+            <inputUIs>
+                <hidden id="item.id" title="item.id" reserve="false"/>
+                <remote id="companyId" title="item.company.id" row="1" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="uneditable" language="false" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,编码,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT company.id, company.code, company.name
+ FROM WmsCompany company
+ WHERE (company.code LIKE :param OR company.name LIKE :param)
+ AND company.status = 'ENABLED'
+ AND company.type='N'
+ AND company.id in (select wareCompany.company.id from WmsWarehouseCompany wareCompany where wareCompany.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN})]]></hql>
+                    <eventListeners>
+                        <eventListener id="item.lotRule.id" index="1" refreshUI="true"/>
+                        <eventListener id="item.countLotRule.id" index="1" refreshUI="true"/>
+                    </eventListeners>
+                </remote>
+                <text id="item.code" title="item.code" row="1" col="2" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="item.barCode" title="item.barCode" row="1" col="3" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="item.name" title="item.name" row="2" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="item.baseUnit" title="item.baseUnit" row="2" col="2" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <list id="item.lotRule.id" title="item.lotRule.id" row="2" col="3" span="1" width="120" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                    <visibleExpression/>
+                    <hql><![CDATA[ SELECT lotRule.id,lotRule.name 
+ FROM WmsLotRule lotRule
+ WHERE 
+ lotRule.status = 'ENABLED'
+ AND lotRule.masterGroup.id in (select company.masterGroup.id from WmsCompany company where company.id= cast(${companyId} as integer))
+ order by lotRule.id]]></hql>
+                    <eventListeners/>
+                </list>
+                <numberText id="item.validPeriod" title="item.validPeriod" row="3" col="1" defaultValue="0" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" validator="nonNegativeIntegerRequired" language="false">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </numberText>
+                <numberText id="item.contigroupsValidityPeriod" title="item.contigroupsValidityPeriod" row="3" col="2" defaultValue="0" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" validator="nonNegativeIntegerRequired" language="false">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </numberText>
+                <list id="item.countLotRule.id" title="item.countLotRule.id" row="3" col="3" span="1" width="120" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                    <visibleExpression/>
+                    <hql><![CDATA[ SELECT lotRule.id,lotRule.name 
+ FROM WmsLotRule lotRule
+ WHERE 
+ lotRule.status = 'ENABLED'
+ AND lotRule.masterGroup.id in (select company.masterGroup.id from WmsCompany company where company.id= cast(${companyId} as integer))
+ order by lotRule.id]]></hql>
+                    <eventListeners/>
+                </list>
+                <text id="item.classabc" title="item.classabc" row="4" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="item.class1" title="item.class1" row="4" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="item.class2" title="item.class2" row="4" col="3" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="item.class3" title="item.class3" row="5" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="item.class4" title="item.class4" row="5" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="item.class5" title="item.class5" row="5" col="3" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <numberText id="item.weight" title="item.weight" row="6" col="1" defaultValue="0" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" returnType="Double" decimal="3">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </numberText>
+                <numberText id="item.volume" title="item.volume" row="6" col="2" defaultValue="0" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" returnType="Double" decimal="3">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </numberText>
+                <numberText id="item.buPrecision" title="item.buPrecision" row="6" col="3" defaultValue="2" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" returnType="Integer">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </numberText>
+                <text id="item.putawayGroup" title="item.putawayGroup" row="7" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="item.allocationGroup" title="item.allocationGroup" row="7" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <!-- <text id="item.userFieldD1" title="item.userFieldD1" row="7" col="3" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text> -->
+                <numberText id="item.userFieldD1" title="item.userFieldD1" row="7" col="3"  defaultValue="0" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </numberText>
+                <text id="item.barCode2" title="item.barCode2" row="8" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="item.hsCode" title="item.hsCode" row="8" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="item.hsName" title="item.hsName" row="8" col="3" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <checkbox id="item.isHazardous" title="item.isHazardous" row="9" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </checkbox>
+                <checkbox id="item.allowCross" title="item.allowCross" row="9" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </checkbox>
+                <text id="item.qcClass" title="item.qcClass" row="9" col="3" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <list id="item.userFieldV1" title="item.userFieldV1" row="10" col="1" span="1" width="120" readOnly="false" required="false" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false" enumType="WmsItemHandOverAtt">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT 
+ enumerate.enumValue,
+ enumerate.enumValue FROM Enumerate enumerate 
+ where enumerate.enumType = 'WmsItemHandOverAtt']]></hql>
+                    <eventListeners/>
+                </list>
+                <list id="item.userFieldV2" title="item.userFieldV2" row="10" col="2" span="1" width="120" readOnly="false" required="false" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false" enumType="WmsItemJITAtt">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT 
+ enumerate.enumValue,
+ enumerate.enumValue FROM Enumerate enumerate 
+ where enumerate.enumType = 'WmsItemJITAtt']]></hql>
+                    <eventListeners/>
+                </list>
+                <list id="item.userFieldV3" title="item.userFieldV3" row="10" col="3" span="1" width="120" readOnly="false" required="false" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false" enumType="WmsItemUnPackingAtt">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT 
+ enumerate.enumValue,
+ enumerate.enumValue FROM Enumerate enumerate 
+ where enumerate.enumType = 'WmsItemUnPackingAtt']]></hql>
+                    <eventListeners/>
+                </list>
+                <text id="item.description" title="item.description" row="11" col="1" span="2" width="400" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <list id="item.userFieldV10" title="item.userFieldV10" row="11" col="2" span="1" width="120" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false" enumType="WmsItemScanCode">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT 
+ enumerate.enumValue,
+ enumerate.enumValue FROM Enumerate enumerate 
+ where enumerate.enumType = 'WmsItemScanCode']]></hql>
+                    <eventListeners/>
+                </list>
+            </inputUIs>
+        </modify>
+        <detail autoQuery="false" gridHeight="150">
+            <datasource><![CDATA[SELECT packageUnit.id,packageUnit.unit,packageUnit.convertFigure,packageUnit.length,packageUnit.width,packageUnit.height,packageUnit.weight,packageUnit.volume,packageUnit.unitLevel,packageUnit.description  FROM WmsPackageUnit packageUnit
+ WHERE 1=1
+ /~item.id:AND packageUnit.item.id = {item.id} ~/
+ ORDER BY packageUnit.id ASC]]></datasource>
+            <columns>
+                <column id="packageUnit.id" title="ID" visible="false" sortable="true"/>
+                <column id="packageUnit.unit" title="packageUnit.unit" visible="true" sortable="true" horizonAlign="center"/>
+                <column id="packageUnit.convertFigure" title="packageUnit.convertFigure" visible="true" sortable="true" horizonAlign="center"/>
+                <column id="packageUnit.length" title="packageUnit.length" visible="true" sortable="true" horizonAlign="center"/>
+                <column id="packageUnit.width" title="packageUnit.width" visible="true" sortable="true" horizonAlign="center"/>
+                <column id="packageUnit.height" title="packageUnit.height" visible="true" sortable="true" horizonAlign="center"/>
+                <column id="packageUnit.weight" title="packageUnit.weight" visible="true" sortable="true" horizonAlign="center"/>
+                <column id="packageUnit.volume" title="packageUnit.volume" visible="true" sortable="true" horizonAlign="center"/>
+                <column id="packageUnit.unitLevel" title="packageUnit.unitLevel" visible="true" sortable="true" horizonAlign="center"/>
+                <column id="packageUnit.description" title="packageUnit.description" visible="true" sortable="true" horizonAlign="center"/>
+            </columns>
+        </detail>
+    </modifyDetailPage>
+</pages>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 标准拣货输入库位 -->
+<RFFormPage id="pickRFLocationPage" title="pickRFLocationPage">
+	<RFDisplay id="pickDisplay" load="tclRfPickticketManager.showWorkDocInfos">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+		             拣货单号:{workCode}
+		             产线:{productLine}
+		             产线描述:{lineStr}
+		             工单号:{poCode}              
+			收货人:{customer}
+			订单日期:{orderDate}
+			{itemInfos}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>	
+		             拣货单号:{workCode}
+		             产线:{productLine}
+		             产线描述:{lineStr}
+		             工单号:{poCode}              
+			收货人:{customer}
+			订单日期:{orderDate}
+			{itemInfos}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="pickLocInput" title="pickLocInput" tip=""
+				 onFoucs="true">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="pickLocationScan" title="pickLocationScan" action="rfPickticketManager.inputLocationCommit" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

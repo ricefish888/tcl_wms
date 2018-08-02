@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsJITDownLineRecordPage" title="maintainWmsJITDownLineRecordPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.receiving.WmsJITDownLineRecord" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT 
+linerecord.id,
+linerecord.asnCode,
+item.code,
+item.name,
+detail.expectedPackQty,
+linerecord.backQuantity,
+linerecord.updateInfo.creator,
+linerecord.updateInfo.createdTime,
+linerecord.updateInfo.lastOperator,
+linerecord.updateInfo.updateTime
+FROM WmsJITDownLineRecord linerecord 
+LEFT JOIN linerecord.detail detail 
+LEFT JOIN linerecord.detail.item item  
+WHERE 1=1 
+ORDER BY linerecord.id DESC
+ ]]></datasource>
+        <columns>
+            <column id="linerecord.id" title="linerecord.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="linerecord.asnCode" title="linerecord.asnCode" visible="true"  sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.name" title="item.name"  visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="detail.expectedPackQty" title="detail.expectedPackQty"  visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="6"/>
+            <column id="linerecord.backQuantity" title="linerecord.backQuantity"  visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="6"/>
+            <column id="linerecord.updateInfo.creator" title="linerecord.updateInfo.creator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="linerecord.updateInfo.createdTime" title="linerecord.updateInfo.createdTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="linerecord.updateInfo.lastOperator" title="linerecord.updateInfo.lastOperator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="linerecord.updateInfo.updateTime" title="linerecord.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+        </columns>
+    </maintainPage>
+</pages>

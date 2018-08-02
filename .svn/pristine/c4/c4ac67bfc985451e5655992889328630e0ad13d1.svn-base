@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsBOLDetailPage" title="maintainWmsBOLDetailPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.bol.WmsBol" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT
+bolDetail.id,
+bol.code,
+keeper.name,
+pickTicket.code,
+pickTicketDetail.lineNo,
+item.code,
+item.name,
+bolDetail.planQty,
+bolDetail.pickedQty,
+masterBol.code,
+bol.status,
+bol.qty,
+(select sum(bolDetail.pickedQty) from WmsBolDetail bolDetail where bolDetail.bol=bol) as bolPickedQty,
+customer.name,
+bol.shipToName,
+bol.expectedDeliveryTime,
+bol.actualDeliveryTime,
+bol.expectedArriveTime,
+bol.actualArriveTime,
+bol.palletCode,
+bol.containerCode,
+bol.remark,
+bol.updateInfo.creator,
+bol.updateInfo.createdTime,
+bol.updateInfo.lastOperator, 
+bol.updateInfo.updateTime
+ FROM WmsBolDetail bolDetail
+ LEFT JOIN bolDetail.bol bol
+ LEFT JOIN bolDetail.pickTicketDetail pickTicketDetail
+ LEFT JOIN bolDetail.pickTicketDetail.pickTicket pickTicket
+ LEFT JOIN bolDetail.pickTicketDetail.item item
+ LEFT JOIN bol.masterBol masterBol
+ LEFT JOIN bol.customer customer
+ LEFT JOIN bol.warehouse warehouse
+ LEFT JOIN bol.keeper keeper
+ WHERE 1=1
+ AND warehouse.baseOrganization = #{SESSION_BASE_ORGAN}
+ AND bol.type = 'BOL'
+ ORDER BY bol.id DESC
+ ]]></datasource>
+        <columns>
+            <column id="bolDetail.id" title="ID" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+            <column id="bol.code" title="bol.code" width="150" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="keeper.name" title="keeper.name" width="100" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="pickTicket.code" title="pickTicket.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+            <column id="pickTicketDetail.lineNo" title="pickTicketDetail.lineNo" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+            <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+            <column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+            <column id="bolDetail.planQty" title="bolDetail.planQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+            <column id="bolDetail.pickedQty" title="qty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>           
+            <column id="masterBol.code" title="masterBol.code" width="200" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="bol.status" title="bol.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsBolStatus"/>
+            <column id="bol.qty" title="bol.qty" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="3"/>
+            <column id="bolPickedQty" title="bolPickedQty" visible="false" sortable="false" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="3"/>
+            <column id="customer.name" title="customer.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="bol.shipToName" title="bol.shipToName" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="bol.expectedDeliveryTime" title="bol.expectedDeliveryTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m:s"/>
+            <column id="bol.actualDeliveryTime" title="bol.actualDeliveryTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m:s"/>
+            <column id="bol.expectedArriveTime" title="bol.expectedArriveTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m:s"/>
+            <column id="bol.actualArriveTime" title="bol.actualArriveTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m:s"/>
+            <column id="bol.palletCode" title="bol.palletCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="bol.containerCode" title="bol.containerCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="bol.remark" title="bol.remark" width="200" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>           
+            <column id="bol.updateInfo.creator" title="bol.updateInfo.creator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="bol.updateInfo.createdTime" title="bol.updateInfo.createdTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m:s"/>
+            <column id="bol.updateInfo.lastOperator" title="bol.updateInfo.lastOperator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="bol.updateInfo.updateTime" title="bol.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m:s"/>
+        </columns>
+    </maintainPage>
+</pages>

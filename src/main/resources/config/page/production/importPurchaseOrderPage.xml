@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    
+     <editPage id="importPurchaseOrderPage" title="importPurchaseOrderPage">
+        <inputUIs>
+            <file id="import.file.name" title="import.file.name" row="1" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" inVisible="false" showImage="false" storeDir="TEMP_FILE_DIR" fileSize="22577152"/>
+        </inputUIs>
+    </editPage>
+</pages>

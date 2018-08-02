@@ -1,0 +1,21 @@
+package com.vtradex.wms.webservice.utils;
+
+public class CommonHelper {
+    /**
+     * @Description:   递归获取错误信息 传入一个excpetion
+     * @Author:        <a href="xuyan.xia@vtradex.net">夏绪焰</a>
+     * @CreateDate:    Nov 19, 2012 3:08:37 PM
+     * @param e
+     * @return:
+     */
+    public static String getErrorMessageByException(Throwable e) {
+        if(e==null) {
+            return null;
+        }
+        if(e.getMessage()==null && e.getCause()!=null) {
+            return getErrorMessageByException(e.getCause());
+        }
+        return e.getMessage();
+    }
+    
+}

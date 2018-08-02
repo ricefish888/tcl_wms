@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsProductionOrderCheckPage" title="maintainWmsProductionOrderCheckPage" mainEntrance="true" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.base.WmsProductionOrderCheck">
+        <workflow/>
+        <datasource><![CDATA[SELECT check.id,
+check.code,
+check.productionDate,
+check.userCode,
+check.checkTime
+ FROM WmsProductionOrderCheck check
+ WHERE 1=1  
+ ORDER BY check.id]]></datasource>
+        <columns>
+            <column id="check.id" title="check.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="check.code" title="check.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="check.productionDate" title="check.productionDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="check.userCode" title="check.userCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="check.checkTime" title="check.checkTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            
+        </columns>
+    </maintainPage>
+</pages>

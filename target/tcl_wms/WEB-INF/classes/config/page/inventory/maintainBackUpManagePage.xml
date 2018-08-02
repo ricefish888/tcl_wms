@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainBackUpManagePage" title="maintainBackUpManagePage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.inventory.WmsInventory" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT inventory.id,
+inventory.location.code,
+inventory.location.type,
+inventory.company.name,
+inventory.relatedBillCode,
+inventory.relatedBillType,
+inventory.itemKey.lotInfo.extendPropC13,
+inventory.itemKey.lotInfo.extendPropC14,
+inventory.pallet,
+inventory.carton,
+inventory.item.code,
+inventory.item.name,
+inventory.packageUnit.unit,
+inventory.packQty,
+inventory.qty,
+inventory.qty AS inventoryCancelQty,
+inventory.status,
+inventory.itemKey.lotInfo.storageDate,
+inventory.itemKey.lotInfo.productDate,
+inventory.itemKey.lotInfo.lot,
+inventory.itemKey.lotInfo.soiCode,	
+inventory.itemKey.lotInfo.asnCustomerBill,
+inventory.itemKey.lotInfo.supplierCode,
+inventory.itemKey.lotInfo.serialNo,
+inventory.itemKey.lotInfo.extendPropC1,
+inventory.itemKey.lotInfo.extendPropC2,
+inventory.itemKey.lotInfo.extendPropC3,
+inventory.itemKey.lotInfo.extendPropC4,
+inventory.operationStatus,
+(select distinct userField3 from WmsPickTicket p where p.code=inventory.relatedBillCode) as billType ,
+inventory.warehouse.code 
+ FROM WmsInventory inventory
+ LEFT JOIN inventory.task
+ WHERE 1=1
+ AND inventory.packQty>0
+ AND (
+ 	(inventory.location.type = 'HANDOVER' AND inventory.operationStatus ='NORMAL')
+ 	or 
+ 	(inventory.location.type = 'SHIP' AND inventory.operationStatus ='READY_OUT')
+ )
+
+ AND inventory.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}
+ ORDER BY inventory.location.code]]></datasource><!--  AND inventory.relatedBillType IS NOT NULL -->
+        <columns>
+            <column id="inventory.id" title="inventory.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="inventory.location.code" title="inventory.location.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.location.type" title="inventory.location.type" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsLocationType"/>
+            <column id="inventory.company.name" title="inventory.company.name" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.relatedBillCode" title="inventory.relatedBillCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.relatedBillType" title="inventory.relatedBillType" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.itemKey.lotInfo.extendPropC13" title="inventory.itemKey.lotInfo.extendPropC13" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.itemKey.lotInfo.extendPropC14" title="inventory.itemKey.lotInfo.extendPropC14" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.pallet" title="inventory.pallet" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.carton" title="inventory.carton" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.item.code" title="inventory.item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.item.name" title="inventory.item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.packageUnit.unit" title="inventory.packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.packQty" title="inventory.packQty" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="inventory.qty" title="inventory.qty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="inventoryCancelQty" title="inventory.cancelQty" visible="true" sortable="false" horizonAlign="center" verticalAlign="middle" dataType="double" inputUI="tableValues"/>
+            <column id="inventory.status" title="inventory.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.itemKey.lotInfo.storageDate" title="inventory.itemKey.lotInfo.storageDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date"/>
+            <column id="inventory.itemKey.lotInfo.productDate" title="inventory.itemKey.lotInfo.productDate" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date"/>
+            <column id="inventory.itemKey.lotInfo.lot" title="inventory.itemKey.lotInfo.lot" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.itemKey.lotInfo.soiCode" title="inventory.itemKey.lotInfo.soiCode" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.asnCustomerBill" title="inventory.itemKey.lotInfo.asnCustomerBill" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.supplierCode" title="inventory.itemKey.lotInfo.supplierCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.serialNo" title="inventory.itemKey.lotInfo.serialNo" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+           	<column id="inventory.itemKey.lotInfo.extendPropC1" title="inventory.itemKey.lotInfo.extendPropC1" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.extendPropC2" title="inventory.itemKey.lotInfo.extendPropC2" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.extendPropC3" title="inventory.itemKey.lotInfo.extendPropC3" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.extendPropC4" title="inventory.itemKey.lotInfo.extendPropC4" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.operationStatus" title="inventory.operationStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsInventoryOperationStatus"/>
+            <column id="billType" title="billType" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsPickticketGenType"/>
+            <column id="inventory.warehouse.code" title="inventory.warehouse.code" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+        </columns>
+    </maintainPage>
+</pages>

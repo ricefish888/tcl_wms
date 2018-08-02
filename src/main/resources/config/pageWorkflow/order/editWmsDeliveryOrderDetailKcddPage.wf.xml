@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editWmsDeliveryOrderDetailKcddPage">
+    <main>
+        <process id="wmsDeliveryOrderProcess">
+            <formCommit id="editKcdd" title="editKcdd" process="wmsDeliveryOrderProcess.editKcdd" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="edit">
+                <enableExpression/>
+                <mappings>
+                </mappings>
+                <actions>
+                </actions>
+                <forwards>
+                    <forward name="resetWindow" newEnabled="true" editEnabled="true"/>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>    
+        </process>
+    </main>
+</page>

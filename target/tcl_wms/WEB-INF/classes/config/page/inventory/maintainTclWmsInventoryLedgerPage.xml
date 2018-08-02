@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainTclWmsInventoryLedgerPage" title="maintainTclWmsInventoryLedgerPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.inventory.TclWmsInventoryLedger" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT inventoryLedger.id,
+warehouse.name,
+inventoryLedger.moveType,
+inventoryLedger.wmsCode,
+inventoryLedger.code,
+inventoryLedger.lineNo,
+inventoryLedger.sapCode,
+inventoryLedger.billType,
+inventoryLedger.poCode,
+inventoryLedger.curDate,
+inventoryLedger.receiveDate,
+inventoryLedger.minTransDate,
+inventoryLedger.poLineNo,
+item.code,
+item.name,
+sapFactory.code,
+sapFactory.name,
+inventoryLedger.locationCode,
+inventoryLedger.recWarehouse,
+inventoryLedger.supplierCode,
+inventoryLedger.invType,
+inventoryLedger.quantity,
+inventoryLedger.cancelQuantity,
+inventoryLedger.invStatus,
+inventoryLedger.doCode,
+inventoryLedger.doLineNo,
+inventoryLedger.remark,
+inventoryLedger.wmsInCode,
+inventoryLedger.wmsInCodeLineNo,
+inventoryLedger.qcLocCode,
+inventoryLedger.productionCode,
+inventoryLedger.baseUnit,
+inventoryLedger.reservedCode,
+inventoryLedger.costCenter,
+inventoryLedger.resProject,
+inventoryLedger.recFatoryCode,
+inventoryLedger.oldLedgerId,
+inventoryLedger.createType,
+inventoryLedger.genXmlFlag,
+inventoryLedger.updateInfo.creator,
+inventoryLedger.updateInfo.createdTime,
+inventoryLedger.updateInfo.updateTime
+ FROM TclWmsInventoryLedger inventoryLedger
+ LEFT JOIN inventoryLedger.warehouse warehouse
+ LEFT JOIN inventoryLedger.item item
+ LEFT JOIN inventoryLedger.sapFactory sapFactory
+  WHERE 1=1
+ ORDER BY inventoryLedger.id DESC]]></datasource>
+        <columns>
+            <column id="inventoryLedger.id" title="inventoryLedger.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="warehouse.name" title="warehouse.name" visible="true" sortable="true"  horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.moveType" title="inventoryLedger.moveType" width="110" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="TclWmsMoveType"/>
+            <column id="inventoryLedger.wmsCode" title="inventoryLedger.wmsCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.code" title="inventoryLedger.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+             <column id="inventoryLedger.lineNo" title="inventoryLedger.lineNo"  visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>            
+            <column id="inventoryLedger.sapCode" title="inventoryLedger.sapCode"  width="100" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.billType" title="inventoryLedger.billType" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="TclWmsInventoryLedgerBillType"/>
+            <column id="inventoryLedger.poCode" title="inventoryLedger.poCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>           
+            <column id="inventoryLedger.curDate" title="inventoryLedger.curDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" format="dateFormat" language="false"/>
+            <column id="inventoryLedger.receiveDate" title="inventoryLedger.receiveDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" format="dateFormat" language="false"/>
+            <column id="inventoryLedger.minTransDate" title="inventoryLedger.minTransDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="inventoryLedger.poLineNo" title="inventoryLedger.poLineNo" width="80" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>   
+            <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.name" title="item.name"  width="220"  visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="sapFactory.code" title="sapFactory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="sapFactory.name" title="sapFactory.name" visible="true"  width="150" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.locationCode" title="inventoryLedger.locationCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.recWarehouse" title="inventoryLedger.recWarehouse" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.supplierCode" title="inventoryLedger.supplierCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.invType" title="inventoryLedger.invType" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsInvType"/>
+            <column id="inventoryLedger.quantity" title="inventoryLedger.quantity" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+            <column id="inventoryLedger.cancelQuantity" title="inventoryLedger.cancelQuantity" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+            <column id="inventoryLedger.invStatus" title="inventoryLedger.invStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsInvStatus"/>
+            <column id="inventoryLedger.doCode" title="inventoryLedger.doCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.doLineNo" title="inventoryLedger.doLineNo"  visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+            <column id="inventoryLedger.remark" title="inventoryLedger.remark" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.wmsInCode" title="inventoryLedger.wmsInCode"  visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.wmsInCodeLineNo" title="inventoryLedger.wmsInCodeLineNo"  visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.qcLocCode" title="inventoryLedger.qcLocCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+        	<column id="inventoryLedger.productionCode" title="inventoryLedger.productionCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.baseUnit" title="inventoryLedger.baseUnit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.reservedCode" title="inventoryLedger.reservedCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.costCenter" title="inventoryLedger.costCenter" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.resProject" title="inventoryLedger.resProject" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.recFatoryCode" title="inventoryLedger.recFatoryCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.oldLedgerId" title="inventoryLedger.oldLedgerId" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="inventoryLedger.createType" title="inventoryLedger.createType" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+        	<column id="inventoryLedger.genXmlFlag" title="inventoryLedger.genXmlFlag" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="enumFormat" formatParam="booleanFormat"/>
+        	<column id="inventoryLedger.updateInfo.creator" title="inventoryLedger.updateInfo.creator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLedger.updateInfo.createdTime" title="inventoryLedger.updateInfo.createdTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="inventoryLedger.updateInfo.updateTime" title="inventoryLedger.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+        </columns>
+    </maintainPage>
+</pages>

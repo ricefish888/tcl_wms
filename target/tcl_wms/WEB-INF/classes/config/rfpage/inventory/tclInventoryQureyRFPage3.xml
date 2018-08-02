@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ASN收货表单页面模板 -->
+<RFFormPage id="tclInventoryQureyRFPage3" title="tclInventoryQureyRFPage3">
+	<RFDisplay id="inventoryQueryComfirmDisplay" load="tclRfinventoryQueryManager.inventoryInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+		    货主:{companyName}		
+			库位:{locCode}
+			货品代码:{itemCode}
+			货品名称:{itemName}
+			批次号:{lotNo}
+			工厂编码:{fcode}
+			供应商名称:{sname}
+			生产日期:{productDate}
+			包装单位:{unit}
+			包装数量:{packQty}
+			库存数量:{qty}
+			库存状态:{inventoryStatus}
+			作业状态:{operationStatus}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>	
+			货主:{companyName}
+			库位:{locCode}
+			货品代码:{itemCode}
+			货品名称:{itemName}
+			批次号:{lotNo}
+			工厂编码:{fcode}
+			供应商名称:{sname}
+			生产日期:{productDate}
+			包装单位:{unit}
+			包装数量:{packQty}
+			库存数量:{qty}
+			库存状态:{inventoryStatus}
+			作业状态:{operationStatus}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+		</inputs>
+		<buttons>
+			<RFButton id="inventoryQuerySwitchPreviousPage" title="inventoryQuerySwitchPreviousPage" action="tclRfinventoryQueryManager.previousPage" validate="" onFoucs="false"/>
+			<RFButton id="inventoryQuerySwitchReturn" title="inventoryQuerySwitchReturn" action="tclRfinventoryQueryManager.switchReturn" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

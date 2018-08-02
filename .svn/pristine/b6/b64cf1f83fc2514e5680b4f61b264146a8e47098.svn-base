@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="interfaceProcess" control="status">
+
+	<task id="view" title="查看">
+	</task>
+
+	<task id="resend" title="重新执行">
+	</task>
+
+</process>

@@ -1,0 +1,131 @@
+package com.vtradex.wms.server.service.receiving;
+
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import com.vtradex.thorn.client.ui.table.RowData;
+import com.vtradex.wms.server.model.entity.base.WmsBarCodeRepPrintRecord;
+import com.vtradex.wms.server.model.entity.receiving.WmsASN;
+import com.vtradex.wms.server.model.entity.receiving.WmsASNDetail;
+
+/**
+ * 
+ * Tcl定制化发货单业务
+ * 
+ * @author <a href="zhen.lei@vtradex.com">Yogurt_lei</a>
+ * 
+ * @date 2017年7月21日 下午2:32:39
+ */
+public interface WmsTclASNManager {	
+	
+	/**
+	 * 刷新标签数量
+	 */
+	@Transactional
+	void refreshDetail(WmsASN asn);
+
+	/**
+	 * 
+	 * 收货回写采购单和交货单
+	 * 
+	 * @author Yogurt_lei
+	 *
+	 * @date 2017年7月17日 下午1:37:57
+	 */
+	@Transactional
+	Long receivedWriteBackPoAndDo2(WmsASNDetail detail,Double qty);
+	
+	/**
+     * 
+     * 收货回写采购单和交货单
+     * 
+     * @author Yogurt_lei
+     *
+     * @date 2017年7月17日 下午1:37:57
+     */
+	@Transactional
+	void receivedWriteBackPoAndDo(WmsASN asn);
+	
+	
+	
+	/** 整单收货
+	 * @param wmsASN
+	 */
+	@Transactional
+	void receiveAll(Long asnId,Long workerId);
+	
+	/**
+     * RF收货
+     * @param asnId
+     * @param itemCode
+     * @param receiveQty
+     * @param itemStateId
+     * @param workerId
+     */
+	@Transactional
+    public void rfReceiving(Long asnId,String itemCode,double receiveQty,Long workerId);
+	
+	/**
+	 * 整单质检确认
+	 */
+	@Transactional
+	void allQcRecord(Long asnId, Long qcStatusId,Long workerId);
+	
+	/**
+	 * 单一质检确认
+	 */
+	@Transactional
+	void singleQcRecord(Long recordId, Long qcStatusId, Long workerId,double qcNumber);
+	
+	
+	
+	/**
+	 * 打印标签
+	 */
+	Map printLabel(List<WmsASN> wmsAsns);
+	
+	/**
+	 * 条码补打
+	 */
+	Map print(List<WmsBarCodeRepPrintRecord> records);
+	
+	/**
+	 *  单一明细收货
+	 * @param detail
+	 * @param packageUnitId
+	 * @param quantity
+	 * @param itemStateId
+	 * @param workerId
+	 */
+	@Transactional
+	void detailReceive(WmsASNDetail detail, Long packageUnitId,double quantity,String itemStateId,Long workerId);
+	
+	/** 
+	 * 保存asn时,编码由规则产生
+	 * */
+	@Transactional
+	void storeASN(WmsASN asn);
+	
+	
+	/**
+	 * 移除ASN明细
+	 * @param details
+	 */
+	@Transactional
+	void removeDetails(WmsASNDetail detail);
+	
+    /**
+     *打印asn明细 
+     */
+	@Transactional
+	Map printWmsASNDetail(WmsASNDetail detail,Integer quantity);
+	
+	
+	/**
+	 * 打印asn明细张数，初始化方法
+	 */
+	public RowData getQuantity(Map map);
+}

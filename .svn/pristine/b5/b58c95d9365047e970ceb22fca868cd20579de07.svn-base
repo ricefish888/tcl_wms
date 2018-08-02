@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.warehouse.WmsLocation" table="WMS_LOCATION">
+        
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_WMS_LOCATION</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        
+       <many-to-one name="warehouse" class="com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse">
+			<column name="WAREHOUSE_ID" not-null="true" unique-key="UK_LOCATION"/>
+		</many-to-one>
+		<many-to-one name="zone" class="com.vtradex.wms.server.model.entity.warehouse.WmsZone">
+			<column name="ZONE_ID" unique-key="UK_LOCATION"/>
+		</many-to-one>
+		<many-to-one name="workArea" class="com.vtradex.wms.server.model.entity.warehouse.WmsWorkArea">
+			<column name="WORK_AREA_ID"/>
+		</many-to-one>
+        <property name="code" type="string">
+			<column name="CODE" length="50" not-null="true" unique-key="UK_LOCATION"/>
+		</property>
+		<property name="status" type="string">
+            <column name="STATUS" length="50"/>
+        </property>
+        <property name="type" type="string">
+            <column name="TYPE" length="50"/>
+        </property>
+         <property name="exeType" type="string">
+            <column name="EXE_TYPE" length="1"/>
+        </property>
+        <property name="allocationCategory" type="string">
+            <column name="ALLOCATION_CATEGORY" length="50"/>
+        </property>
+        <property name="putawayCategory" type="string">
+            <column name="PUTAWAY_CATEGORY" length="50"/>
+        </property>
+        <many-to-one name="locationCapacity" class="com.vtradex.wms.server.model.entity.warehouse.WmsLocationCapacity">
+			<column name="LOCATION_CAPACITY_ID"/>
+		</many-to-one>
+		 <property name="aisle" type="string">
+            <column name="AISLE" length="50"/>
+        </property>
+       <property name="lineNo" type="integer">
+            <column name="LINE_NO" />
+        </property>
+        <property name="columnNo" type="integer">
+            <column name="COLUMN_NO" />
+        </property>
+        <property name="layerNo" type="integer">
+            <column name="LAYER_NO" />
+        </property>
+        <property name="putawaySequence" type="integer">
+            <column name="PUTAWAY_SEQUENCE" />
+        </property>
+        <property name="pickingSequence" type="integer">
+            <column name="PICKING_SEQUENCE" />
+        </property>
+         <property name="locationStatus" type="string">
+            <column name="LOCATION_STATUS" length="50"/>
+        </property>
+        <property name="countLock" type="yes_no">
+            <column name="COUNT_LOCK"/>
+        </property>
+        <property name="cycleDate" type="date">
+            <column name="CYCLE_DATE"/>
+        </property>
+		<property name="exceptionFlag" type="yes_no">
+            <column name="EXCEPTION_FLAG"/>
+        </property>
+        <property name="useRate" type="double">
+            <column name="USE_RATE" />
+        </property>
+         <property name="touchTimes" type="integer">
+            <column name="TOUCH_TIMES" />
+        </property>
+        <property name="mixRule" type="string">
+            <column name="MIX_RULE" length="50"/>
+        </property>        
+        <property name="inOutLock" type="string">
+            <column name="INOUT_LOCK" length="50"/>
+        </property>        
+        <property name="description" type="string">
+            <column name="DESCRIPTION" length="255"/>
+        </property>        
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+		
+		<property name="checkingSequence" type="integer">
+            <column name="CHECKING_SEQUENCE" />
+        </property>
+        
+	 </class>
+</hibernate-mapping>

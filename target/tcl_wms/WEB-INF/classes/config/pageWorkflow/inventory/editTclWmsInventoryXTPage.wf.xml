@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editTclWmsInventoryXTPage">
+    <main>      
+        <process id="tclWmsInventoryProcess">
+            <formCommit id="modifyXT" title="modifyXT" process="tclWmsInventoryProcess.modifyXT" enableType="none" download="false" confirmMessage="是否确认修线体？">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="newXT" className="string">
+                        <entries/>
+                    </mapping>
+                    <mapping id="qty" className="double">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsTclInventoryManageManager" methodName="modifyXT" parameter="obj,newXT,qty"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+</page>

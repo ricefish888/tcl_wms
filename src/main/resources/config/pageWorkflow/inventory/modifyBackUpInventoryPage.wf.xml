@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="modifyBackUpInventoryPage">
+    <main/>
+    <detail>
+        <process id="wmsInventoryProcess">
+            <tableCommit id="backUp" title="backUp" process="wmsInventoryProcess.backUp" enableType="multi" multiMapping="false" download="false" closeTransactional="false">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="maintainBackUpManagePage.id" className="long">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsPickticketManager" methodName="singleBackUp" parameter="maintainBackUpManagePage.id,obj,tableValues"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+        </process>
+    </detail>
+</page>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="importValidateProductionPage">
+    <main>
+        <process id="importValidateProductionPage">
+             
+              <formCommit id="import" title="import" process="productionOrderProcess.save" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="new">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="import.file.name" className="file"/>
+                </mappings>
+                <actions>
+                    <action managerName="wmsDeliveryOrderManager" methodName="importOrderHandleTime" parameter="import.file.name"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        
+        </process>
+    </main>
+    <detail/>
+</page>
+
+
+
+

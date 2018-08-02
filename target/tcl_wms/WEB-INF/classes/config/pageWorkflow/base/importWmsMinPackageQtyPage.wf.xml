@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="importWmsMinPackageQtyPage">
+    <main>
+        <process id="minPackageProcess">
+             
+              <formCommit id="import" title="import" process="minPackageProcess.import" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="new">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="import.file.name" className="file"/>
+                </mappings>
+                <actions>
+                    <action managerName="wmsMinPackageManager" methodName="importWmsMinPackageQtyFile" parameter="import.file.name"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        
+        </process>
+    </main>
+    <detail/>
+</page>
+
+
+
+

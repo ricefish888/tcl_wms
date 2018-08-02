@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+	
+	<!-- 
+	<jaxws:endpoint xmlns:tns="http://erp.server.edi.vtradex.com/"
+		id="erpToWms" implementor="com.vtradex.edi.server.service.erp.ErpWebService"
+		  endpointName="tns:ErpWebPort"
+		serviceName="tns:ErpWebService" address="/ErpWebPort">
+		<jaxws:features>
+			<bean class="org.apache.cxf.feature.LoggingFeature" />
+		</jaxws:features>
+	</jaxws:endpoint>	
+	 -->
+	 <!-- http://localhost:8089/tcl_wms_edi/services/SapWebPort?wsdl
+	<jaxws:endpoint xmlns:tns="http://sap.server.edi.vtradex.com/"
+		id="sapToWms" implementor="com.vtradex.edi.server.service.sap.SapWebServiceImpl"
+		endpointName="tns:SapWebPort"
+		serviceName="tns:SapWebService" address="/SapWebPort">
+		<jaxws:features>
+			<bean class="org.apache.cxf.feature.LoggingFeature" />
+		</jaxws:features>
+	</jaxws:endpoint>
+	 -->
+	<!--
+	SAP2WMS接口 物料主数据
+	http://localhost:8089/tcl_wms_edi/services/SapWebPort?wsdl
+	 -->
+	<jaxws:endpoint xmlns:tns="http://sap.server.edi.vtradex.com/"
+		id="sapToWms"
+		endpointName="tns:SapWebPort"
+		serviceName="tns:SapWebService" address="/SapWebPort">
+		<jaxws:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>  
+		 <bean class="org.apache.cxf.feature.LoggingFeature" /> 
+		</jaxws:features>
+		<jaxws:implementor ref="sapWebServiceImpl"></jaxws:implementor> 
+	</jaxws:endpoint>	
+ 	<bean id="sapWebServiceImpl" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.edi.server.service.sap.SapWebServiceImpl" >
+				<constructor-arg index="0">
+					<ref bean="interfaceLogManager"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	<!--SAP2WMS接口 供应商主数据 
+	http://localhost:8089/tcl_wms_edi/services/SapSupplierWebService?wsdl
+	-->
+	<jaxws:endpoint xmlns:tns="http://sap.server.edi.vtradex.com/"
+		id="SapSupplierWebService"
+		endpointName="tns:SapSupplierWebService"
+		serviceName="tns:SapSupplierWebService" 
+		address="/SapSupplierWebService">
+		<jaxws:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>  
+		 <bean class="org.apache.cxf.feature.LoggingFeature" /> 
+		</jaxws:features>
+		<jaxws:implementor ref="sapWebServiceSupplierImpl"></jaxws:implementor> 
+	</jaxws:endpoint>	
+ 	<bean id="sapWebServiceSupplierImpl" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.edi.server.service.sap.SapWebServiceSupplierImpl" >
+				<constructor-arg index="0">
+					<ref bean="interfaceLogManager"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+ 	<!--SAP2WMS接口 仓库主数据 
+	http://localhost:8089/tcl_wms_edi/services/SapWarehouseWebService?wsdl
+	-->
+ 	<jaxws:endpoint xmlns:tns="http://sap.server.edi.vtradex.com/"
+		id="SapWarehouseWebService"
+		endpointName="tns:SapWarehouseWebService"
+		serviceName="tns:SapWarehouseWebService" 
+		address="/SapWarehouseWebService">
+		<jaxws:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>  
+		 <bean class="org.apache.cxf.feature.LoggingFeature" /> 
+		</jaxws:features>
+		<jaxws:implementor ref="sapWebServiceWarehouseImpl"></jaxws:implementor> 
+	</jaxws:endpoint>	
+ 	<bean id="sapWebServiceWarehouseImpl" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.edi.server.service.sap.SapWebServiceWarehouseImpl" >
+				<constructor-arg index="0">
+					<ref bean="interfaceLogManager"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	<!--SAP2WMS接口 采购订单PO
+	http://localhost:8089/tcl_wms_edi/services/SapPoWebService?wsdl
+	-->
+ 	<jaxws:endpoint xmlns:tns="http://sap.server.edi.vtradex.com/"
+		id="SapPoWebService"
+		endpointName="tns:SapPoWebService"
+		serviceName="tns:SapPoWebService" 
+		address="/SapPoWebService">
+		<jaxws:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>  
+		 <bean class="org.apache.cxf.feature.LoggingFeature" />
+		</jaxws:features>
+		<jaxws:implementor ref="sapWebServicePoImpl"></jaxws:implementor> 
+	</jaxws:endpoint>	
+ 	<bean id="sapWebServicePoImpl" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.edi.server.service.sap.SapWebServicePoImpl" >
+				<constructor-arg index="0">
+					<ref bean="interfaceLogManager"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	
+	
+	<!--SAP2WMS接口 采购交货单 PurchaseOrder
+	http://localhost:8089/tcl_wms_edi/services/SapDeliveryOrderWebService?wsdl
+	-->
+ 	<jaxws:endpoint xmlns:tns="http://sap.server.edi.vtradex.com/"
+		id="SapDeliveryOrderWebService"
+		endpointName="tns:SapDeliveryOrderWebService"
+		serviceName="tns:SapDeliveryOrderWebService" 
+		address="/SapDeliveryOrderWebService">
+		<jaxws:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>  
+		 <bean class="org.apache.cxf.feature.LoggingFeature" />
+		</jaxws:features>
+		<jaxws:implementor ref="sapWebServiceDeliveryOrderImpl"></jaxws:implementor> 
+	</jaxws:endpoint>	
+ 	<bean id="sapWebServiceDeliveryOrderImpl" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.edi.server.service.sap.SapWebServiceDeliveryOrderImpl" >
+				<constructor-arg index="0">
+					<ref bean="interfaceLogManager"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	<!--SAP2WMS接口 业务单据号码回传  wms传交货单给sap sap处理成功后回传单号给wms 交货单
+	http://localhost:8089/tcl_wms_edi/services/SapReturnOrderCodeWebService?wsdl
+	-->
+ 	<jaxws:endpoint xmlns:tns="http://sap.server.edi.vtradex.com/"
+		id="SapReturnOrderCodeWebService"
+		endpointName="tns:SapReturnOrderCodeWebService"
+		serviceName="tns:SapReturnOrderCodeWebService" 
+		address="/SapReturnOrderCodeWebService">
+		<jaxws:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>  
+		 <bean class="org.apache.cxf.feature.LoggingFeature" /> 
+		</jaxws:features>
+		<jaxws:implementor ref="sapWebServiceReturnOrderCodeImpl"></jaxws:implementor> 
+	</jaxws:endpoint>	
+ 	<bean id="sapWebServiceReturnOrderCodeImpl" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.edi.server.service.sap.SapWebServiceReturnOrderCodeImpl">
+				<constructor-arg index="0">
+					<ref bean="interfaceLogManager"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	
+	<!--SAP2WMS接口 生产订单 工单 ProductionOrder
+	http://localhost:8089/tcl_wms_edi/services/SapProductOrderWebService?wsdl
+	-->
+ 	<jaxws:endpoint xmlns:tns="http://sap.server.edi.vtradex.com/"
+		id="SapProductOrderWebService"
+		endpointName="tns:SapProductOrderWebService"
+		serviceName="tns:SapProductOrderWebService" 
+		address="/SapProductOrderWebService">
+		<jaxws:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>  
+		 <bean class="org.apache.cxf.feature.LoggingFeature" />
+		</jaxws:features>
+		<jaxws:implementor ref="sapWebServiceProductOrderImpl"></jaxws:implementor> 
+	</jaxws:endpoint>	
+ 	<bean id="sapWebServiceProductOrderImpl" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.edi.server.service.sap.SapWebServiceProductOrderImpl">
+				<constructor-arg index="0">
+					<ref bean="interfaceLogManager"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	
+	<!--SAP2WMS接口 预留主数据 
+	http://localhost:8089/tcl_wms_edi/services/SapReservedDataWebService?wsdl
+	-->
+ 	<jaxws:endpoint xmlns:tns="http://sap.server.edi.vtradex.com/"
+		id="SapReservedDataWebService"
+		endpointName="tns:SapReservedDataWebService"
+		serviceName="tns:SapReservedDataWebService" 
+		address="/SapReservedDataWebService">
+		<jaxws:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>  
+		 <bean class="org.apache.cxf.feature.LoggingFeature" />
+		</jaxws:features>
+		<jaxws:implementor ref="sapWebServiceReservedDataImpl"></jaxws:implementor> 
+	</jaxws:endpoint>	
+ 	<bean id="sapWebServiceReservedDataImpl" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.edi.server.service.sap.SapWebServiceReservedDataImpl">
+				<constructor-arg index="0">
+					<ref bean="interfaceLogManager"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	
+	<!--SAP2WMS接口Sap销售外向交货单接口
+	http://localhost:8089/tcl_wms_edi/services/SapSaleOutDeliveryWebService?wsdl
+	-->
+ 	<jaxws:endpoint xmlns:tns="http://sap.server.edi.vtradex.com/"
+		id="SapSaleOutDeliveryWebService"
+		endpointName="tns:SapSaleOutDeliveryWebService"
+		serviceName="tns:SapSaleOutDeliveryWebService" 
+		address="/SapSaleOutDeliveryWebService">
+		<jaxws:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>  
+		 <bean class="org.apache.cxf.feature.LoggingFeature" />
+		</jaxws:features>
+		<jaxws:implementor ref="sapWebServiceSaleOutDeliveryImpl"></jaxws:implementor> 
+	</jaxws:endpoint>	
+ 	<bean id="sapWebServiceSaleOutDeliveryImpl" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.edi.server.service.sap.SapWebServiceSaleOutDeliveryImpl">
+				<constructor-arg index="0">
+					<ref bean="interfaceLogManager"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	
+	<!--SAP2WMS接口Sap采购对账单标准接口
+	http://localhost:8089/tcl_wms_edi/services/SapCheckOrderWebService?wsdl
+	-->
+ 	<jaxws:endpoint xmlns:tns="http://sap.server.edi.vtradex.com/"
+		id="SapCheckOrderWebService"
+		endpointName="tns:SapCheckOrderWebService"
+		serviceName="tns:SapCheckOrderWebService" 
+		address="/SapCheckOrderWebService">
+		<jaxws:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>  
+		 <bean class="org.apache.cxf.feature.LoggingFeature" />
+		</jaxws:features>
+		<jaxws:implementor ref="sapCheckOrderWebServiceImpl"></jaxws:implementor> 
+	</jaxws:endpoint>	
+ 	<bean id="sapCheckOrderWebServiceImpl" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.edi.server.service.sap.SapCheckOrderWebServiceImpl">
+				<constructor-arg index="0">
+					<ref bean="interfaceLogManager"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	
+	<!--SAP2WMS接口Sap采购对账单寄售接口
+	http://localhost:8089/tcl_wms_edi/services/SapJSCheckOrderWebService?wsdl
+	-->
+ 	<jaxws:endpoint xmlns:tns="http://sap.server.edi.vtradex.com/"
+		id="SapJSCheckOrderWebService"
+		endpointName="tns:SapJSCheckOrderWebService"
+		serviceName="tns:SapJSCheckOrderWebService" 
+		address="/SapJSCheckOrderWebService">
+		<jaxws:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>  
+		 <bean class="org.apache.cxf.feature.LoggingFeature" />
+		</jaxws:features>
+		<jaxws:implementor ref="sapJSCheckOrderWebServiceImpl"></jaxws:implementor> 
+	</jaxws:endpoint>	
+ 	<bean id="sapJSCheckOrderWebServiceImpl" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.edi.server.service.sap.SapJSCheckOrderWebServiceImpl">
+				<constructor-arg index="0">
+					<ref bean="interfaceLogManager"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	
+	<!--SAP2WMS生产订单入库接口
+	http://localhost:8089/tcl_wms_edi/services/SapProductOrderInWebService?wsdl
+	-->
+ 	<jaxws:endpoint xmlns:tns="http://sap.server.edi.vtradex.com/"
+		id="SapProductOrderInWebService"
+		endpointName="tns:SapProductOrderInWebService"
+		serviceName="tns:SapProductOrderInWebService" 
+		address="/SapProductOrderInWebService">
+		<jaxws:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>  
+		 <bean class="org.apache.cxf.feature.LoggingFeature" />
+		</jaxws:features>
+		<jaxws:implementor ref="sapProductOrderInWebServiceImpl"></jaxws:implementor> 
+	</jaxws:endpoint>	
+ 	<bean id="sapProductOrderInWebServiceImpl" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.edi.server.service.sap.SapProductOrderInWebServiceImpl">
+				<constructor-arg index="0">
+					<ref bean="interfaceLogManager"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	<!--SAP2WMS成本中心主数据接口
+	http://localhost:8089/tcl_wms_edi/services/SapCostCenterWebService?wsdl
+	-->
+ 	<jaxws:endpoint xmlns:tns="http://sap.server.edi.vtradex.com/"
+		id="SapCostCenterWebService"
+		endpointName="tns:SapCostCenterWebService"
+		serviceName="tns:SapCostCenterWebService" 
+		address="SapCostCenterWebService">
+		<jaxws:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>  
+		 <bean class="org.apache.cxf.feature.LoggingFeature" />
+		</jaxws:features>
+		<jaxws:implementor ref="sapCostCenterWebServiceImpl"></jaxws:implementor> 
+	</jaxws:endpoint>	
+ 	<bean id="sapCostCenterWebServiceImpl" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.edi.server.service.sap.SapCostCenterWebServiceImpl">
+				<constructor-arg index="0">
+					<ref bean="interfaceLogManager"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+</beans>

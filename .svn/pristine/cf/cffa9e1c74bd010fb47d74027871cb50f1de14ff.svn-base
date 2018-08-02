@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainProductionOrderDetailPage" title="maintainProductionOrderDetailPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.production.ProductionOrderDetail" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT 
+pod.id,
+po.id,
+po.code,
+pod.item.code,
+pod.item.name,
+po.factory.name,
+po.planQuantity,
+po.finishedQuantity,
+po.canAllocate,
+po.beCreatPt,
+po.productLine,
+pod.lineNo,
+pod.bomCode,
+pod.planQuantityBu,
+pod.dealDlanQuantityBu,
+pod.allocatedQuantityBu,
+pod.pickedQuantityBu,
+pod.shippedQuantityBu,
+pod.remark,  
+pod.packageUnit.unit,
+po.status,
+po.beginDate,
+po.endDate,
+po.beginTime,
+po.endTime,
+po.beginHour,
+po.endHour,
+po.remark 
+FROM ProductionOrderDetail pod
+LEFT JOIN pod.item
+LEFT JOIN pod.packageUnit
+LEFT JOIN pod.productionOrder po
+LEFT JOIN po.factory
+WHERE 1=1
+ORDER BY po.id DESC]]></datasource>
+        <columns>
+            <column id="pod.id" title="pod.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="po.id" title="po.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="po.code" title="po.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+            <column id="pod.item.code" title="pod.item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="pod.item.name" title="pod.item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>            
+            <column id="po.factory.name" title="po.factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+            
+            <column id="po.planQuantity" title="po.planQuantity" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+            <column id="po.finishedQuantity" title="po.finishedQuantity" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+            <column id="po.canAllocate" title="po.canAllocate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="booleanFormat" language="false"/>
+            <column id="po.beCreatPt" title="po.beCreatPt" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="booleanFormat" language="false"/>
+            <column id="po.productLine" title="po.productLine" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+            <column id="pod.lineNo" title="pod.lineNo" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>            
+            <column id="pod.bomCode" title="pod.bomCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="pod.planQuantityBu" title="pod.planQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="pod.dealDlanQuantityBu" title="pod.dealDlanQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="pod.allocatedQuantityBu" title="pod.allocatedQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="pod.pickedQuantityBu" title="pod.pickedQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="pod.shippedQuantityBu" title="pod.shippedQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="pod.remark" title="pod.remark" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="pod.packageUnit.unit" title="pod.packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="po.status" title="po.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="ProductionOrderStatus" language="false"/>
+            <column id="po.beginDate" title="po.beginDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" format="dateFormat" formatParam="y-m-d" language="false"/>
+            <column id="po.endDate" title="po.endDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" format="dateFormat" formatParam="y-m-d" language="false"/>
+            <column id="po.beginTime" title="po.beginTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m" language="false"/>
+            <column id="po.endTime" title="po.endTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m" language="false"/>
+            <column id="po.beginHour" title="po.beginHour" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+            <column id="po.endHour" title="po.endHour" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+            <column id="po.remark" title="po.remark" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+        </columns>
+    </maintainPage>
+</pages>

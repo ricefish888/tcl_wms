@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsInventoryPage" title="maintainWmsInventoryPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.inventory.WmsInventory" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT inventory.id,
+inventory.location.code,
+inventory.location.type,
+inventory.company.name,
+(case when inventory.task.relatedBillCode <> '' then inventory.task.relatedBillCode else inventory.relatedBillCode end) as relatedBillCode,
+inventory.pallet,
+inventory.carton,
+inventory.item.code,
+inventory.item.name,
+inventory.item.userFieldV1,
+inventory.item.userFieldV2,
+inventory.packageUnit.unit,
+inventory.packQty,
+inventory.qty,
+inventory.status,
+inventory.lockStatus,
+inventory.itemKey.lotInfo.storageDate,
+inventory.itemKey.lotInfo.productDate,
+inventory.itemKey.lotInfo.expireDate,
+inventory.itemKey.lotInfo.qaDate,
+inventory.itemKey.lotInfo.lot,
+inventory.itemKey.lotInfo.soiCode,	
+inventory.itemKey.lotInfo.asnCustomerBill,
+inventory.itemKey.lotInfo.supplierCode,
+inventory.itemKey.lotInfo.extendPropC8,
+inventory.itemKey.lotInfo.extendPropC9,
+inventory.itemKey.lotInfo.serialNo,
+inventory.itemKey.lotInfo.erpCode,
+inventory.itemKey.lotInfo.extendPropC1,
+inventory.itemKey.lotInfo.extendPropC2,
+inventory.itemKey.lotInfo.extendPropC3,
+inventory.itemKey.lotInfo.extendPropC4,
+inventory.itemKey.lotInfo.extendPropC17,
+inventory.itemKey.lotInfo.extendPropC18,
+wmsSapWarehouse.name,
+inventory.itemKey.lotInfo.extendPropC10,
+inventory.itemKey.lotInfo.extendPropC11,
+factory.type,
+inventory.operationStatus 
+ FROM WmsInventory inventory
+ LEFT JOIN inventory.task
+ LEFT JOIN inventory.location location
+ LEFT JOIN location.zone zone
+ LEFT JOIN zone.wmsSapWarehouse wmsSapWarehouse
+ left join zone.wmsSapWarehouse.sapFactory factory
+ WHERE 1=1
+ AND inventory.qty>0
+ AND inventory.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}
+ AND inventory.location.type <> 'COUNT'
+ ORDER BY inventory.id DESC]]></datasource>
+        <columns>
+            <column id="inventory.id" title="inventory.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="inventory.location.code" title="inventory.location.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.location.type" title="inventory.location.type" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsLocationType"/>
+            <column id="inventory.company.name" title="inventory.company.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="relatedBillCode" title="inventory.relatedBillCode" width="180" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.pallet" title="inventory.pallet" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.carton" title="inventory.carton" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.item.code" title="inventory.item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.item.name" title="inventory.item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.item.userFieldV1" title="inventory.item.userFieldV1" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsItemHandOverAtt"/>
+            <column id="inventory.item.userFieldV2" title="inventory.item.userFieldV2" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsItemJITAtt"/>        
+            <column id="inventory.packageUnit.unit" title="inventory.packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.packQty" title="inventory.packQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="inventory.qty" title="inventory.qty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="inventory.status" title="inventory.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventory.lockStatus" title="inventory.lockStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="booleanFormat"/>
+            <column id="inventory.itemKey.lotInfo.storageDate" title="inventory.itemKey.lotInfo.storageDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date"/>
+            <column id="inventory.itemKey.lotInfo.productDate" title="inventory.itemKey.lotInfo.productDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date"/>
+            <column id="inventory.itemKey.lotInfo.expireDate" title="inventory.itemKey.lotInfo.expireDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date"/>
+            <column id="inventory.itemKey.lotInfo.qaDate" title="inventory.itemKey.lotInfo.qaDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date"/>
+            <column id="inventory.itemKey.lotInfo.lot" title="inventory.itemKey.lotInfo.lot" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.soiCode" title="inventory.itemKey.lotInfo.soiCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.asnCustomerBill" title="inventory.itemKey.lotInfo.asnCustomerBill" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.supplierCode" title="inventory.itemKey.lotInfo.supplierCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.extendPropC8" title="inventory.itemKey.lotInfo.extendPropC8" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsFactoryXmlb"/>
+			<column id="inventory.itemKey.lotInfo.extendPropC9" title="inventory.itemKey.lotInfo.extendPropC9" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.serialNo" title="inventory.itemKey.lotInfo.serialNo" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.erpCode" title="inventory.itemKey.lotInfo.erpCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.extendPropC1" title="inventory.itemKey.lotInfo.extendPropC1" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.extendPropC2" title="inventory.itemKey.lotInfo.extendPropC2" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.extendPropC3" title="inventory.itemKey.lotInfo.extendPropC3" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.extendPropC4" title="inventory.itemKey.lotInfo.extendPropC4" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.extendPropC17" title="inventory.itemKey.lotInfo.extendPropC17" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.extendPropC18" title="inventory.itemKey.lotInfo.extendPropC18" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"  dataType="string"/>
+			
+			<column id="wmsSapWarehouse.name" title="wmsSapWarehouse.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.extendPropC10" title="sapFactory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventory.itemKey.lotInfo.extendPropC11" title="sapFactory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="factory.type" title="sapFactory.type" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsSapFactoryType"/>
+            <column id="inventory.operationStatus" title="inventory.operationStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsInventoryOperationStatus"/>
+        </columns>
+    </maintainPage>
+</pages>

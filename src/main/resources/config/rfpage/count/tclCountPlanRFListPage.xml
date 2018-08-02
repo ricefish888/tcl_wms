@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 查询列表页面模板 -->
+<RFListPage id="tclCountPlanRFListPage" title="tclCountPlanRFListPage">
+	<RFSearchUI id="countPlanCodeSearch" text="countPlanCodeSearch" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="countPlanId" title="countPlanId" width="50" enumType="" hidden="true" />
+		<RFTh id="countPlanName" title="countPlanName" width="140" enumType="" hidden="false" />
+		<RFTh id="countPlanType" title="countPlanType" width="100" enumType="WmsCountPlanType" hidden="false" />
+		<RFTh id="cycleType" title="cycleType" width="140" enumType="WmsCountCycleType" hidden="false" />
+		<DataSource type="HQL">
+			<statement>
+			<![CDATA[
+				 SELECT 
+				 countPlan.id AS countPlanId,
+				 countPlan.name as countPlanName,
+				 countPlan.planType as countPlanType,
+				 countPlan.cycleType AS cycleType
+						FROM WmsCountPlan countPlan 
+						WHERE 1=1 
+						AND countPlan.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN} 
+						AND countPlan.status IN ('ACTIVE','COUNTING')
+						AND (select count(detail) from WmsCountDetail detail 
+						where detail.countPlan.id=countPlan.id and detail.status='READY_ALLOCATE'
+						/~countPlanCodeSearch: AND countPlan.name like '%{countPlanCodeSearch}%' ~/
+				ORDER BY countPlan.updateInfo.createdTime asc
+			]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

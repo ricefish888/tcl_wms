@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<RFFormPage id="bolHandoverRFPage1" title="bolHandoverRFPage1">
+	<RFForm>
+		<inputs> 
+			<RFText id="bolCodeInput" title="bolCodeInput" tip="bolCodeInput" onFoucs="false">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="bolCodeScanBt" title="bolCodeScanBt" action="tclRfBolManager.bolCodeInputCommit" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

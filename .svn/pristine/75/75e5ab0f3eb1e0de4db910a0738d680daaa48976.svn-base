@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="importReservedOrderPage">
+    <main>
+        <process id="wmsReservedOrderProcess">
+             
+              <formCommit id="import" title="import" process="wmsReservedOrderProcess.save" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="new">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="import.file.name" className="file"/>
+                </mappings>
+                <actions>
+                    <action managerName="wmsDeliveryOrderManager" methodName="importReservedOrderFile" parameter="import.file.name"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        
+        </process>
+    </main>
+    <detail/>
+</page>
+
+
+
+

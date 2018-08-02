@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="wmsInventoryProcess" control="status">
+
+	<task id="new" title="新建">
+	</task>
+
+	<task id="qtyAdjust" title="数量调整">
+	</task>
+
+	<task id="lotInfoAdjust" title="批次属性调整">
+	</task>
+
+	<task id="stateAdjust" title="库存状态调整">
+	</task>
+
+	<task id="cancelReceipt" title="取消收货">
+	</task>
+
+	<task id="backUp" title="退拣">
+	</task>
+
+	<task id="conversionPackage" title="转换包装">
+	</task>
+
+	<task id="moveByPallet" title="托盘移位">
+	</task>
+
+	<task id="unlockByStatus" title="解锁">
+	</task>
+
+	<task id="lockByStatus" title="锁定">
+	</task>
+
+	<task id="cargoTransfer" title="货权转移">
+	</task>
+
+	<task id="countAdjust" title="盈亏调整">
+	</task>
+
+	<task id="change" title="调拨">
+	</task>
+
+</process>

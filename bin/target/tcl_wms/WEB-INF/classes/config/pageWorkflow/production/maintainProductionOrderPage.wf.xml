@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainProductionOrderPage">
+    <main>
+        <process id="productionOrderProcess">
+            <tablePopup id="view" title="view" process="productionOrderProcess.view" enableType="single" containId="true" pageId="editProductionOrderPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="new" title="new" process="productionOrderProcess.new" enableType="none" containId="false" pageId="editProductionOrderPage">
+            	<enableExpression/>
+            </tablePopup>
+            <tablePopup id="modify" title="modify" process="productionOrderProcess.modify" enableType="single" containId="true" pageId="editProductionOrderPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="active" title="active" process="productionOrderProcess.active" enableType="multi" multiMapping="false" download="false" confirmMessage="是否确认生效此条记录？">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                   <!--  <action managerName="wmsDeliveryOrderManager" methodName="test" /> -->
+                </actions>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="unActive" title="unActive" process="productionOrderProcess.unActive" enableType="multi" multiMapping="false" download="false" confirmMessage="是否确认失效此条记录？">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+            <tablePopup id="importPickingOrder" title="importPickingOrder" process="productionOrderProcess.importPickingOrder" enableType="none" containId="false" pageId="importPickingOrderPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="importOrderHandleTime" title="importOrderHandleTime" process="productionOrderProcess.importOrderHandleTime" enableType="none" containId="false" pageId="importOrderHandleTimePage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="creatPickTicket" title="creatPickTicket" process="productionOrderProcess.creatPickTicket" enableType="none" multiMapping="false" download="false">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                     <action managerName="productionOrderManager" methodName="creatPickTicketByProductionOrder" />
+                </actions>
+                <forwards/>
+            </tableCommit> 
+            <tableCommit id="productionOrder" title="productionOrder" process="productionOrderProcess.productionOrder" enableType="none" multiMapping="false" download="false">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                     <action managerName="wmsDeliveryOrderManager" methodName="test" />
+                </actions>
+                <forwards/>
+            </tableCommit>
+          	<tablePopup id="onTimeWarning" title="onTimeWarning" process="productionOrderProcess.onTimeWarning" enableType="none" containId="false" pageId="chooseWarningTimePage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="import" title="import" process="productionOrderProcess.import" enableType="none" containId="false" pageId="importProductionOrderPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="validateProduction" title="validateProduction" process="productionOrderProcess.validateProduction" enableType="none" containId="false" pageId="importValidateProductionPage">
+                <enableExpression/>
+            </tablePopup>
+        </process>
+    </main>
+    <detail/>
+</page>

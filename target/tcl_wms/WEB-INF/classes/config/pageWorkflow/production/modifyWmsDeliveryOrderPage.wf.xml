@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="modifyWmsDeliveryOrderPage">
+    <main>
+        <process id="wmsDeliveryOrderProcess">
+            <formCommit id="new" title="new" process="wmsDeliveryOrderProcess.new" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="new">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsDeliveryOrderManager" methodName="storeWmsDeliveryOrder" parameter="obj"/>
+                </actions>
+                <forwards/>
+            </formCommit>
+            <formCommit id="modify" title="modify" process="wmsDeliveryOrderProcess.modify" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="edit">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </formCommit>
+        </process>
+    </main>
+    <detail>
+        <process id="wmsDeliveryOrderProcess">
+            <tablePopup id="addDetail" title="addDetail" process="wmsDeliveryOrderProcess.addDetail" enableType="none" containId="false" pageId="editWmsDeliveryOrderDetailPage">
+               <enableExpression><![CDATA[${deliveryOrder.status} == 'OPEN']]></enableExpression>
+            </tablePopup>
+            <tablePopup id="modifyDetail" title="modifyDetail" process="wmsDeliveryOrderProcess.modifyDetail" enableType="single" containId="true" pageId="editWmsDeliveryOrderDetailPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="delDetail" title="delDetail" process="wmsDeliveryOrderProcess.delDetail" enableType="multi" multiMapping="true" download="false" closeTransactional="false" confirmMessage="confirm.modifyWmsDeliveryOrderPage.delDetail">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsDeliveryOrderManager" methodName="removeDetails" parameter="objs"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+            <tablePopup id="editKcdd" title="editKcdd" process="wmsDeliveryOrderProcess.editKcdd" enableType="single" containId="true" pageId="editWmsDeliveryOrderDetailKcddPage">
+                <enableExpression/>
+            </tablePopup>
+        </process>
+    </detail>
+</page>

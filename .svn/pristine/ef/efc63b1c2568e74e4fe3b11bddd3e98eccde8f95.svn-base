@@ -1,0 +1,18 @@
+package com.vtradex.wms.server.model.entity.production;
+
+public interface WmsReservedOrderType {
+	
+	
+	//Z01 Z03 Z311为出库预留申请
+	String Z01 = "ZO1";
+	
+	String Z03 = "Z03";
+	
+	String Z311="311";
+	
+	//Z02 Z04为入库预留申请
+	String Z02="Z02";
+	
+	String Z04="Z04";
+	
+}

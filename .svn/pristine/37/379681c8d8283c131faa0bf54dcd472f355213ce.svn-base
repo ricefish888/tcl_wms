@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 查询列表页面模板 -->
+<RFListPage id="tclCancelReceiveRFPage1" title="tclCancelReceiveRFPage1">
+<RFSearchUI id="asnCodeSearch" text="asnCodeSearch" width="50" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="detailId" title="detailId" width="50" enumType="" hidden="true" />
+		<RFTh id="asnCode" title="asnCode" width="100" enumType="" hidden="false" />
+		<RFTh id="deliveryCode" title="deliveryCode" width="100" enumType="" hidden="false" />
+		<RFTh id="itemCode" title="itemCode" width="100" enumType="" hidden="false" />
+		<RFTh id="receivedQty" title="receivedQty" width="50" enumType="" hidden="false" />
+		
+		<DataSource type="HQL">
+			<statement>
+				<![CDATA[
+				 SELECT
+				 detail.id AS detailId,
+				 detail.asn.code AS asnCode,
+				 deliveryOrder.code AS deliveryCode,
+				 detail.item.code AS itemCode,
+				 detail.receivedQty-detail.actualQcQty AS receivedQty
+                 FROM WmsASNDetail detail 
+                 LEFT JOIN detail.asn asn
+                 LEFT JOIN detail.item item
+                 LEFT JOIN detail.transportOrderDetail transportOrderDetail
+                 LEFT JOIN detail.transportOrderDetail.deliveryOrderDetail deliveryOrderDetail
+                 LEFT JOIN detail.transportOrderDetail.deliveryOrderDetail.deliveryOrder deliveryOrder
+                 WHERE 1=1
+                         AND item.code=${itemCode}
+						 AND asn.warehouse.baseOrganization.id = #{SESSION_BASE_ORGAN}
+                         AND asn.code=${asnCode}
+                         /~asnCodeSearch: AND deliveryOrder.code like '%{asnCodeSearch}%' ~/
+                ORDER BY  detail.id ASC
+				]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

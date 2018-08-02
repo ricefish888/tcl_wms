@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Delivery交货输入页面模板 -->
+<RFFormPage id="tclDeliveryPartOutRFPage4" title="tclDeliveryPartOutRFPage4">
+	<RFDisplay id="AllDisplay" load="tclRfDeliveryManager.showdeliveryInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			配送单号: {deliveryCodeInput}
+			备注:{remark}
+			配送类型:{type}
+			{itemInfos}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>
+			配送单号: {deliveryCodeInput}
+			备注:{remark}
+			配送类型:{type}
+			{itemInfos}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs> 
+			<RFText id="itemCodeInput" title="itemCodeInput" tip="itemCodeInput" onFoucs="false">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="itemCodeScanBt" title="itemCodeScanBt" action="tclRfDeliveryManager.itemCodeInputCommit" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>
+	

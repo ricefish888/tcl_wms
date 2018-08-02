@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsItemMinPackageQtyPage">
+    <main>
+        <process id="minPackageProcess">
+            <tablePopup id="new" title="new" process="minPackageProcess.new" enableType="none" containId="false" pageId="editWmsMinPackagePage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="modify" title="modify" process="minPackageProcess.modify" enableType="single" containId="true" pageId="editWmsMinPackagePage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="delete" title="delete" process="minPackageProcess.delete" enableType="multi" multiMapping="false" download="false" closeTransactional="false">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

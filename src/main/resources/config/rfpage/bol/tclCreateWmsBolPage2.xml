@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 作业单查询列表页面模板 -->
+<RFListPage id="tclCreateWmsBolPage2" title="tclCreateWmsBolPage2">
+	<RFSearchUI id="workDocCodeSearch" text="workDocCodeSearch" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="docId" title="docId" width="50" enumType="" hidden="true" />
+		<RFTh id="docCode" title="docCode" width="150" enumType="" hidden="false" />
+		<RFTh id="productOrderCode" title="productOrderCode" width="150" enumType="" hidden="false" />
+		<RFTh id="userField5" title="userField5" width="150" enumType="" hidden="false" />
+		<DataSource type="HQL">
+			<statement>
+			<![CDATA[
+				 SELECT 
+				 doc.id AS docId,
+				 doc.code AS docCode,
+				 doc.productOrderCode as productOrderCode,
+				 doc.userField5 as userField5
+				 FROM WmsBolDetail detail
+				 LEFT JOIN detail.workDoc doc
+				 WHERE 1=1 
+				 		AND doc.status IN('FINISH','IN_OPERATION')
+				 		AND doc.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN} 
+				 		AND doc.keeper.id =#{SESSION_USERS}
+				 		
+				 		AND detail.bol.id is null
+				 		AND detail.isPacking = 'N'
+						AND exists ( select pt.code from WmsPickTicket pt where pt.code=doc.relatedBillCode and pt.billType.code NOT IN('SCLLD','XSJHD','DBCKD'))
+						/~workDocCodeSearch: AND doc.code like '%{workDocCodeSearch}%' ~/
+						group by doc.id,
+						 doc.code,
+						 doc.productOrderCode,
+						 doc.userField5
+				ORDER BY doc.id ASC
+			]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

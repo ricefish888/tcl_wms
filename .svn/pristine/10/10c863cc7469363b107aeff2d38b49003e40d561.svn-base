@@ -1,0 +1,56 @@
+package com.vtradex.wms.webservice.utils;
+
+import com.vtradex.thorn.server.exception.BusinessException;
+import com.vtradex.wms.server.utils.StringHelper;
+
+public class CommonHelper {
+	 
+    /**
+     * @Description:   递归获取错误信息 传入一个excpetion
+     * @Author:        <a href="xuyan.xia@vtradex.net">夏绪焰</a>
+     * @CreateDate:    Nov 19, 2012 3:08:37 PM
+     * @param e
+     * @return:
+     */
+    public static String getErrorMessageByException(Throwable e) {
+        if(e==null) {
+            return null;
+        }
+        if(e.getMessage()==null && e.getCause()!=null) {
+            return getErrorMessageByException(e.getCause());
+        }
+        return e.getMessage();
+    }
+    
+    /**长度不足n在字符串str后补c*/
+    public static String addCharAfterStr(String str,int length,String c) {
+        return addCharToStr(str, length, c, false);
+    }
+    
+    /**长度不足n在字符串str前补c*/
+    public static String addCharBeforeStr(String str,int length,String c) {
+        return addCharToStr(str, length, c, true);
+    }
+    /**长度不足n在字符串str前面后者后面补c
+     * before 为true在前面  false在后面
+     * */
+    private static String addCharToStr(String str,int length,String c,boolean before) {   
+        if(length<=0) {
+            return str;
+        }
+        if(StringHelper.isNullOrEmpty(c) || c.length()!=1) {
+            throw new BusinessException("参数错误");
+        }
+        str = StringHelper.replaceNullToEmpty(str);
+        while(str.length()<length) {
+            if(before) {
+                str = c + str;
+            }
+            else {
+                str = str + c;
+            }
+        }
+        return str;
+    }
+    
+}

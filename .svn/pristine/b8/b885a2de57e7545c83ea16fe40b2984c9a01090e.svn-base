@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editTclWmsInventoryChangeHousePage" title="editTclWmsInventoryChangeHousePage" entityClass="com.vtradex.wms.server.model.entity.inventory.WmsInventory" width="400" height="350">
+        <workflow/>
+        <initListeners>
+        </initListeners>
+        <inputUIs>
+            <hidden id="inventory.id" title="inventory.id" reserve="false"/>
+            <hidden id="inventory.itemKey.id" title="inventory.itemKey.id" reserve="false"/>
+            <hidden id="inventory.warehouse.id" title="inventory.warehouse.id" reserve="false"/>
+			<text id="inventory.itemKey.lotInfo.extendPropC10" title="inventory.itemKey.lotInfo.extendPropC10" row="1" col="1" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="true" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+            </text>
+            <text id="inventory.warehouse.name" title="inventory.warehouse.name" row="1" col="1" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+             </text>
+            <remote id="locationId" title="locationCode" row="1" col="2" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="editable" multiple="false" manualEditable="true" displayColumn="4"  enumColumnType="3=WmsLocationType"  percentSignPosition="both" displayedTableHead="序号,仓库,库位类型,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT 
+	w.id,
+	warehouse.name,
+	w.type,
+	w.code
+	FROM WmsLocation w
+	LEFT JOIN w.warehouse warehouse
+	WHERE w.status = 'ENABLED'
+	AND w.type ='STORAGE'
+	AND w.warehouse.id in (SELECT f.warehouse.id FROM WmsFactoryWarehouse f WHERE 1=1
+		  					 AND f.warehouse.baseOrganization !=#{SESSION_BASE_ORGAN}
+		  					 AND f.factory.code=${inventory.itemKey.lotInfo.extendPropC10}
+	  					  )
+	AND (w.code LIKE :param)
+ 		]]></hql>
+                    <eventListeners/>
+                </remote>
+			<list id="qty3" title="inventory.qty" row="2" col="1" span="1" width="120" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="true">
+			    <visibleExpression/>
+			    <hql><![CDATA[
+			    SELECT
+			    inv.qty,
+			    inv.qty
+ FROM WmsInventory inv where inv.id=${inventory.id}
+			     ]]></hql> 
+			    <eventListeners>
+                	<eventListener id="qty2" index="1" refreshUI="false"/>
+                </eventListeners>
+			</list> 
+			<numberText id="qty2" title="inventory.qty" row="2" col="1" span="1" readOnly="true" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+            	<visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </numberText>
+            <numberText id="qty" title="qty" row="2" col="2" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+            	<visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </numberText>
+			
+        </inputUIs>
+    </editPage>
+</pages>

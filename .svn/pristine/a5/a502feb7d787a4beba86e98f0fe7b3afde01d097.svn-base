@@ -1,0 +1,148 @@
+package com.vtradex.wms.server.service.task.pojo;
+
+import java.util.Date;
+
+import com.vtradex.thorn.server.service.pojo.DefaultBaseManager;
+import com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse;
+import com.vtradex.wms.server.service.item.TclMessageManager;
+import com.vtradex.wms.server.service.production.WmsDeliveryOrderManager;
+import com.vtradex.wms.server.service.task.CallOracleProcManager;
+import com.vtradex.wms.server.service.task.CrontabLogManager;
+import com.vtradex.wms.server.service.task.CrontabManager;
+import com.vtradex.wms.webservice.utils.ServerUtil;
+
+/**
+ * @Description:   统一的定时任务管理类
+ * @Author:        <a href="xuyan.xia@vtradex.net">夏绪焰</a>
+ * @CreateDate:    May 28, 2012 9:43:32 AM
+ * @version:       v1.0
+ */
+public class DefaultCrontabManager extends DefaultBaseManager implements CrontabManager {
+    //日志
+    private CrontabLogManager crontabLogManager;
+	private CallOracleProcManager callOracleProcManager;
+	protected TclMessageManager tclMessageManager;
+	
+    public DefaultCrontabManager(CrontabLogManager crontabLogManager ,
+            CallOracleProcManager callOracleProcManager,
+            TclMessageManager tclMessageManager
+            ) {
+        this.crontabLogManager = crontabLogManager;
+        this.callOracleProcManager = callOracleProcManager;
+        this.tclMessageManager = tclMessageManager;
+        
+    }
+    
+    /**每天晚上0点前的任务 建议23点开始跑*/
+    public void everyDayBeforeZeroTask() {
+        if(!ServerUtil.isEdiServer()) {
+            return ;
+        }
+        /**********************************************************************/
+        Date beginDate = new Date();
+        String crontabName="计算月度齐套率报表";
+        Long crontablogid = 0L;
+		try {
+			crontablogid = crontabLogManager.storeCrontabRunningLog(beginDate, crontabName);
+			WmsDeliveryOrderManager wmsDeliveryOrderManager = (WmsDeliveryOrderManager)applicationContext.getBean("wmsDeliveryOrderManager");
+			wmsDeliveryOrderManager.gdqt_mon();
+			crontabLogManager.updateCrontabLogToSucess(crontablogid);
+		} catch (Exception e) {
+			crontabLogManager.updateCrontabLogToError(crontablogid, e.getMessage());
+			e.printStackTrace();
+		}
+        
+        
+    }
+    
+    /**拣配工单导入 定时任务 由task执行 无事务*/
+    public void jpgddr(Long warehouseId) {
+    	 if(!ServerUtil.isEdiServer()) {
+             return ;
+         }
+         /**********************************************************************/
+         Date beginDate = new Date();
+         WmsWarehouse w = commonDao.load(WmsWarehouse.class, warehouseId);
+         String crontabName="拣配工单导入定时执行:仓库："+w.getName();
+         Long crontablogid = 0L;
+         try {
+        	 crontablogid = crontabLogManager.storeCrontabRunningLog(beginDate, crontabName);
+        	 
+        	 tclMessageManager.importProductionOrderByTask(warehouseId);
+             
+             crontabLogManager.updateCrontabLogToSucess(crontablogid);
+         } 
+         catch (Exception e) {
+             crontabLogManager.updateCrontabLogToError(crontablogid, e.getMessage());
+             e.printStackTrace();
+         }
+         
+    }
+    
+    /**每天0点开始跑的任务 定时任务配置时间建议每天0:10以后*/
+    public void everyDayInZeroTask1() {
+        if(!ServerUtil.isEdiServer()) {
+            return ;
+        }
+        /**********************************************************************/
+        Date beginDate = new Date();
+        String crontabName="移动定时任务完成状态信息";
+        try {
+            callOracleProcManager.MOVE_THORN_TASK();
+            crontabLogManager.storeCrontabSuccessLog(beginDate, crontabName);
+        } 
+        catch (Exception e) {
+            crontabLogManager.storeCrontabErrorLog(beginDate, crontabName, e.getMessage());
+            e.printStackTrace();
+        }
+        
+        /**********************************************************************/
+        
+       /* beginDate = new Date();
+        crontabName="计算库存结转数据(日结表)";
+        try {
+            wmsInventoryManager.compute();
+            crontabLogManager.storeCrontabSuccessLog(beginDate, crontabName);
+        } 
+        catch (Exception e) {
+            crontabLogManager.storeCrontabErrorLog(beginDate, crontabName, e.getMessage());
+            e.printStackTrace();
+        } */
+        
+    }
+    
+    /**每天0点后的任务 建议每天3:00以后触发*/
+    public void everyDayInZeroTask2() {
+        if(!ServerUtil.isEdiServer()) {
+            return ;
+        }
+        /**********************************************************************/
+        
+        Date beginDate = new Date();
+        String crontabName="删除无效库存记录";
+        try {
+//            wmsInventoryManager.deleteInvalidInventory();
+            crontabLogManager.storeCrontabSuccessLog(beginDate, crontabName);
+        } 
+        catch (Exception e) {
+            crontabLogManager.storeCrontabErrorLog(beginDate, crontabName, e.getMessage());
+            e.printStackTrace();
+        }
+        
+    }
+     
+    /**仅仅由应用的jvm跑的task*/
+    public void appTask1() {
+        if(!ServerUtil.isAppServer()) {
+            return ;
+        }
+        /**********************************************************************/
+        
+    }
+    
+    
+}
+
+
+
+

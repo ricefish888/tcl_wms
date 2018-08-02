@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainPutawayWorkDocPage" title="maintainPutawayWorkDocPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.workdoc.WmsWorkDoc" width="800" height="500" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT workDoc.id,
+workDoc.code,
+workDoc.type,
+workDoc.qty,
+workDoc.allocateQty,
+workDoc.putawayQty,
+workDoc.relatedBillCode,
+workDoc.status,
+keeper.name,
+workDoc.printTimes,
+workDoc.startTime,
+workDoc.endTime,
+workDoc.updateInfo.createdTime,
+workDoc.updateInfo.updateTime 
+ FROM WmsWorkDoc workDoc
+ LEFT JOIN workDoc.keeper keeper
+ WHERE 1=1
+ AND workDoc.type='PUTAWAY'
+ AND workDoc.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}
+ ORDER BY workDoc.id DESC
+ ]]></datasource>
+        <columns>
+            <column id="workDoc.id" title="workDoc.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="workDoc.code" title="workDoc.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="workDoc.type" title="workDoc.type" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsWorkDocType"/>
+            <column id="workDoc.qty" title="workDoc.qty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="3"/>
+            <column id="workDoc.allocateQty" title="workDoc.allocateQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="3"/>
+            <column id="workDoc.putawayQty" title="workDoc.putawayQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="3"/>
+            <column id="workDoc.relatedBillCode" title="workDoc.relatedBillCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="workDoc.status" title="workDoc.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsWorkDocStatus"/>
+            <column id="keeper.name" title="keeper.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="workDoc.printTimes" title="workDoc.printTimes" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer" language="false"/>
+            <column id="workDoc.startTime" title="workDoc.startTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m:s"/>
+            <column id="workDoc.endTime" title="workDoc.endTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m:s"/>
+            <column id="workDoc.updateInfo.createdTime" title="workDoc.updateInfo.createdTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m:s"/>
+            <column id="workDoc.updateInfo.updateTime" title="workDoc.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m:s"/>
+        </columns>
+    </maintainPage>
+</pages>

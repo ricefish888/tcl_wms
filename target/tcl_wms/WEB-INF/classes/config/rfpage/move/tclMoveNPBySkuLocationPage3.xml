@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ASN收货表单页面模板 -->
+<RFFormPage id="tclMoveNPBySkuLocationPage3" title="tclMoveNPBySkuLocationPage3">
+	<RFDisplay id="moveNoPlanBySkuComfirmDisplay" load="tclRfNPMoveBySkuManager.inventoryInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[		
+			库位:{locCode}
+			货主:{company}
+			货品代码:{itemCode}
+			货品描述:{itemName}
+			包装单位:{unit}
+			包装数量:{packQty}
+			库存数量:{qty}
+			生产日期:{productDate}
+			库存状态:{inventoryStatus}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>	
+			库位:{locCode}
+			货主:{company}
+			货品代码:{itemCode}
+			货品描述:{itemName}
+			包装单位:{unit}
+			包装数量:{packQty}
+			库存数量:{qty}
+			生产日期:{productDate}
+			库存状态:{inventoryStatus}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="moveNoPlanBySkuQtyInput" title="moveNoPlanBySkuQtyInput" tip=""
+				 onFoucs="true">
+			</RFText>
+			<RFText id="moveNoPlanBySkuToLocInput" title="moveNoPlanBySkuToLocInput" tip=""
+				 onFoucs="false">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="moveNoPlanBySkuComfirmScan" title="moveNoPlanBySkuComfirmScan" action="tclRfNPMoveBySkuManager.moveBySkuComfirmCommit" validate="tclRfNPMoveBySkuManager.moveBySkuComfirmCommitValidate" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

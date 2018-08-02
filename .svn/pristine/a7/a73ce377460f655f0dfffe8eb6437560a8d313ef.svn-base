@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 查询列表页面模板 -->
+<RFListPage id="TclMovePlanBySkuLocationPage3" title="TclMovePlanBySkuLocationPage3">
+   <RFSearchUI id="itemCodeSearch" text="itemCodeSearch" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="taskId" title="taskId" width="50" enumType="" hidden="true" />
+		<RFTh id="locationCode" title="locationCode" width="100" enumType="" hidden="false" />
+		<RFTh id="itemCode" title="itemCode" width="120" enumType="" hidden="false" />
+		<RFTh id="inventoryStatus" title="inventoryStatus" width="100" enumType="" hidden="false" />
+		<RFTh id="qty" title="qty" width="80" enumType="" hidden="false" />
+		<DataSource type="HQL">
+			<statement>
+				<![CDATA[
+				select 
+				task.id as taskId,
+				task.fromLocation.code as locationCode,
+				task.item.code as itemCode,
+				task.inventoryStatus as inventoryStatus,
+				task.planQty-task.putawayQty as qty
+				FROM WmsTask task 
+				WHERE 1=1 
+				AND task.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN} 
+				AND task.status in('ENABLED','IN_OPERATION')
+				AND task.type = 'MOVE'
+				AND task.workDoc.id=cast(${workId} as integer)
+				AND task.fromLocation.code=${movePlanBySkuLocationInput}
+				/~itemCodeSearch: AND task.item.code like '%{itemCodeSearch}%' ~/
+				ORDER BY task.item.id asc
+				]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

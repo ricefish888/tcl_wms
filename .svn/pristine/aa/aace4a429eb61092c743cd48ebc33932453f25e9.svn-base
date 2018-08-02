@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsSapWarehousePage">
+    <main>
+        <process id="wmsSapWarehouseProcess">
+            <tablePopup id="new" title="new" process="wmsSapWarehouseProcess.new" enableType="none" containId="false" maintain="false" pageId="editSapWarehousePage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="edit" title="edit" process="wmsSapWarehouseProcess.edit" enableType="single" containId="true" pageId="editSapWarehousePage">
+            </tablePopup>
+            <tableCommit id="disable" title="disable" process="wmsSapWarehouseProcess.disable" enableType="multi" download="false" confirmMessage="是否确认失效此条记录？">
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="enable" title="enable" process="wmsSapWarehouseProcess.enable" enableType="multi" download="false">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

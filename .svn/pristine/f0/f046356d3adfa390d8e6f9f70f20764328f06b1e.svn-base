@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="addPurchaseOrderDetailPage" title="addPurchaseOrderDetailPage" entityClass="com.vtradex.wms.server.model.entity.order.PurchaseOrderDetail" width="250" height="280" onClose="refreshParent">
+        <workflow/>
+        <initListeners/>
+        <inputUIs>
+            <hidden id="detail.id" title="detail.id" reserve="false"/>
+            <numberText id="detail.lineNo" title="detail.lineNo" row="1" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="true" inVisible="false" validator="positiveInteger" editModel="uneditable" returnType="Integer">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </numberText>
+            <remote id="detail.item.id" title="detail.item.id" row="2" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="false" focusUI="false" inVisible="false" editModel="uneditable" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,物料编码,物料描述">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT
+item.id,
+item.code,
+item.name
+FROM WmsItem item,WmsItemFactory wmsItemFactory
+WHERE item.status = 'ENABLED'
+AND item.masterGroup.id in (select company.masterGroup.id from WmsCompany company where company.id= ${purchaseOrder.company.id})
+AND item.id = wmsItemFactory.item.id
+AND wmsItemFactory.factory.id = ${purchaseOrder.sapFactory.id}
+AND (item.code LIKE :param OR item.name LIKE :param)
+ORDER BY item.id]]></hql>
+                <eventListeners>
+                    <eventListener id="detail.packageUnit.id" index="3" refreshUI="false"/>
+                </eventListeners>
+            </remote>
+            <list id="detail.packageUnit.id" title="detail.packageUnit.id" row="3" col="1" span="1" width="120" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT
+packageUnit.id,
+packageUnit.unit
+FROM WmsPackageUnit packageUnit
+WHERE 1=1
+AND packageUnit.item.id = ${detail.item.id}
+ORDER BY packageUnit.convertFigure desc]]></hql>
+                <eventListeners/>
+            </list>
+            <text id="detail.ebelp" title="detail.ebelp" row="4" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <list id="detail.pstyp" title="detail.pstyp" row="5" col="1" span="1" width="118" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false" enumType="WmsFactoryXmlb">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT 
+	 enumerate.enumValue,
+	 enumerate.enumValue FROM Enumerate enumerate 
+	 where enumerate.enumType = 'WmsFactoryXmlb']]></hql>
+                <eventListeners/>
+            </list>
+            
+            <list id="detail.inventoryStatus" title="detail.inventoryStatus" row="6" col="1" span="1" width="120" readOnly="false" required="true" reserve="true" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT itemState.name,itemState.name
+				 FROM WmsInventoryState itemState
+				 WHERE
+				 itemState.masterGroup.id in (select company.masterGroup.id from WmsCompany company where company.id= ${purchaseOrder.company.id})
+				 AND itemState.status='ENABLED'
+				 ORDER BY itemState.id DESC]]></hql>
+                <eventListeners/>
+            </list>
+            
+            <date id="detail.receivedDate" title="detail.receivedDate" row="7" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" showTime="false" manualEditable="true" defaultCurrentDate="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+            </date>
+                
+            
+            
+            <numberText id="expectedPackQty" title="expectedPackQty" row="8" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" validator="positiveNumber" returnType="Double" decimal="3">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </numberText>
+        </inputUIs>
+    </editPage>
+</pages>

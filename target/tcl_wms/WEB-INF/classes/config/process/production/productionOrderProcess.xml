@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="productionOrderProcess" control="status">
+
+	<state id="OPEN" title="打开"/>
+
+	<state id="CANCELED" title="取消"/>
+
+	<state id="FINISHED" title="完成"/>
+	
+	<state id="ACTIVE" title="生效"/>
+
+	<task id="view" title="查看">
+	</task>
+
+	<task id="importPickingOrder" title="拣配工单导入">
+	</task>
+
+	<task id="importOrderHandleTime" title="工单开始结束时间导入">
+	</task>
+	
+	
+	<task id="import" title="导入">
+	</task>
+	
+	<task id="save" title="保存">
+	</task>
+	
+	<task id="creatPickTicket" title="创建拣货单">
+	</task>
+	
+	<task id="active" title="激活">
+		<from id="OPEN" type="state"/>
+		<to id="ACTIVE" type="state"/>
+	</task>
+
+    <task id="new" title="新建">
+		<to id="OPEN" type="state"/>
+	</task>
+	
+	<task id="modify" title="修改">
+		<from id="OPEN" type="state"/>
+	</task>
+	<task id="addDetail" title="添加明细">
+		<condition><![CDATA[${po.status} == 'OPEN']]></condition>
+		<from id="OPEN" type="state"/>
+	</task>
+
+	<task id="removeDetails" title="删除明细">
+		<condition><![CDATA[${po.status} == 'OPEN']]></condition>
+		<from id="OPEN" type="state"/>
+	</task>
+
+	<task id="modifyDetail" title="修改明细">
+		<condition><![CDATA[${po.status} == 'OPEN']]></condition>
+		<from id="OPEN" type="state"/>
+	</task>
+	
+	<task id="unActive" title="反激活">
+		<from id="ACTIVE" type="state"/>
+		<to id="OPEN" type="state"/>
+	</task>
+	
+	<task id="productionOrder" title="生成交货单">
+	</task>
+	
+	<task id="onTimeWarning" title="恰时预警">
+	</task>
+	
+	<task id="validateProduction" title="齐套验证">
+	</task>
+	
+	
+	<task id="cancle" title="取消拣配单">
+	</task>
+	
+	<task id="createInventoryTrend" title="计算库存趋势">
+	</task>
+	
+	<task id="alonePick" title="单独下发">
+	</task>
+	
+	<task id="alonePickImport" title="单独下发导入">
+	</task>
+	
+	<task id="aloneCreatePick" title="单独生成拣货单">
+	</task>
+	
+	<task id="canclePick" title="明细取消拣配单">
+	</task>
+	
+	<task id="changetXfqty" title="修改下发数量">
+	</task>
+</process>

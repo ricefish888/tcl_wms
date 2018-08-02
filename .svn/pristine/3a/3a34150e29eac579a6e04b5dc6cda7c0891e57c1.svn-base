@@ -1,0 +1,11 @@
+package com.vtradex.wms.server.enumeration;
+
+public interface WmsSapFactoryCodeEnum {
+
+	/** 洗衣机生产工厂编码*/
+	public static final String XYJ = "2000";
+	
+	/** 冰箱生产工厂编码*/
+	public static final String BX = "1000";
+	
+}

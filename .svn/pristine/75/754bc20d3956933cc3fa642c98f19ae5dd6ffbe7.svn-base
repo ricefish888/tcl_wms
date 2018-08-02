@@ -1,0 +1,21 @@
+package com.vtradex.wms.server.service.sap.pojo;
+
+import com.vtradex.thorn.server.exception.BusinessException;
+import com.vtradex.thorn.server.service.pojo.DefaultBaseManager;
+import com.vtradex.wms.server.model.entity.item.WmsMinPackageQty;
+import com.vtradex.wms.server.service.sap.WmsMinPackageManager;
+
+public class DefaultWmsMinPackageManager extends DefaultBaseManager implements WmsMinPackageManager{
+
+	@Override
+	public void storeMinPackage(WmsMinPackageQty min) {
+		WmsMinPackageQty mpk = (WmsMinPackageQty)commonDao.findByQueryUniqueResult("FROM WmsMinPackageQty wmpq where wmpq.supplier=:ws and wmpq.item=:wi", new String[]{"ws","wi"}, new Object[]{min.getSupplier(),min.getItem()});
+		if(min.isNew()){
+			if(null!=mpk){
+				throw new BusinessException("该供应商对应的物料已维护！！");
+			}
+		}
+		commonDao.store(min);
+	}
+
+}

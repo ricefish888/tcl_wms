@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mappings>
+	<element pageId="modifyWmsDeliveryOrderPage" buttonId="delDetail">
+		<mapping id="objs" className="list" />
+	</element>
+	<element pageId="addPurchaseOrderDetail4DeliveryOrderDetaliPage" buttonId="addDetail">
+		<mapping id="objs" className="list" />
+	</element>
+	<element pageId="maintainPurchaseOrderPage" buttonId="received">
+		<mapping id="objs" className="list" />
+	</element>
+	<element pageId="maintainPurchaseOrderPage" buttonId="confirm">
+		<mapping id="objs" className="list" />
+	</element>
+	<element pageId="maintainCheckOrderPage" buttonId="received">
+		<mapping id="objs" className="list" />
+	</element>
+	<element pageId="maintainCheckOrderPage" buttonId="confirm">
+		<mapping id="objs" className="list" />
+	</element>
+	<element pageId="maintainWmsDeliveryOrderPage" buttonId="received">
+		<mapping id="objs" className="list" />
+	</element>
+	<element pageId="maintainWmsDeliveryOrderPage" buttonId="confirm">
+		<mapping id="objs" className="list" />
+	</element>
+	
+	<element pageId="maintainWmsASNPage" buttonId="printLabel">
+		<mapping id="objs" className="list" />
+	</element>	
+	
+	<element pageId="maintainWmsBarCodeRepPrintRecordPage" buttonId="print">
+		<mapping id="objs" className="list" />
+	</element>
+	
+	
+	
+</mappings>

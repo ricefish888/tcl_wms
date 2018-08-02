@@ -1,0 +1,105 @@
+<HTML lang=en xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<META http-equiv=Content-Type content="text/html; charset=utf-8">
+		<title>TCL_WMS仓储管理系统</title>
+		<script type="text/javascript" >
+			function setStatus() {
+				window.status = "TCL_WMS仓储管理系统";
+				//init();
+				//doSecurity();
+			}
+			document.oncontextmenu=function(){return false;}
+			function getJSON(){
+				return eval('(' + {} +')');
+			} 
+			var gwtState = false;
+			function gwtInitOk() {
+				gwtState = true;
+			}
+			
+			function hideiframe() {
+				myfr.document.body.scroll='no';
+				myd.style.display='none';
+			}
+			
+			function init() {
+				if (window.ActiveXObject && !window.XMLHttpRequest) {
+					window.XMLHttpRequest = function() {
+						var msxmls = ['Msxml2.XMLHTTP.5.0','Msxml2.XMLHTTP.4.0','Msxml2.XMLHTTP.3.0','Msxml2.XMLHTTP','Microsoft.XMLHTTP'];
+						for (var i = 0 ; i < msxmls.length ; i ++) {
+							try {
+								return new ActiveXObject(msxmls[i]);
+							}
+							catch(e) {}
+						}
+						return null;
+					};
+				}
+			}
+			
+			function doSecurity() {
+				var url = "*.mainFrame";
+				var xmlHttp = new XMLHttpRequest();
+				xmlHttp.open("POST",url,true);
+				xmlHttp.onreadystatechange=function() {
+					if (xmlHttp.readyState==4 && xmlHttp.status==200) {
+						document.getElementById('myfr').src = xmlHttp.responseText;//ssdd
+					}
+				}
+				xmlHttp.send(null);
+			}
+			function showloginframe() {
+				window.location.href="index.html";
+			}
+		</script>
+		<script type="text/javascript" language="javascript" src="com.vtradex.wms.WMS.nocache.js"></script>
+		<link rel="stylesheet" href="./css/timeline.css"></link>
+	</head>
+	<body onload="setStatus()" style="margin: 0px"> 
+		<!-- OPTIONAL: include this if you want history support -->
+    	<iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1' style="position:absolute;width:0;height:0;border:0"></iframe>
+    
+   	 	<!-- RECOMMENDED if your web app will not function without JavaScript enabled -->
+    	<noscript>
+      		<div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
+        		Your web browser must have JavaScript enabled
+        		in order for this application to display correctly.
+      		</div>
+    	</noscript>
+		<iframe id='__directReport' style='width:0;height:0;border:0'></iframe>
+		<IFRAME id="__tms_dl" name="__tms_dl" style="display:none;width:0;height:0;border:0"></IFRAME>
+		<div id="myd" style="left:0;top:0;width:100%;height:100%">
+			<iframe id="myfr" name="myfr" width=100% height=100% frameborder=0 scrolling=no></iframe>
+		</div>
+		<script type="text/javascript">
+			var myfr=document.getElementById('myfr'),
+				url='OrganBusinessModelServlet',
+				xhr=new XMLHttpRequest(); 
+			if(location.href.indexOf('logout')===-1){
+				xhr.open("POST",url);
+				xhr.onreadystatechange=function() {
+					if (xhr.readyState==4 && xhr.status==200) {
+						if(xhr.responseText=='user is null'){
+							myfr.src='fullLogin.html';
+						}
+						else if(xhr.responseText == "setupLicense"){
+							window.location.href="setupLicense.html";
+						}
+						else{
+							myfr.src='organBusinessModelChoose.html';
+						}
+					}
+				}
+				xhr.send(null);				
+			}else{
+				url='logout.html',
+				xhr=new XMLHttpRequest();
+				xhr.open("POST",url);
+				xhr.onreadystatechange=function() {
+					window.location.href='index.html';
+				}
+				xhr.send(null);	
+			}
+		</script>
+	</body>
+</html>

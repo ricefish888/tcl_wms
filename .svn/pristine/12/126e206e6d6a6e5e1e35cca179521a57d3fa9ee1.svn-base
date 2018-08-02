@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 盘点输入货品 -->
+<RFFormPage id="tclCountPlanRFListPage2" title="tclCountPlanRFListPage2">
+	<RFDisplay id="countPlanItemDisplay" load="tclRfCountPlanManager.showItemCode">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+		              库位:{location}
+		             货品编码:{itemCode}
+		             货品名称:{itemName}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>	
+		             库位:{location}
+		             货品编码:{itemCode}
+		             货品名称:{itemName}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="countPlanItemInput" title="countPlanItemInput" tip=""
+				 onFoucs="true">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="countPlanItemScan" title="countPlanItemScan" action="tclRfCountPlanManager.itemInputCommit" validate="" onFoucs="false"/>
+			<RFButton id="countPlanItemForNullScan" title="countPlanItemForNullScan" action="tclRfCountPlanManager.countPlanItemForNullCommit" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

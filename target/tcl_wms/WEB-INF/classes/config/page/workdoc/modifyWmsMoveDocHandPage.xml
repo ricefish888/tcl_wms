@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <modifyDetailPage id="modifyWmsMoveDocHandPage" title="modifyWmsMoveDocHandPage" entityClass="com.vtradex.wms.server.model.entity.workdoc.WmsWorkDoc" onClose="refreshParent" width="880" height="300">
+        <initListeners/>
+    <modify>
+            <inputUIs>
+                <hidden id="workDoc.id" title="workDoc.id" reserve="false"/>
+            </inputUIs>
+        </modify>
+        <detail entityClass="com.vtradex.wms.server.model.entity.workdoc.WmsTask">
+            <datasource><![CDATA[SELECT 
+            task.id,task.status,fromLocation.code,task.toLocation.code,
+            item.code,item.name,packageUnit.unit,
+            task.planPackQty,task.planQty,task.pickedQty 
+            FROM WmsTask task 
+            LEFT JOIN task.fromLocation fromLocation
+            LEFT JOIN task.toLocation toLocation
+            LEFT JOIN task.item item
+            LEFT JOIN task.packageUnit packageUnit
+ WHERE 1=1
+ AND task.workDoc.id = {workDoc.id}]]></datasource>
+            <columns>
+                <column id="task.id" title="ID" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="task.status" title="task.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsTaskStatus"/>
+                <column id="fromLocation.code" title="fromLocation.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="toLocation.code" title="toLocation.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="item.name" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="packageUnit.unit" title="packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="task.planPackQty" title="task.planPackQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="task.planQty" title="task.planQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="task.pickedQty" title="qty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+            </columns>
+        </detail>
+    </modifyDetailPage>
+</pages>

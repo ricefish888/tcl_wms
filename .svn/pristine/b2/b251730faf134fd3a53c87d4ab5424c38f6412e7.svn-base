@@ -1,0 +1,11 @@
+package com.vtradex.wms.server.model.enums;
+
+/**
+ * 生成ASN的来源方式
+ * @author fs
+ * @date 2017-8-7 18:27:27
+ */
+public interface WmsAsnGenType {
+	
+	public static String YLRKD = "YLRKD";/**预留入库单(入库类型的预留单->ASN)*/
+}

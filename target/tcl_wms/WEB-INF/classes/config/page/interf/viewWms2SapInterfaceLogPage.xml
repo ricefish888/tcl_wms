@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="viewWms2SapInterfaceLogPage" title="viewWms2SapInterfaceLogPage" entityClass="com.vtradex.wms.server.model.entity.base.Wms2SapInterfaceLog" width="600" height="400" onClose="refreshParent">
+        <workflow/>
+        <initListeners/>
+        <inputUIs>
+            <hidden id="wi.id" title="wi.id" reserve="false"/>
+            <textArea id="wi.requestContent" title="wi.requestContent" row="1" col="1" span="2" width="450" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" rows="20" cols="30">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </textArea>
+            <textArea id="wi.responseContent" title="wi.responseContent" row="2" col="1" span="20" width="450" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" rows="10" cols="45">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </textArea>
+        </inputUIs>
+    </editPage>
+</pages>

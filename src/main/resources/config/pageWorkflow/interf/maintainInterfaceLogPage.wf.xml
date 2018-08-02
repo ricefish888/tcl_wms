@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainInterfaceLogPage">
+    <main>      
+        <process id="interfaceProcess">
+            <tablePopup id="view" title="view" process="interfaceProcess.view" enableType="single" containId="true" pageId="viewInterfaceLogPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="resend" title="resend" process="interfaceProcess.resend" enableType="multi" multiMapping="false" download="false">
+                <enableExpression><![CDATA[${lf.status} == 'FAIL']]></enableExpression>
+                <mappings/>
+                <actions>
+                     <action managerName="interfaceLogManager" methodName="resendFailInterfaceLog" parameter="obj" />
+                </actions>
+                <forwards/>
+          </tableCommit>  
+        </process>
+    </main>
+</page>

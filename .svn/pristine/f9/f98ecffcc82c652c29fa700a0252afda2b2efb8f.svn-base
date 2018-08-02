@@ -1,0 +1,268 @@
+package com.vtradex.wms.rfserver.service.bol.pojo;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils; 
+ 
+
+
+
+
+
+
+
+
+import com.vtradex.rf.common.RfConstant;
+import com.vtradex.rf.common.exception.RfBusinessException; 
+import com.vtradex.rf.util.GsonUtil;
+import com.vtradex.thorn.server.exception.BusinessException;
+import com.vtradex.thorn.server.model.EntityFactory;
+import com.vtradex.thorn.server.service.pojo.DefaultBaseManager;
+import com.vtradex.thorn.server.util.DateUtil;
+import com.vtradex.thorn.server.util.LocalizedMessage; 
+import com.vtradex.thorn.server.web.security.BaseOrganizationHolder;
+import com.vtradex.thorn.server.web.security.UserHolder; 
+import com.vtradex.wms.rfserver.bean.RfAsnVo;
+import com.vtradex.wms.rfserver.bean.RfSkuTaskVo;
+import com.vtradex.wms.rfserver.common.RfConstantDiy;
+import com.vtradex.wms.rfserver.common.RfMessageCode;
+import com.vtradex.wms.rfserver.service.bol.TclRfBolManager;
+import com.vtradex.wms.rfserver.service.order.TclRfOrderManager;
+import com.vtradex.wms.rfserver.service.receiving.TclRfAsnManager;
+import com.vtradex.wms.rfserver.service.receiving.RfPalletPutawayWorkManager;
+import com.vtradex.wms.rfserver.service.receiving.RfSKUPutawayWorkManager;
+import com.vtradex.wms.server.helper.WmsBarCodeParse;
+import com.vtradex.wms.server.model.component.LotInfo;
+import com.vtradex.wms.server.model.entity.base.WmsProductionOrderCheck;
+import com.vtradex.wms.server.model.entity.bol.WmsBol;
+import com.vtradex.wms.server.model.entity.bol.WmsBolDetail;
+import com.vtradex.wms.server.model.entity.bol.WmsBolStatus;
+import com.vtradex.wms.server.model.entity.bol.WmsBolType;
+import com.vtradex.wms.server.model.entity.item.WmsBillType;
+import com.vtradex.wms.server.model.entity.item.WmsCompany;
+import com.vtradex.wms.server.model.entity.item.WmsInventoryState;
+import com.vtradex.wms.server.model.entity.item.WmsItem;
+import com.vtradex.wms.server.model.entity.item.WmsLotRule;
+import com.vtradex.wms.server.model.entity.item.WmsPackageUnit;
+import com.vtradex.wms.server.model.entity.production.ProductionOrder;
+import com.vtradex.wms.server.model.entity.receiving.WmsASN;
+import com.vtradex.wms.server.model.entity.receiving.WmsASNDetail;
+import com.vtradex.wms.server.model.entity.receiving.WmsASNStatus;
+import com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse;
+import com.vtradex.wms.server.model.entity.workdoc.WmsTask;
+import com.vtradex.wms.server.model.entity.workdoc.WmsWorkDoc;
+import com.vtradex.wms.server.model.enums.WmsTaskStatus;
+import com.vtradex.wms.server.model.enums.WmsWorkDocStatus;
+import com.vtradex.wms.server.model.enums.WmsWorkDocType;
+import com.vtradex.wms.server.service.bol.WmsBolManager;
+import com.vtradex.wms.server.service.receiving.WmsASNDetailManager;
+import com.vtradex.wms.server.service.receiving.WmsASNManager;
+import com.vtradex.wms.server.service.receiving.WmsNoTransactionalManager;
+import com.vtradex.wms.server.service.rule.WmsRuleManager;
+import com.vtradex.wms.server.utils.DoubleUtils;
+import com.vtradex.wms.server.utils.StringHelper;
+
+ 
+/**
+ * 订单RF逻辑类
+ * @author admin
+ *
+ */
+public class DefaultTclRfBolManager extends DefaultBaseManager implements TclRfBolManager{
+	 private WmsBolManager wmsBolManager;
+	public DefaultTclRfBolManager(WmsBolManager wmsBolManager) {
+		 this.wmsBolManager = wmsBolManager;
+	}
+	 
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map bolCodeInputCommit(Map bolMap) throws RfBusinessException {
+		String bolCode = (String) bolMap.get("bolCodeInput");
+		if(StringUtils.isEmpty(bolCode)){
+			throw new RfBusinessException("交接单号不能为空");
+		}
+		
+		String hql = "From WmsBol bol where  bol.warehouse.baseOrganization.id=:baseOrganizationId and bol.code=:code ";
+		
+		WmsBol bol = (WmsBol)commonDao.findByQueryUniqueResult(hql, new String[]{"baseOrganizationId","code"},new Object[]{BaseOrganizationHolder.getThornBaseOrganization().getId(), bolCode});
+		if(bol==null){
+			throw new RfBusinessException("未找到交接单");
+		}
+		if(!WmsBolStatus.ACTIVE.equals(bol.getStatus())){
+			throw new RfBusinessException("交接单状态不为激活");
+		}
+		hql ="select detail.pickTicketDetail.item.code, detail.pickTicketDetail.item.name ,sum(detail.planQty) From WmsBolDetail detail where detail.bol.id=:bolId group by detail.pickTicketDetail.item.code, detail.pickTicketDetail.item.name";
+		List<Object[]> details = commonDao.findByQuery(hql, "bolId", bol.getId());
+		StringBuffer itemInfoStr = new StringBuffer();
+		for(int i = 0;i <details.size();i++){
+//			物料代码：
+//			物料名称：
+//			数量
+			Object[] detail = details.get(i);
+			String itemCode = detail[0].toString();
+			itemInfoStr.append("物料代码:").append(itemCode).append("\n");
+			String itemName = detail[1].toString();
+			itemInfoStr.append("物料名称:").append(itemName).append("\n");
+			Double expectedQty =Double.valueOf(detail[2].toString());
+			itemInfoStr.append("数量:").append(expectedQty).append("\n");
+			if(i<(details.size()-1)){
+				itemInfoStr.append("----------------------\n");
+			}
+		}
+		if(WmsBolType.VMI.equals(bol.getType())){
+			bolMap.put("bolId", bol.getId());
+			bolMap.put("itemInfos", itemInfoStr);
+			bolMap.put("bolCode",bol.getCode());
+			bolMap.put("bolType", bol.getType());
+			bolMap.put(RfConstant.FORWARD_VALUE, RfConstant.FORWARD_SUCCESS);
+		}else if(WmsBolType.DB.equals(bol.getType())){
+			bolMap.put("bolId", bol.getId());
+			bolMap.put("itemInfos", itemInfoStr);
+			bolMap.put("bolCode", bol.getCode());
+			bolMap.put("bolType", bol.getType());
+			bolMap.put(RfConstant.FORWARD_VALUE, RfConstant.FORWARD_SUCCESS);
+		}else{
+			throw new RfBusinessException("没有找到对应的单据类型!!");
+		}
+		return bolMap;
+	}
+
+
+
+	@Override
+	public Map bolInfo(Map bolMap) throws RfBusinessException {
+		Long bolId = bolMap.get("bolId") == null ? null : Long.valueOf(bolMap.get("bolId").toString());
+		if(null == bolId){
+			bolId = bolMap.get(RfConstant.ENTITY_ID) == null ? null
+					: Long.valueOf(bolMap.get(RfConstant.ENTITY_ID).toString());
+		}
+		if(StringHelper.isNullOrEmpty(bolId.toString())){
+			throw new RfBusinessException(RfMessageCode.RF_MESSAGE_PARAM_LOSE);
+		}
+		WmsBol bol = commonDao.load(WmsBol.class, bolId);
+		
+		String hql ="select detail.pickTicketDetail.item.code, detail.pickTicketDetail.item.name ,sum(detail.planQty) From WmsBolDetail detail where detail.bol.id=:bolId group by detail.pickTicketDetail.item.code, detail.pickTicketDetail.item.name";
+		List<Object[]> details = commonDao.findByQuery(hql, "bolId", bol.getId());
+		StringBuffer itemInfoStr = new StringBuffer();
+		for(int i = 0;i <details.size();i++){
+//			物料代码：
+//			物料名称：
+//			数量
+			Object[] detail = details.get(i);
+			String itemCode = detail[0].toString();
+			itemInfoStr.append("物料代码:").append(itemCode).append("\n");
+			String itemName = detail[1].toString();
+			itemInfoStr.append("物料名称:").append(itemName).append("\n");
+			Double expectedQty =Double.valueOf(detail[2].toString());
+			itemInfoStr.append("数量:").append(expectedQty).append("\n");
+			if(i<(details.size()-1)){
+				itemInfoStr.append("----------------------\n");
+			}
+		}
+		if(WmsBolType.VMI.equals(bol.getType())){
+			bolMap.put("bolId", bol.getId());
+			bolMap.put("itemInfos", itemInfoStr);
+			bolMap.put("bolCode",bol.getCode());
+			bolMap.put("bolType", bol.getType());
+			bolMap.put(RfConstant.FORWARD_VALUE, RfConstant.FORWARD_SUCCESS);
+		}else if(WmsBolType.DB.equals(bol.getType())){
+			bolMap.put("bolId", bol.getId());
+			bolMap.put("itemInfos", itemInfoStr);
+			bolMap.put("bolCode", bol.getCode());
+			bolMap.put("bolType", bol.getType());
+			bolMap.put(RfConstant.FORWARD_VALUE, RfConstant.FORWARD_SUCCESS);
+		}else if(WmsBolType.BOL.equals(bol.getType())){
+			bolMap.put("bolId", bol.getId());
+			bolMap.put("itemInfos", itemInfoStr);
+			bolMap.put("bolCode", bol.getCode());
+			bolMap.put("bolType", bol.getType());
+			bolMap.put("remark", bol.getRemark());
+			bolMap.put(RfConstant.FORWARD_VALUE, RfConstant.FORWARD_SUCCESS);
+		}else{
+			throw new RfBusinessException("没有找到对应的单据类型!!");
+		}
+		return bolMap;
+	}
+
+
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public Map bolShipCommit(Map bolMap) throws RfBusinessException {
+		Long bolId = Long.valueOf(bolMap.get("bolId").toString());
+		WmsBol bol = commonDao.load(WmsBol.class, bolId);
+		if(WmsBolStatus.OPEN.equals(bol.getStatus())){
+			if(bol.getDetails().size()<=0){
+				throw new BusinessException("出库单未添加作业单");
+			}
+			bol.setStatus(WmsBolStatus.ACTIVE);
+		}
+		//调用发运
+		wmsBolManager.shipBol(bol);
+		bol.setStatus(WmsBolStatus.SHIPPED);
+		commonDao.store(bol);
+		bolMap.put(RfConstant.CLEAR_VALUE, Boolean.TRUE);
+		bolMap.put(RfConstant.FORWARD_VALUE, RfConstant.FORWARD_SUCCESS);
+		return bolMap;
+	}
+
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map cancelShip(Map bolMap) throws RfBusinessException {
+		// TODO Auto-generated method stub
+		bolMap.put(RfConstant.CLEAR_VALUE, Boolean.TRUE);
+		bolMap.put(RfConstant.FORWARD_VALUE, RfConstant.FORWARD_SUCCESS);
+		return bolMap;
+	}
+	/**
+	 * 创建出库单
+	 */
+	public Map createBol(Map bolMap) throws RfBusinessException{
+		String remark = bolMap.get("remarkInput") ==null ? null : bolMap.get("remarkInput").toString().trim();
+		WmsBol bol = EntityFactory.getEntity(WmsBol.class);
+		bol.setExpectedDeliveryTime(new Date());
+		bol.setKeeper(UserHolder.getUser());
+		bol.setRemark(remark);
+		bol.setType("BOL");
+		wmsBolManager.storeBOL(bol);
+		
+		bolMap.put("bolId", bol.getId());
+		bolMap.put(RfConstant.FORWARD_VALUE, RfConstant.FORWARD_SUCCESS);
+		return bolMap;
+	}
+	/**
+	 * 添加作业单
+	 */
+	public Map addWorkDoc(Map bolMap) throws RfBusinessException{
+		bolMap.put(RfConstant.CLEAR_VALUE, Boolean.TRUE);
+		bolMap.put(RfConstant.FORWARD_VALUE, RfConstant.FORWARD_SUCCESS);
+		return bolMap;
+	}
+	/**
+	 * 显示作业单信息
+	 */
+	public Map showWorkDocInfo(Map bolMap) throws RfBusinessException{
+		Long docId = bolMap.get("docId") == null ? null : Long.valueOf(bolMap.get("docId").toString());
+		if(null == docId){
+			docId = bolMap.get(RfConstant.ENTITY_ID) == null ? null
+					: Long.valueOf(bolMap.get(RfConstant.ENTITY_ID).toString());
+		}
+		if(docId == null){
+			throw new RfBusinessException(RfMessageCode.RF_MESSAGE_PARAM_LOSE);
+		}
+		WmsWorkDoc workDoc = commonDao.load(WmsWorkDoc.class, docId);
+		String hql = "FROM WmsTask task WHERE task.workDoc.id =:workDocId ";
+		List<WmsTask> tasks = commonDao.findByQuery(hql, "workDocId", docId);
+		
+		return bolMap;
+		
+	}
+}

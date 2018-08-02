@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainPutawayWorkDocPage">
+    <main>
+        <process id="wmsPutawayWorkDocProcess">
+            <tablePopup id="view" title="view" process="wmsPutawayWorkDocProcess.view" enableType="single" containId="true" pageId="viewPutawayWorkDocPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="autoAllocate" title="autoAllocate" process="wmsPutawayWorkDocProcess.autoAllocate" enableType="single" multiMapping="false" download="false" closeTransactional="true">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsWorkDocManager" methodName="autoAllocateByWordDoc" parameter="obj"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+            <tablePopup id="manualAllocate" title="manualAllocate" process="wmsPutawayWorkDocProcess.manualAllocate" enableType="single" containId="true" pageId="modifyWmsPutawayWorkDocPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="cancelAllocateTask" title="cancelAllocateTask" process="wmsPutawayWorkDocProcess.cancelAllocateTask" enableType="multi" multiMapping="false" download="false" closeTransactional="false" confirmMessage="confirm.maintainPutawayWorkDocPage.cancelAllocateTask">
+                <enableExpression><![CDATA[${workDoc.status} == 'ALLOCATED'||${workDoc.status} == 'PART_ALLOCATE']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsWorkDocManager" methodName="cancelAllocateWhole" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tablePopup id="cancelAllocate" title="cancelAllocate" process="wmsPutawayWorkDocProcess.cancelAllocate" enableType="single" containId="true" pageId="modifyWmsWorkDocCancelAllocatePage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="active" title="active" process="wmsPutawayWorkDocProcess.active" enableType="multi" multiMapping="false" download="false" closeTransactional="false">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsWorkDocManager" methodName="activeWmsWorkDoc" parameter="obj"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="unActive" title="unActive" process="wmsPutawayWorkDocProcess.unActive" enableType="multi" multiMapping="false" download="false" closeTransactional="false">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsWorkDocManager" methodName="unActiveWmsWorkDoc" parameter="obj"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="delete" title="delete" process="wmsPutawayWorkDocProcess.delete" enableType="single" multiMapping="false" download="false" closeTransactional="false" confirmMessage="confirm.maintainPutawayWorkDocPage.delete">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsWorkDocManager" methodName="deleteWorkDoc" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tablePopup id="confirm" title="confirm" process="wmsPutawayWorkDocProcess.confirm" enableType="multi" containId="true" pageId="editWholeWorkConfirmPutawayPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="singleConfirm" title="singleConfirm" process="wmsPutawayWorkDocProcess.singleConfirm" enableType="single" containId="true" pageId="modifyWorkConfirmPage">
+                <enableExpression/>
+            </tablePopup>
+        </process>
+        
+    </main>
+    <detail/>
+</page>

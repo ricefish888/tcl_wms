@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 查询列表页面模板 -->
+<RFListPage id="tclVMIQuickShippingListPage" title="tclVMIQuickShippingListPage">
+	<RFSearchUI id="deliveryCodeInput" text="deliveryCodeInput" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="workDocId" title="workDocId" width="50" enumType="" hidden="true" />
+		<RFTh id="workDocCode" title="workDocCode" width="150" enumType="" hidden="false" />
+		<RFTh id="remark" title="remark" width="100" hidden="false" />
+		<RFTh id="type" title="type" width="150" enumType="WmsWorkDocType" hidden="false" />
+		<DataSource type="HQL">
+			<statement>
+			<![CDATA[
+				SELECT
+					workDoc.id AS workDocId,
+					workDoc.code AS workDocCode,
+					workDoc.userField4 AS remark,
+					workDoc.userField2 AS type
+					 FROM WmsWorkDoc workDoc
+					 WHERE 1=1
+					 AND workDoc.userField2 in ('T_1_AREA','LINE_EDGE') 
+					 AND workDoc.updateInfo.creatorId =#{SESSION_USERS}
+					 AND workDoc.status in('READY_ALLOCATE')
+					/~deliveryCodeInput: AND (workDoc.code like '%{deliveryCodeInput}%')~/
+					ORDER BY workDoc.id DESC
+			]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

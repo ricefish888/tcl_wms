@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<messages>
+    <!-- asn生效 -->
+    <message id="wmsASNProcess.active">
+        <subscriber action="wmsASNManager.isActiveAsn" asyn="false" taskType=""/>
+    </message>
+    <!-- asn刷新标签 -->
+    <message id="wmsTclASNProcess.label">
+        <subscriber action="wmsTclASNManager.refreshDetail" asyn="false" taskType=""/>
+    </message>
+    <!-- asn整单收货回写采购单 交货单 -->
+    <message id="wmsASNProcess.receiveAll">
+        <subscriber action="wmsTclASNManager.receivedWriteBackPoAndDo" asyn="false" taskType=""/>
+    </message>
+    <!-- wms货品属性 -->
+    <message id="itemProcess.edit">
+        <subscriber action="tclMessageManager.createItemLog" asyn="false" taskType=""/>
+    </message>
+</messages>

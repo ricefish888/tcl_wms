@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ASN收货输入页面模板 -->
+<RFFormPage id="tclAsnReceiveRFPage2" title="tclAsnReceiveRFPage2">
+	<RFDisplay id="asnDisplay" load="tclRfAsnManager.asnInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			收货单号: {asnCode}
+			单据类型:{asnTypeName} 
+			项目类别:{userField5} 
+			供应商编码:{supplierCode} 
+			供应商名称:{supplierName} 
+			已收数量/总量: {recvQuantity}/{totalQuantity}
+		  
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>
+			收货单号: {asnCode}
+			单据类型:{asnTypeName} 
+			项目类别:{userField5} 
+			供应商编码:{supplierCode} 
+			供应商名称:{supplierName} 
+			已收数量/总量: {recvQuantity}/{totalQuantity}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="asnItemInput" title="asnItemInput" tip="asnItemInput" onFoucs="true">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="asnItemScanBt" title="asnItemScanBt" action="tclRfAsnManager.asnItemCommit" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

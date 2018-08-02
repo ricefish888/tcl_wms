@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.inventory.TclWmsInventoryCount" table="TCL_WMSINVENTORY_COUNT">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">TSEQ_TCL_WMSINVENTORY_COUNT</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        
+        <many-to-one name="warehouse" class="com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse">
+			<column name="WAREHOUSE_ID"/>
+		</many-to-one>
+        <many-to-one name="item" class="com.vtradex.wms.server.model.entity.item.WmsItem">
+			<column name="ITEM_ID"/>
+		</many-to-one>
+		<many-to-one name="itemKey" class="com.vtradex.wms.server.model.entity.item.WmsItemKey">
+			<column name="ITEM_KEY_ID"/>
+		</many-to-one>
+		<property name="companyCode" column="COMPANY_CODE" type="string" length="50"/>
+		<property name="factoryCode" column="FACTORY_CODE" type="string" length="50"/>
+		<property name="lgort" column="IGORT" type="string" length="100"/>
+	    <property name="computeDate" type="date">
+			<column name="COMPUTE_DATE"/>
+		</property>
+		<property name="supplierCode" column="SUPPLIER_CODE" type="string" length="50"/>
+		<property name="pstyp" column="PSTYP" type="string" length="1"/>
+		<property name="unlimCount" type="double" column="UNLIM_COUNT"/>
+		<property name="checkInventory" type="double" column="CHECK_INVENTORY"/>
+		<property name="startCount" type="double" column="START_COUNT"/>
+		<property name="inCount" type="double" column="IN_COUNT"/>
+		<property name="outCount" type="double" column="OUT_COUNT"/>
+		<property name="endCount" type="double" column="END_COUNT"/>
+		
+		<many-to-one name="location" class="com.vtradex.wms.server.model.entity.warehouse.WmsLocation">
+			<column name="LOCATION_ID" not-null="true"/>
+		</many-to-one>
+		
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+	</class>
+</hibernate-mapping>

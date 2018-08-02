@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.email.EmailRecord" table="EMAIL_RECORD">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">OSEQ_EMAIL_RECORD</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+		<property name="receiver" column="RECEIVER" type="string" length="50"/>
+		<property name="emailTo" column="EMAIL_TO" type="string" length="50"/>
+		<property name="theme" column="THEME" type="string" length="200"/>
+		<property name="content" column="CONTENT" type="string" length="300"/>
+		<property name="attachName" column="ATTACH_NAME" type="string" length="50"/>
+		<property name="attachPath" column="ATTACH_PATH" type="string" length="50"/>
+		<property name="beginTime" type="timestamp" column="BEGIN_TIME" />
+		<property name="lastSendTime" type="timestamp" column="LAST_SEND_TIME" />
+		<property name="sendCount" type="int" column="SEND_COUNT" />
+		<property name="status" column="STATUS" type="string" length="50"/>	
+		<property name="emailType" column="EMAIL_TYPE" type="string" length="50"/>	
+		
+		<property name="emailCc" column="EMAIL_CC" type="string" length="50"/>	
+		
+        <property name="errorInfo" column="ERROR_INFO" type="string" length="255"/>
+        
+         <property name="realateCode" column="REALATE_CODE" type="string" length="50"/>
+         
+        	
+         
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID" />
+			<property name="creator" type="string" length="50" column="CREATOR" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME" />
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID" />
+			<property name="lastOperator" type="string" length="50" column="LAST_OPERATOR" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME" />
+		</component>
+	</class>
+</hibernate-mapping>

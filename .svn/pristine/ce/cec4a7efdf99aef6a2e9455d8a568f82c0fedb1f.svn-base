@@ -1,0 +1,26 @@
+package com.vtradex.wms.server.service.task;
+
+import com.vtradex.thorn.server.service.BaseManager;
+
+/**
+ * @Description:   统一的定时任务管理类
+ * @Author:        <a href="xuyan.xia@vtradex.net">夏绪焰</a>
+ * @version:       v1.0
+ */
+public interface CrontabManager extends BaseManager {
+    
+    /**每天晚上0点前的任务 建议23点开始跑*/
+    void everyDayBeforeZeroTask();
+    
+    /**每天0点开始跑的任务 定时任务配置时间建议每天0:10以后*/
+    void everyDayInZeroTask1() ;
+    
+    /**每天0点后的任务 建议每天3:00以后触发*/
+    void everyDayInZeroTask2();
+    
+    
+    /**拣配工单导入 定时任务执行 无事务 传入warehouseID*/
+    void jpgddr(Long warehouseId);
+    
+   
+}

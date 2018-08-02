@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.base.WmsBarCodeRepPrintRecord" table="WMS_BARCODE_RP_RECORD">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_BARCODE_RP_RECORD</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        
+        <many-to-one name="item" class="com.vtradex.wms.server.model.entity.item.WmsItem">
+			<column name="ITEM_ID" not-null="true"/>
+		</many-to-one>
+		
+		 <many-to-one name="warehouse" class="com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse">
+			<column name="WAREHOUSE_ID" not-null="true"/>
+		</many-to-one>
+
+		<property name="lotkey" type="string" column="LOT_KEY" length="50" />
+		<property name="barcode" type="string" column="BAR_CODE" length="50" />
+		
+		
+		<property name="factoryCode" type="string" column="FACTORY_CODE" length="50" />
+		<property name="asnCode" type="string" column="ASN_CODE" length="50" />
+		<property name="supplierCode" type="string" column="SUPPLIER_CODE" length="50" />
+		<property name="supplierName" type="string" column="SUPPLIER_NAME" length="100" />
+		<property name="xmlb" type="string" column="XMLB" length="50" />
+		<property name="storeaDate" type="timestamp" column="STORE_DATE"/>
+		
+        <property name="insertTime" type="timestamp" column="INSERT_TIME"/>
+        <property name="rfUser" type="string" column="RF_USER" length="50" />
+        
+        <property name="printFlag" type="yes_no" column="PRINT_FLAG" />
+		
+        <property name="printTime" type="timestamp" column="PRINT_TIME"/>
+         
+         
+        <property name="minPackageQty" type="double" column="MIN_PACKAGE_QTY" />
+         
+         <component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+		
+	 </class>
+</hibernate-mapping>

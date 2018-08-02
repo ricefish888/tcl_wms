@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="thornTaskProcess" control="status">
+
+	<state id="FAIL" title="失败"/>
+	<state id="READY" title="准备"/>
+	<task id="rerun" title="重新处理">
+		<from id="FAIL" type="state"/>
+		<to id="READY" type="state"/>
+	</task>
+
+</process>

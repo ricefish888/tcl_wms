@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <customPage id="importPickingOrderPage" title="importPickingOrderPage" className="com.vtradex.thorn.client.template.ImportPageTemplate" onClose="refreshParent" width="300" height="120">
+    	<buttons>
+    		<button id="import" title="search">
+    			<actions>
+    				<action managerName="productionOrderManager" methodName="importPickingOrder" />
+    			</actions>
+    		</button>
+		</buttons>
+    </customPage>
+</pages>

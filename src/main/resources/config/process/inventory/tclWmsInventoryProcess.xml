@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="tclWmsInventoryProcess" control="-">
+	
+	<task id="modify" title="修改供应商">
+	</task>
+	
+	<task id="modifyXT" title="修改线体">
+	</task>
+
+</process>

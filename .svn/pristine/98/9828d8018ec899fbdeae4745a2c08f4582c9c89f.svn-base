@@ -1,0 +1,10 @@
+maintainWmsItemFactoryPage=\u7269\u6599\u5de5\u5382\u6620\u5c04\u7ba1\u7406
+new=\u65b0\u5efa
+edit=\u4fee\u6539
+itemFactory.id=\u5e8f\u53f7
+factory.name=\u5de5\u5382\u540d\u79f0
+item.name=\u7269\u6599\u540d\u79f0
+disable=\u5931\u6548
+enable=\u751f\u6548
+factory.code=\u5de5\u5382\u7f16\u7801
+item.code =\u7269\u6599\u7f16\u7801

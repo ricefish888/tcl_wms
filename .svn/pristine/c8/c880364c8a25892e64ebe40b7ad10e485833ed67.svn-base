@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsBOLPage">
+    <main>
+        <process id="wmsBOLProcess">
+            <tablePopup id="view" title="view" process="wmsBOLProcess.view" enableType="single" containId="true" pageId="viewWmsBOLPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="new" title="new" process="wmsBOLProcess.new" enableType="none" containId="false" pageId="modifyWmsBOLPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="edit" title="edit" process="wmsBOLProcess.edit" enableType="single" containId="true" pageId="modifyWmsBOLPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="active" title="active" process="wmsBOLProcess.active" enableType="multi" multiMapping="false" download="false" closeTransactional="false">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsBolManager" methodName="activeBol" parameter="obj"/> 
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="unActive" title="unActive" process="wmsBOLProcess.unActive" enableType="multi" multiMapping="false" download="false" closeTransactional="false" confirmMessage="confirm.maintainWmsBOLPage.unActive">
+                <enableExpression><![CDATA[${masterBol.code} == '-' && ${bol.containerCode} == '-']]></enableExpression>
+                <mappings/>
+                <actions/>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="delete" title="delete" process="wmsBOLProcess.delete" enableType="multi" download="false" confirmMessage="confirm.delete">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsBolManager" methodName="deleteBol" parameter="obj"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="ship" title="wmsBOLProcess.ship" process="wmsBOLProcess.ship" enableType="multi" multiMapping="false" download="false" closeTransactional="false" confirmMessage="是否确认交接？">
+                <enableExpression><![CDATA[${masterBol.code} == '-']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsBolManager" methodName="shipBol" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

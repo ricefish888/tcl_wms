@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="viewEmailRecordPage" title="viewEmailRecordPage" entityClass="com.vtradex.wms.server.model.entity.email.EmailRecord" width="600" height="700" onClose="refreshParent">
+        <workflow/>
+        <initListeners/>
+        <inputUIs>
+            <hidden id="record.id" title="record.id" reserve="false"/>
+            <text id="record.receiver" title="record.receiver" row="1" col="1" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+             </text>
+            <text id="record.emailTo" title="record.emailTo" row="1" col="2" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+             </text>
+            <text id="record.theme" title="record.theme" row="1" col="3" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+             </text>
+            <text id="record.content" title="record.content" row="2" col="1" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+             </text>
+               <text id="record.attachName" title="record.attachName" row="2" col="2" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+             </text>
+            <text id="record.attachPath" title="record.attachPath" row="2" col="3" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+             </text>
+             <date id="record.beginTime" title="record.beginTime" row="3" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" showTime="false" manualEditable="true" customFormat="YYYY-MM" defaultCurrentDate="false">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+             </date>
+             <date id="record.lastSendTime" title="record.lastSendTime" row="3" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" showTime="false" manualEditable="true" customFormat="YYYY-MM" defaultCurrentDate="false">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+             </date>
+            <text id="record.sendCount" title="record.sendCount" row="3" col="3" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+             </text>
+              <text id="record.emailCc" title="record.emailCc" row="4" col="1" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+             </text>
+              <text id="record.errorInfo" title="record.errorInfo" row="5" col="1" span="2"  width="300" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+             </text>
+             
+            
+             
+        </inputUIs>
+    </editPage>
+</pages>

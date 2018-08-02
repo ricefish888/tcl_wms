@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="wms2SapInterfaceLogProcess" control="status">
+
+	<task id="view" title="查看">
+	</task>
+
+</process>

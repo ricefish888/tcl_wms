@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RFFormPage id="tclOrderItemCheckRFPage3" title="tclOrderItemCheckRFPage3">
+	<RFDisplay id="asnDisplay" load="tclRfOrderManager.orderInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			线体号: {orderCode} 
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>
+			线体号: {orderCode} 
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="beginDate" title="beginDate" tip="" required="true" validator="dateValidator" onFoucs="false" />
+		</inputs>
+		<buttons>
+			<RFButton id="beginDateScanBt" title="beginDateScanBt" action="tclRfOrderManager.beginDateCommit" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

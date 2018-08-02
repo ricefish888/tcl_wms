@@ -1,0 +1,13 @@
+addPurchaseOrderDetail4DeliveryOrderDetaliPage=\u9009\u62e9\u6dfb\u52a0\u91c7\u8d2d\u5355\u660e\u7ec6
+pod.id=ID
+pod.lineNo=\u884c\u53f7
+pod.item.name=\u8d27\u54c1
+pod.packageUnit.unit=\u5305\u88c5\u5355\u4f4d
+pod.expectedQty=\u671f\u5f85\u6570\u91cf
+pod.allotQty=\u5206\u914d\u6570\u91cf
+pod.receivedQty=\u5b9e\u9645\u6536\u8d27\u6570\u91cf
+pod.expectedPackQty=\u671f\u5f85\u5305\u88c5\u6570\u91cf
+factory.name=SAP\u5de5\u5382
+pod.ebelp=\u9879\u76ee
+addDetail=\u6dfb\u52a0\u660e\u7ec6
+pod.purchaseOrder.code=\u91c7\u8d2d\u8ba2\u5355\u53f7

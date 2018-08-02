@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <modifyDetailPage id="modifyBackUpByProductLinePage" title="modifyBackUpByProductLinePage" entityClass="com.vtradex.wms.server.model.entity.inventory.WmsInventory" width="800"  height="325">
+        <initListeners/>
+        <modify>
+            <inputUIs>
+                <hidden id="inventory.id" title="inventory.id" reserve="false"/>
+                <text id="inventory.location.code" title="inventory.location.code" row="1" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="inventory.company.name" title="inventory.company.name" row="1" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>               
+                <text id="inventory.relatedBillCode" title="inventory.relatedBillCode" row="1" col="3" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="inventory.relatedBillType" title="inventory.relatedBillType" row="1" col="4" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                
+                 <remote id="inventory.item.id" title="inventory.item.id" row="2" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" multiple="false" manualEditable="true" displayColumn="2" percentSignPosition="both" displayedTableHead="ID,物料编码,物料名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[ select w.id,
+ w.code,
+ w.name
+ from WmsItem w 
+ where (w.name like:param OR w.code like:param) 
+ ]]></hql>            
+                     <eventListeners>
+                      <eventListener id="inventory.item.name" index="3" refreshUI="false"/> 
+                    </eventListeners> 
+                </remote>
+                <text id="inventory.item.name" title="inventory.item.name" row="2" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                
+                <numberText id="inventory.packQty" title="inventory.packQty" row="2" col="3" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true"/>
+
+                <text id="inventory.status" title="inventory.status" row="2" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="inventory.itemKey.lotInfo.extendPropC13" title="inventory.itemKey.lotInfo.extendPropC13" row="3" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="inventory.relatedBillCode" title="inventory.relatedBillCode" row="3" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="true" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+           
+            
+                <!-- <hidden id="inventory.item.id" title="inventory.item.id" reserve="false"/> -->
+            </inputUIs>
+        </modify>
+        <detail entityClass="com.vtradex.wms.server.model.entity.production.ProductionOrderDetail">
+            <datasource><![CDATA[SELECT pod.id,
+            pod.productionOrder.code,
+            pod.productionOrder.factory.code,
+            pod.productionOrder.factory.name,
+            item.code,
+            item.name,
+            pod.pickedQuantityBu-pod.oldShippedQuantityBu as quantity ,
+            pod.planQuantityBu,
+            pod.dealDlanQuantityBu,
+            pod.allocatedQuantityBu,
+            pod.pickedQuantityBu,
+            pod.shippedQuantityBu 
+            
+            from ProductionOrderDetail pod 
+            LEFT JOIN pod.item item
+            LEFT JOIN pod.productionOrder  
+            LEFT JOIN pod.productionOrder.factory
+
+where 1=1 AND pod.allocatedQuantityBu>0 AND pod.pickedQuantityBu>0 
+AND pod.id 
+	in (select podp.productionOrderDetail.id from ProductionOrderDetailPtDetail podp where podp.pickticketDetail.id 
+		in (select ptd.id from WmsPickTicketDetail ptd where ptd.item.id={inventory.item.id} and ptd.pickTicket.id 
+		in (select w.id from WmsPickTicket w where w.code={inventory.relatedBillCode})))
+AND pod.item.id ={inventory.item.id}]]></datasource>
+            <columns>
+                <column id="pod.id" title="pod.id" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+                <column id="pod.productionOrder.code" title="order.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+                <column id="pod.productionOrder.factory.code" title="factory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+                <column id="pod.productionOrder.factory.name" title="factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+                <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+                <column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+                <column id="quantity" title="quantity" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false" inputUI="tableValues"/>
+                <column id="pod.planQuantityBu" title="pod.planQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+                <column id="pod.dealDlanQuantityBu" title="pod.dealDlanQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+                <column id="pod.allocatedQuantityBu" title="pod.allocatedQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+                <column id="pod.pickedQuantityBu" title="pod.pickedQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+                <column id="pod.shippedQuantityBu" title="pod.shippedQuantityBu" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            </columns>
+        </detail>
+    </modifyDetailPage>
+</pages>

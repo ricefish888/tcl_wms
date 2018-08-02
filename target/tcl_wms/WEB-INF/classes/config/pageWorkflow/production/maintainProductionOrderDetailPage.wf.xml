@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainProductionOrderDetailPage">
+    <main>
+        <process id="productionOrderProcess">
+            <tableCommit id="alonePick" title="alonePick" process="productionOrderProcess.alonePick" enableType="multi" multiMapping="false" download="false" closeTransactional="false" confirmMessage="是否确认单独下发此条记录？">
+                <enableExpression><![CDATA[${pod.beAlonePick} =='false']]></enableExpression>
+                <mappings/>
+                <actions>
+                	<action managerName="productionOrderManager" methodName="changeAlonePick"  parameter="obj"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+            <!-- 单独下发导入 -->
+            <tablePopup id="alonePickImport" title="alonePickImport" process="productionOrderProcess.alonePickImport" enableType="none" containId="false" closeTransactional="true" pageId="importAlonePickPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="aloneCreatePick" title="aloneCreatePick" process="productionOrderProcess.aloneCreatePick" enableType="none" multiMapping="false" download="false" closeTransactional="true" confirmMessage="是否确认生成拣配单？">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                     <action managerName="productionOrderManager" methodName="createPickByAlonePick"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="canclePick" title="canclePick" process="productionOrderProcess.canclePick" enableType="multi" multiMapping="false" download="false" confirmMessage="是否确认取消下发的拣配单？">
+                <enableExpression><![CDATA[${pod.beCreatePt} == 'true']]></enableExpression>
+                <mappings/>
+                <actions>
+                     <action managerName="productionOrderManager" methodName="canclePickByAlonePick" parameter="obj"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="changetXfqty" title="changetXfqty" process="productionOrderProcess.changetXfqty" enableType="multi" multiMapping="false" download="false" closeTransactional="false" confirmMessage="是否确认修改下发数量？">
+                <enableExpression><![CDATA[${pod.beChangeXfQty} =='true']]></enableExpression>
+                <mappings/>
+                <actions>
+                	<action managerName="productionOrderManager" methodName="changeXfQty"  parameter="obj"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

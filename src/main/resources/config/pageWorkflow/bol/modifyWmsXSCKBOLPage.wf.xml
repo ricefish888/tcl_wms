@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="modifyWmsXSCKBOLPage">
+    <main>
+    	<process id="bolDetailProcess"/>
+        <process id="wmsBOLProcess">
+            <formCommit id="save" title="save" process="wmsBOLProcess.new" enableType="none" download="false" visibleType="new">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsTclBolManager" methodName="storeBOLDB" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+            <formCommit id="edit" title="save" process="wmsBOLProcess.edit" enableType="none" download="false" visibleType="edit">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsTclBolManager" methodName="storeBOLDB" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+    <detail>
+    </detail>
+</page>

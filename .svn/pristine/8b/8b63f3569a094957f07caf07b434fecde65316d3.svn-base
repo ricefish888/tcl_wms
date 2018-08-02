@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsItemPage" title="maintainWmsItemPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.item.WmsItem" width="500" height="300" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT item.id,
+company.name,
+item.code,
+item.barCode,
+item.barCode2,
+item.name,
+item.baseUnit,
+item.lotRule.name,
+item.countLotRule.name,
+item.description,
+item.validPeriod,
+item.contigroupsValidityPeriod,
+item.classabc,
+item.class1,
+item.class2,
+item.class3,
+item.class4,
+item.class5,
+item.hsCode,
+item.hsName,
+item.weight,
+item.volume,
+item.buPrecision,
+item.putawayGroup,
+item.allocationGroup,
+item.isHazardous,
+item.allowCross,
+item.qcClass,
+item.status,
+item.userFieldD1,
+item.userFieldD2,
+item.userFieldV1,
+item.userFieldV2,
+item.userFieldV3,
+item.userFieldV4,
+item.userFieldV6,
+item.userFieldV7,
+item.userFieldV8,
+item.userFieldV9,
+item.updateInfo.updateTime
+ FROM WmsItem item ,WmsCompany company
+ LEFT JOIN item.masterGroup masterGroup
+ LEFT JOIN item.lotRule lotRule 
+ LEFT JOIN item.countLotRule countLotRule   
+ WHERE 1=1
+ AND company.masterGroup.id=item.masterGroup.id
+ AND company.type='N'
+ AND company.id in (select wareCompany.company.id from WmsWarehouseCompany wareCompany where wareCompany.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN})
+ ORDER BY item.code ]]></datasource>
+        <columns>
+            <column id="item.id" title="item.id" visible="false" sortable="true" dataType="long"/>
+            <column id="company.name" title="item.company.name" visible="true" sortable="true" horizonAlign="center" dataType="string"/>
+            <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="left"  dataType="string"/>
+            <column id="item.barCode" title="item.barCode" visible="true" sortable="true" horizonAlign="center" dataType="string"/>
+            <column id="item.barCode2" title="item.barCode2" visible="true" sortable="true" horizonAlign="center" dataType="string"/>
+            <column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" dataType="string"/>
+            <column id="item.baseUnit" title="item.baseUnit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.lotRule.name" title="item.lotRule.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.countLotRule.name" title="item.countLotRule.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.description" title="item.description" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.validPeriod" title="item.validPeriod" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+            <column id="item.contigroupsValidityPeriod" title="item.contigroupsValidityPeriod" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+            <column id="item.classabc" title="item.classabc" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.class1" title="item.class1" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.class2" title="item.class2" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.class3" title="item.class3" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.class4" title="item.class4" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.class5" title="item.class5" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.hsCode" title="item.hsCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.hsName" title="item.hsName" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.weight" title="item.weight" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="item.volume" title="item.volume" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="item.buPrecision" title="item.buPrecision" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+            <column id="item.putawayGroup" title="item.putawayGroup" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.allocationGroup" title="item.allocationGroup" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.isHazardous" title="item.isHazardous" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="enumFormat" formatParam="booleanFormat"/>
+            <column id="item.allowCross" title="item.allowCross" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="enumFormat" formatParam="booleanFormat"/>
+            <column id="item.qcClass" title="item.qcClass" visible="true" sortable="true" horizonAlign="center" dataType="string"/>
+            <column id="item.status" title="item.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="BaseStatus"/>
+            <column id="item.userFieldD1" title="item.userFieldD1" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="item.userFieldD2" title="item.userFieldD2" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="item.userFieldV1" title="item.userFieldV1" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsItemHandOverAtt"/>
+            <column id="item.userFieldV2" title="item.userFieldV2" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsItemJITAtt"/>
+            <column id="item.userFieldV3" title="item.userFieldV3" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsItemUnPackingAtt"/>
+            <column id="item.userFieldV4" title="item.userFieldV4" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.userFieldV6" title="item.userFieldV6" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.userFieldV7" title="item.userFieldV7" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.userFieldV8" title="item.userFieldV8" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.userFieldV9" title="item.userFieldV9" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+        	<column id="item.updateInfo.updateTime" title="item.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+        </columns>
+    </maintainPage>
+</pages>

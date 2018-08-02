@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsArrivalDeliveryPage" title="maintainWmsArrivalDeliveryPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.order.WmsArrivalDelivery" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT 
+delivery.id,
+deliveryOrder.code,
+supplier.code,
+supplier.name,
+warehouse.name,
+factory.code,
+factory.name,
+purchaseOrder.code,
+purchaseOrderDetail.pstyp,
+item.code,
+item.name,
+packageUnit.unit,
+delivery.deliveryDate,
+deliveryOrderDetail.planQuantityBu,
+deliveryOrderDetail.delivedQuantityBu,
+delivery.quantity
+ FROM WmsArrivalDelivery delivery 
+LEFT JOIN  delivery.deliveryOrderDetail deliveryOrderDetail
+LEFT JOIN  deliveryOrderDetail.deliveryOrder deliveryOrder
+LEFT JOIN  deliveryOrderDetail.factory factory 
+LEFT JOIN  deliveryOrder.supplier supplier 
+LEFT JOIN  deliveryOrder.warehouse warehouse 
+LEFT JOIN  delivery.deliveryOrderDetail.purchaseOrderDetail purchaseOrderDetail 
+LEFT JOIN  purchaseOrderDetail.purchaseOrder purchaseOrder 
+LEFT JOIN  purchaseOrderDetail.item item 
+LEFT JOIN purchaseOrderDetail.packageUnit packageUnit 
+ WHERE 1=1 
+ ORDER BY delivery.id DESC
+ ]]></datasource>
+        <columns>
+            <column id="delivery.id" title="delivery.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="deliveryOrder.code" title="deliveryOrder.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.code" title="supplier.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.name" title="supplier.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="warehouse.name" title="warehouse.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="factory.code" title="factory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="factory.name" title="factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.code" title="purchaseOrder.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrderDetail.pstyp" title="purchaseOrderDetail.pstyp" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsFactoryXmlb"/>
+            <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="packageUnit.unit" title="packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="delivery.deliveryDate" title="delivery.deliveryDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="deliveryOrderDetail.planQuantityBu" title="deliveryOrderDetail.planQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+            <column id="deliveryOrderDetail.delivedQuantityBu" title="deliveryOrderDetail.delivedQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+            <column id="delivery.quantity" title="delivery.quantity" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+        </columns>
+    </maintainPage>
+</pages>

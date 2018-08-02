@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 查询列表页面模板 -->
+<RFListPage id="tclJITShipPage5" title="tclJITShipPage5">
+<RFSearchUI id="itemCodeSearch" text="itemCodeSearch" width="50" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="tid" title="tid" width="50" enumType="" hidden="true" />
+		<RFTh id="pcode" title="pcode" width="140" enumType="" hidden="false" />
+		<RFTh id="icode" title="icode" width="140" enumType="" hidden="false" />
+		<RFTh id="iname" title="iname" width="140" enumType="" hidden="false" />
+		<RFTh id="qty" title="qty" width="50" enumType="" hidden="false" />
+		<DataSource type="HQL">
+			<statement>
+				<![CDATA[
+				 SELECT 
+				 	task.id as tid,
+					po.code as pcode,
+					item.code as icode,
+					item.name as iname,
+					task.planQty as qty
+					FROM WmsTask task,ProductionOrderDetail pod
+					LEFT JOIN pod.productionOrder po 
+					LEFT JOIN task.item item
+					WHERE 1=1 
+					AND task.productionDetailId=pod.id
+					AND task.workDoc.code =${workDocCode}
+					/~itemCodeSearch: AND item.code like '%{itemCodeSearch}%' ~/
+                ORDER BY task.id ASC
+				]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

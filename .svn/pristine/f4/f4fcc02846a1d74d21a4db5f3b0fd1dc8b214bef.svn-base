@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <reportPopupPage id="printWorkPage" title="printWorkPage" reportFile="printWork.raq" parameter="parentIds" width="800" height="500">
+        <inputUIs/>
+    </reportPopupPage>
+</pages>

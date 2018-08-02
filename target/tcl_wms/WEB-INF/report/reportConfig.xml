@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<reportConfig>
+	<!-- 配置加载快逸属性文件 -->
+	<config>
+		<name>logConfig</name>
+		<value>/WEB-INF/report/runqianReportLog.properties</value>
+	</config>
+	<!-- 配置加载快逸授权文件 -->
+	<config>
+		<name>license</name>
+		<value>/WEB-INF/report/quiee.lic</value>
+		<!-- <value>/WEB-INF/report/quieeLinuxServer.lic</value> -->
+	</config>
+	<!-- 配置加载快逸加载JSP文件的路径 -->
+	<config>
+		<name>reportFileHome</name>
+		<value>/reportFiles</value>
+	</config>
+	
+	<!-- 配置快逸加载数据时候的datasource -->
+	<jdbc-ds-configs>
+		<jdbc-ds-config>
+			<name>tcl_wms</name>
+			<db-type>javax.sql.DataSource</db-type>
+			<connection-url>jdbc:oracle:thin:@10.116.6.25:1521:bxwms</connection-url>
+			<driver-class>oracle.jdbc.OracleDriver</driver-class>
+			<user-name>tcl_wms</user-name>
+			<password>vtradex</password>
+			<db-charset>gbk</db-charset>
+			<client-charset>gbk</client-charset>
+			<extend-properties></extend-properties>
+		<!--
+			<name>e2tms</name>
+			<db-type>sqlsvr</db-type>
+			<connection-url>jdbc:sqlserver://192.168.1.134:1433;databasename=e2tms_bak</connection-url>
+			<driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+			<user-name>sa</user-name>
+			<password>123456</password>
+			<db-charset>gbk</db-charset>
+			<client-charset>gbk</client-charset>
+			<extend-properties></extend-properties>
+			-->
+		</jdbc-ds-config>
+	</jdbc-ds-configs>
+	<!-- 配置加载快逸的字符集 -->
+	<config>
+		<name>jspCharset</name>
+		<value>GBK</value>
+	</config>
+	<config>
+		<name>alwaysReloadDefine</name>
+		<value>yes</value>
+	</config>
+	<config>
+		<name>cachedParamsTimeout</name>
+		<value>120</value>
+	</config>
+	<config>
+		<name>cachedReportDir</name>
+		<value>E:\work\report\cached</value>
+	</config>
+	<config>
+		<name>cachedIdPrefix</name>
+		<value>A</value>
+	</config>
+	<config>
+		<name>cachedReportTimeout</name>
+		<value>120</value>
+	</config>
+	<config>
+		<name>maxCellNum</name>
+		<value>100000</value>
+	</config>
+	<config>
+		<name>maxConcurrentForReport</name>
+		<value></value>
+	</config>
+	<config>
+		<name>maxWaitForReport</name>
+		<value>10</value>
+	</config>
+	<config>
+		<name>maxWaitTimeForReport</name>
+		<value>30</value>
+	</config>
+	<config>
+		<name>appUrlPrefix</name>
+		<value></value>
+	</config>
+	<config>
+		<name>errorPage</name>
+		<value>/myError.jsp</value>
+	</config>
+</reportConfig>

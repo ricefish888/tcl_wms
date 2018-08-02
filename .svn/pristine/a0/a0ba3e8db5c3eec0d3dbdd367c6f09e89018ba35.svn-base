@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="wmsTclASNProcess" control="status">
+
+	<task id="label" title="刷新标签数量">
+	</task>
+	
+	<task id="printWmsASN" title="打印收货单">
+	</task>
+	
+	<task id="printWmsASNDetail" title="打印标签">
+	</task>
+	
+	
+	<task id="printSupplierWmsASN" title="打印供应商收货单明细标签">
+	</task>
+	
+	
+</process>

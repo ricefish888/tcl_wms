@@ -1,0 +1,261 @@
+package com.vtradex.wms.webservice.utils;
+
+import java.io.File;
+import java.lang.reflect.Method;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.beanutils.MethodUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+
+import com.vtradex.thorn.server.exception.BusinessException;
+
+import jxl.Cell;
+import jxl.NumberCell;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.biff.EmptyCell;
+import jxl.write.Label;
+import jxl.write.Number;
+import jxl.write.NumberFormats;
+import jxl.write.WritableCell;
+import jxl.write.WritableCellFormat;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+
+/**
+ * excel帮助类
+ * */
+public class ExcelHelper {
+	
+	/**
+     * @Description:        导入excel 按行调用处理逻辑
+     * @param importFile    xls文件
+     * @param manager       调用的manager
+     * @param method:       调用manager中的方法
+     * @param headRow:      表头是第几行 从0开始
+     * @param oldParam:     老的参数
+     */
+    public static void importExcel(File importFile, Object manager, String method,Map<String,Object> oldParam,List<Integer> headRow) {
+        if (manager == null || method == null || method.equals("")) {
+            throw new BusinessException("参数不能为空");
+        }
+        parseExcel(importFile, true, manager, method,oldParam,headRow);
+    }
+    /**
+     * @Description:        导入excel 按行调用处理逻辑 表头为0行 第一个sheet
+     * @param importFile    xls文件
+     * @param manager       调用的manager
+     * @param method:       调用manager中的方法
+     * @param oldParam:     老的参数
+     */
+    public static void importExcel(File importFile, Object manager, String method,Map<String,Object> oldParam) {
+        List<Integer> headRow = new ArrayList<Integer>();
+        headRow.add(0);
+        importExcel(importFile, manager, method, oldParam ,headRow);
+    }
+    
+
+    /**
+     * 解析excel到List 表头为0行
+     * */
+    public static List<Map<String, Object>> parseExcel2List(File importFile) {
+        List<Integer> headRow = new ArrayList<Integer>();
+        headRow.add(0);
+        return parseExcel(importFile, false, null, null,null,headRow);
+    }
+    
+    /**
+     * 解析excel到List headRow是表头的行数 从0开始
+     * */
+    public static List<Map<String, Object>> parseExcel2List(File importFile,Integer headRow) {
+        List<Integer> headRows = new ArrayList<Integer>();
+        headRows.add(headRow);
+        return parseExcel(importFile, false, null, null,null,headRows);
+    }
+
+    /**将EXCEL解析到list list里面放map
+     * headRows的size为sheet的个数 headRows为对应sheet的开始读取行
+     * */
+    private static List<Map<String, Object>> parseExcel(File importFile, boolean invorkMethod, Object manager, String methodName, 
+            Map<String,Object> oldParam,List<Integer> headRows) {
+        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>(); //返回
+        Workbook wb = null;
+        try {
+            wb = Workbook.getWorkbook(importFile);
+            Sheet[] sheets = wb.getSheets();
+            if (sheets == null) {
+                return result;
+            }
+            int sheetindex=-1; //第几个sheet
+            for(Integer headRow : headRows) {
+                sheetindex++;
+                Sheet sheet = sheets[sheetindex];
+                if (sheet == null) {
+                    return result;
+                }
+                int cols = sheet.getColumns();
+                int rows = sheet.getRows();
+                if (cols == 0 || rows == 0) {
+                    return result;
+                }
+                if(headRow==null) {
+                    headRow = 0;
+                }
+                Cell[] headerCell = sheet.getRow(headRow);
+                for (int r = headRow+1; r < rows; r++) {
+                    Cell[] cell = sheet.getRow(r);
+                    Map<String, Object> map = new HashMap<String, Object>();
+                    map.put("SHEET号", sheetindex);
+                    map.put("EXCEL行号", r);
+                    for (int col = 0; col < cell.length; col++) {
+                        String key = headerCell[col].getContents();
+                        if (key != null) {
+                            key = key.trim();
+                        }
+                        Cell valueCell = cell[col];
+                        String content = null;
+                        if (valueCell instanceof NumberCell) {
+                            double vaule = ((NumberCell) valueCell).getValue();
+                            DecimalFormat df = new DecimalFormat("#.######");
+                            content = df.format(vaule);
+                        }
+                        else {
+                            content = valueCell.getContents();
+                        }
+                        if (content != null) {
+                            content = content.toString();
+                        }
+                        map.put(key, content);
+    
+                    }
+                    if (invorkMethod) { //立即调用方法处理
+                        if(oldParam!=null) {
+                            map.putAll(oldParam);
+                        }
+                        invoke(manager, methodName, map);
+                        map = null;
+                    }
+                    else { //仅仅解析
+                        result.add(map);
+                    }
+                }
+            }
+            return result;
+        }
+        catch (Exception e) {
+            throw new BusinessException(e);
+        }
+        finally {
+            try {
+                if (wb != null) {
+                    wb.close();
+                }
+            }
+            catch (Exception e) {
+            }
+        }
+    }
+
+    /**调用方法*/
+    private static void invoke(Object manager, String methodName, Map rowMap) {
+        if (manager == null) {
+            return;
+        }
+        Method method = MethodUtils.getAccessibleMethod(manager.getClass(), methodName, Map.class);
+        try {
+            method.invoke(manager, new Object[] { rowMap });
+        }
+        catch (Exception e) {
+            throw new BusinessException(e);
+        }
+    }
+    
+   
+//    public static void main(String[] args) {
+////        File importFile = new File("c:/qq.xls");
+////        List<Map<String, Object>> list = parseExcel2List(importFile);
+////        System.out.println("直接读取excel");
+////        for (Map map : list) {
+////            System.out.println(map);
+////        }
+////        Object manager=new ExcelHelper();
+////        Map<String,Object> oldParam = new HashMap<String,Object>();
+////        oldParam.put("customerId", 123L);
+////        System.out.println("读取xls并按行调用处理方法");
+////        importExcel(importFile, manager, "ttt", oldParam);
+//    }
+    
+	public static String write2xls(List<List<String>> infos ,String filepath) {
+		return write2xls(infos,new File(filepath));
+	}
+	
+	public static void main(String[] args) {
+        List<String> xx = new ArrayList<String>();
+        xx.add("a");
+        xx.add("b");
+        xx.add("c");
+        xx.add("d");
+        
+        List<String> yy = new ArrayList<String>();
+        yy.add("aa");
+        yy.add("bb");
+        yy.add("cc");
+        yy.add("dd");
+        
+        List<List<String>> infos = new ArrayList<List<String>>();
+        infos.add(xx);
+        infos.add(yy);
+        ExcelHelper.write2xls(infos, "E:\\xxxxxxxx.xls");
+        
+    }
+	
+	/**写excel*/
+	public static String write2xls(List<List<String>> infos ,File file) {
+		//将INFOS写入到file中
+	    String fileName = file.getName();
+	    WritableWorkbook workbook = null;
+        try {
+            workbook = Workbook.createWorkbook(file);
+            WritableSheet sheet = workbook.createSheet(fileName, 0);
+            
+            int row = infos.size();
+            for (int r=0; r<row; r++) {
+                int col = infos.get(r).size();
+                
+                for (int c=0; c<col; c++) {
+                    String value = infos.get(r).get(c);
+                    WritableCell cell = null;
+                    if (StringUtils.isEmpty(value)) {
+                        cell = new EmptyCell(c, r);
+                    } else if (NumberUtils.isNumber(value)) {
+                        WritableCellFormat doubleCellFormat = new WritableCellFormat(NumberFormats.FLOAT);
+                        cell = new Number(col, row, NumberUtils.createDouble(value.toString()).doubleValue(), doubleCellFormat);
+                    } else {
+                        cell = new Label(c, r, value);
+                    } //TODO 日期格式
+                    sheet.addCell(cell);
+                }
+                
+            }
+            
+            workbook.write();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (workbook != null) {
+                try {
+                    workbook.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+		return file.getAbsolutePath();
+	}
+
+}

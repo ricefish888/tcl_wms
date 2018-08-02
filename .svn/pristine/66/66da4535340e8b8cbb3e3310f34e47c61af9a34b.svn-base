@@ -1,0 +1,384 @@
+package com.vtradex.wms.server.model.entity.production;
+
+import com.vtradex.thorn.server.annotation.UniqueKey;
+import com.vtradex.thorn.server.exception.BusinessException;
+import com.vtradex.thorn.server.model.VersionalEntity;
+import com.vtradex.wms.server.model.entity.item.WmsItem;
+import com.vtradex.wms.server.model.entity.item.WmsPackageUnit;
+import com.vtradex.wms.server.utils.DoubleUtils;
+import com.vtradex.wms.webservice.utils.CommonHelper;
+
+/***
+ * 生产订单明细
+ * @author administrator
+ *
+ */
+public class ProductionOrderDetail extends VersionalEntity {
+	
+	private static final long serialVersionUID = 4741167940102225365L;
+
+	@UniqueKey
+	private ProductionOrder productionOrder;
+	
+	@UniqueKey
+	private Integer lineNo;
+	
+	private WmsItem item;
+	
+	/**组件项目号*/
+	private String bomCode;
+	
+	/**计划数量*/
+	private Double planQuantityBu=0D;
+	
+	/**处理后计划数量*/
+	public Double dealDlanQuantityBu=0D;
+	
+	/**已分配数量BU*/
+	public Double allocatedQuantityBu=0D;
+	
+	/**已经拣货数量BU*/
+	public Double pickedQuantityBu=0D;
+	
+	/**已发运数量BU*/
+	public Double shippedQuantityBu=0D;
+	
+	/**已交接数量BU*/
+	public Double handQty = 0D;
+	
+	/**老发运数量BU*/
+	public Double oldShippedQuantityBu=0D;
+	
+	/** 包装单位*/
+	private WmsPackageUnit packageUnit; //都用最小包装来下发
+	
+	private String remark;
+	/**
+	 * 分配状态
+	 * {@link AssignmentStatus}
+	 */
+	private String status ;
+	/**
+	 * 拣货状态
+	 * {@link PickingStatus}
+	 */
+	private String pickSataus;
+	
+	/**
+	 * 发运状态
+	 * {@link ShippingStatus}
+	 */
+	private String shipStatus;
+	
+	/**
+	 * 预留单号  接口传输过来
+	 */
+	private String reservedOrder;
+	/**
+	 * 预留行项目号 接口传输过来
+	 */
+	private String reservedProject;
+	
+	/**
+	 * 是否单独下发
+	 * @return
+	 */
+	private Boolean beAlonePick = Boolean.FALSE;
+	/**
+	 * 是否生成拣货单
+	 */
+	private Boolean beCreatePt = Boolean.FALSE;
+	/**
+	 * 删除标识
+	 */
+	private String deleteFlag;
+	
+	/**
+	 *下发数量 
+	 */
+	private Double xfQty = 0D;
+	
+	public Double getXfQty() {
+		return xfQty;
+	}
+
+	public void setXfQty(Double xfQty) {
+		this.xfQty = xfQty;
+	}
+
+	public String getDeleteFlag() {
+		return deleteFlag;
+	}
+
+	public void setDeleteFlag(String deleteFlag) {
+		this.deleteFlag = deleteFlag;
+	}
+
+	public Double getOldShippedQuantityBu() {
+		return oldShippedQuantityBu;
+	}
+
+	public void setOldShippedQuantityBu(Double oldShippedQuantityBu) {
+		this.oldShippedQuantityBu = oldShippedQuantityBu;
+	}
+
+	public Boolean getBeAlonePick() {
+		return beAlonePick;
+	}
+
+	public void setBeAlonePick(Boolean beAlonePick) {
+		this.beAlonePick = beAlonePick;
+	}
+
+	public Boolean getBeCreatePt() {
+		return beCreatePt;
+	}
+
+	public void setBeCreatePt(Boolean beCreatePt) {
+		this.beCreatePt = beCreatePt;
+	}
+
+	public Double getHandQty() {
+		return handQty;
+	}
+
+	public void setHandQty(Double handQty) {
+		this.handQty = handQty;
+	}
+
+	public String getReservedOrder() {
+		return reservedOrder;
+	}
+
+	public void setReservedOrder(String reservedOrder) {
+		this.reservedOrder = reservedOrder;
+	}
+
+	public String getReservedProject() {
+		return reservedProject;
+	}
+
+	public void setReservedProject(String reservedProject) {
+		this.reservedProject = reservedProject;
+	}
+
+	public String getPickSataus() {
+		return pickSataus;
+	}
+
+	public void setPickSataus(String pickSataus) {
+		this.pickSataus = pickSataus;
+	}
+
+	public String getShipStatus() {
+		return shipStatus;
+	}
+
+	public void setShipStatus(String shipStatus) {
+		this.shipStatus = shipStatus;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public ProductionOrder getProductionOrder() {
+        return productionOrder;
+    }
+
+    public void setProductionOrder(ProductionOrder productionOrder) {
+        this.productionOrder = productionOrder;
+    }
+
+    public Integer getLineNo() {
+        return lineNo;
+    }
+
+    public void setLineNo(Integer lineNo) {
+        this.lineNo = lineNo;
+    }
+
+    public WmsItem getItem() {
+        return item;
+    }
+
+    public void setItem(WmsItem item) {
+        this.item = item;
+    }
+
+    public String getBomCode() {
+        return bomCode;
+    }
+
+    public void setBomCode(String bomCode) {
+        this.bomCode = bomCode;
+    }
+
+    public Double getPlanQuantityBu() {
+        return planQuantityBu;
+    }
+
+    public void setPlanQuantityBu(Double planQuantityBu) {
+        this.planQuantityBu = planQuantityBu;
+    }
+
+    public Double getDealDlanQuantityBu() {
+        return dealDlanQuantityBu;
+    }
+
+    public void setDealDlanQuantityBu(Double dealDlanQuantityBu) {
+        this.dealDlanQuantityBu = dealDlanQuantityBu;
+    }
+
+    public Double getAllocatedQuantityBu() {
+        return allocatedQuantityBu;
+    }
+
+    public void setAllocatedQuantityBu(Double allocatedQuantityBu) {
+        this.allocatedQuantityBu = allocatedQuantityBu;
+    }
+
+    public Double getPickedQuantityBu() {
+        return pickedQuantityBu;
+    }
+
+    public void setPickedQuantityBu(Double pickedQuantityBu) {
+        this.pickedQuantityBu = pickedQuantityBu;
+    }
+
+    public Double getShippedQuantityBu() {
+        return shippedQuantityBu;
+    }
+
+    public void setShippedQuantityBu(Double shippedQuantityBu) {
+        this.shippedQuantityBu = shippedQuantityBu;
+    }
+
+    public WmsPackageUnit getPackageUnit() {
+        return packageUnit;
+    }
+
+    public void setPackageUnit(WmsPackageUnit packageUnit) {
+        this.packageUnit = packageUnit;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public void addAllocatedQuantityBu(Double qty) {
+    	this.allocatedQuantityBu = DoubleUtils.add(this.allocatedQuantityBu, qty);
+    }
+    
+    public void addHandQty(Double qty) {
+        this.handQty = DoubleUtils.add(this.handQty, qty);
+    }
+    
+    public void subAllocatedQuantityBu(Double qty) {
+    	this.allocatedQuantityBu = CommonHelper.dealDoubleError(allocatedQuantityBu);
+        this.allocatedQuantityBu = DoubleUtils.sub(this.allocatedQuantityBu, qty);
+    }
+    public void addPickedQuantityBu(Double qty) {
+        this.pickedQuantityBu = DoubleUtils.add(this.pickedQuantityBu, qty);
+    }
+    
+    public void subPickedQuantityBu(Double qty) {
+        this.pickedQuantityBu = DoubleUtils.sub(this.pickedQuantityBu, qty);
+    }
+    
+    public void addShippedQuantityBu(Double qty) {
+        this.shippedQuantityBu = DoubleUtils.add(this.shippedQuantityBu, qty);
+        if(DoubleUtils.sub(shippedQuantityBu,this.planQuantityBu) > 0) {
+        	throw new BusinessException("JAVABEAN:"+this.getId()+"发运数量"+this.shippedQuantityBu+"不能大于计划数量"+this.planQuantityBu);
+        }
+    }
+    
+    public void addXfQty(Double qty){
+    	this.xfQty = DoubleUtils.add(this.xfQty, qty);
+    }
+    
+    public void subXfQty(Double qty){
+    	this.xfQty = DoubleUtils.sub(this.xfQty, qty);
+    }
+    
+    public void subShippedQuantityBu(Double qty){
+    	this.shippedQuantityBu = DoubleUtils.sub(this.shippedQuantityBu, qty);
+    }
+
+    /**
+     * 获取未分配数量
+     */
+    public Double getUnAllocateQty() {
+        return DoubleUtils.sub(this.planQuantityBu, this.allocatedQuantityBu) ;       
+    }
+    /**
+     * 获取拣货
+     */
+    public Double getUnPickedQty() {
+        return DoubleUtils.sub(this.allocatedQuantityBu, this.pickedQuantityBu) ;       
+    }
+    
+    /**
+     * 获取未发运
+     */
+    public Double getUnShippedQty() {
+    	//不可拆包料分配的时候是会超分的，也就会出现超拣，所以回写发运数量要按计划数量（较小的）来
+    	//也有正常部分配的，拣货也就拣一部分，所以回写要按拣货数量来
+    	if(DoubleUtils.sub(this.pickedQuantityBu, this.planQuantityBu)>0){
+    		return DoubleUtils.sub(this.planQuantityBu, this.shippedQuantityBu) ; 
+    	}else{
+    		return DoubleUtils.sub(this.pickedQuantityBu, this.shippedQuantityBu) ; 
+    	}
+    	      
+    }
+    /**
+     * 获取可交接数量
+     */
+    public Double getRestHandQty() {
+        return DoubleUtils.sub(this.pickedQuantityBu, this.handQty) ;       
+    }
+    
+    /**
+     * 更新工单明细的分配状态、拣货状态、发运状态
+     * @return
+     */
+    public void defineStatus(){
+    	//分配状态
+    	if(this.allocatedQuantityBu > 0D && this.allocatedQuantityBu < this.planQuantityBu ){
+    		this.status = AssignmentStatus.UNALLOCATED;//0<分配数量<计划数量
+    	}else if(this.allocatedQuantityBu == 0D){//分配数量=0
+    		this.status = "-";
+    	}else if(this.planQuantityBu - this.allocatedQuantityBu <= 0 
+    				&& this.planQuantityBu > 0D && this.allocatedQuantityBu > 0D){
+    		this.status = AssignmentStatus.ALLOCATED;
+    	}
+    	
+    	//拣货状态
+    	if(this.pickedQuantityBu == 0D){
+    		this.pickSataus = "-";
+    	}else if(this.pickedQuantityBu > 0D && this.pickedQuantityBu < this.planQuantityBu){
+    		this.pickSataus = PickingStatus.UNPICKED;//部分拣货
+    	}else if(this.pickedQuantityBu - this.planQuantityBu >= 0D
+    				&& this.pickedQuantityBu > 0D && this.planQuantityBu > 0D){
+    		this.pickSataus = PickingStatus.PICKED;
+    	}
+    	
+    	//发运状态
+    	if(this.shippedQuantityBu == 0D){//发运数量=0
+    		this.shipStatus = "-";
+    	}else if(this.shippedQuantityBu > 0D && this.shippedQuantityBu < this.planQuantityBu){
+    		this.shipStatus = ShippingStatus.UNSHIPPED;//部分发运
+    	}else if(this.shippedQuantityBu - this.planQuantityBu >= 0
+    			&& this.shippedQuantityBu > 0D && this.planQuantityBu > 0D){
+    		this.shipStatus = ShippingStatus.SHIPPED;
+    	}
+    }
+}

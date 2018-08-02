@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsSupplierASNPage">
+    <main>
+        <process id="wmsASNProcess">
+            <tablePopup id="view" title="view" process="wmsASNProcess.view" enableType="single" containId="true" pageId="editWmsASNPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="viewReceivedRecord" title="viewReceivedRecord" process="wmsASNProcess.viewReceivedRecord" enableType="single" containId="true" pageId="maintainWmsReceivedRecordForAsnPage">
+                <enableExpression><![CDATA[${asn.status} != 'OPEN' && ${asn.status} != 'CANCELED' &&  ${asn.status} != 'ACTIVE' ]]></enableExpression>
+            </tablePopup>
+            <tablePopup id="new" title="new" process="wmsASNProcess.new" enableType="none" containId="false" pageId="editWmsASNPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="modify" title="modify" process="wmsASNProcess.modify" enableType="single" containId="true" pageId="editWmsASNPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="active" title="active" process="wmsASNProcess.active" enableType="multi" multiMapping="false" download="false" confirmMessage="是否确认生效此条记录？">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="unActive" title="unActive" process="wmsASNProcess.unActive" enableType="multi" multiMapping="false" download="false" confirmMessage="是否确认失效此条记录？">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+            <!-- <tableCommit id="label" title="label" process="wmsASNProcess.label" enableType="multi" multiMapping="false" download="false" closeTransactional="false">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                <action managerName="wmsTclASNManager" methodName="refreshDetail" parameter="obj"/>
+                </actions>
+                <forwards/> 
+            </tableCommit> -->
+            <tablePopup id="quickReceipt" title="quickReceipt" process="wmsASNProcess.quickReceipt" enableType="single" containId="true" pageId="editQuickReceiptPage">
+                <enableExpression><![CDATA[${asn.receiveLocation.type} == 'STORAGE']]></enableExpression>
+            </tablePopup>
+            <tablePopup id="receiveAll" title="receiveAll" process="wmsASNProcess.receiveAll" enableType="single" containId="true" pageId="editReceiveConfirmAllPage">
+                <enableExpression><![CDATA[${asn.receiveLocation.type} != 'STORAGE']]></enableExpression>
+            </tablePopup>
+            <tablePopup id="lineReceive" title="lineReceive" process="wmsASNProcess.lineReceive" enableType="single" containId="true" pageId="editReceiveConfirmPage">
+                <enableExpression><![CDATA[${asn.receiveLocation.type} != 'STORAGE']]></enableExpression>
+            </tablePopup>
+            <tablePopup id="allQcRecord" title="allQcRecord" process="wmsASNProcess.allQcRecord" enableType="single" containId="true" pageId="editQCInvStaPage">
+                <enableExpression><![CDATA[${asn.receiveQty}>${asn.putawayQty}]]></enableExpression>
+            </tablePopup>
+            <tablePopup id="qcRecord" title="qcRecord" process="wmsASNProcess.qcRecord" enableType="single" containId="true" pageId="maintainQCRegPage">
+                <enableExpression><![CDATA[${asn.receiveQty}>${asn.putawayQty}]]></enableExpression>
+            </tablePopup>
+<!-- 			<tableCommit id="cancelAll" title="cancelAll" process="wmsASNProcess.cancelAll" enableType="multi" multiMapping="false" download="false"  confirmMessage="确认整单取消收货么?" closeTransactional="false"> -->
+<!--                 <enableExpression/> -->
+<!--                 <mappings/> -->
+<!--                 <actions> -->
+<!--                     <action managerName="wmsASNManager" methodName="cancelAllReceiving" parameter="obj"/> -->
+<!--                 </actions> -->
+<!--                 <forwards> -->
+<!--                     <forward name="refreshParent" newEnabled="true" editEnabled="true"/> -->
+<!--                     <forward name="resetWindow" newEnabled="false" editEnabled="true"/> -->
+<!--                 </forwards> -->
+<!--             </tableCommit>             -->
+<!--             <tablePopup id="singleCanel" title="singleCanel" process="wmsASNProcess.singleCanel" enableType="single" containId="true" pageId="editCancelReceiveConfirmPage"> -->
+<!--                 <enableExpression/> -->
+<!--             </tablePopup> -->
+            
+            <tableCommit id="createMoveDoc" title="createMoveDoc" process="wmsASNProcess.createMoveDoc" enableType="multi" multiMapping="false" download="false" closeTransactional="true">
+                <enableExpression><![CDATA[(${asn.status} == 'RECEIVING'  ||  ${asn.status} == 'RECEIVED')&& ${asn.receiveLocation.type} != 'STORAGE']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsNoTransactionalManager" methodName="manualCreateWorkDoc" parameter="obj"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="cancel" title="cancel" process="wmsASNProcess.cancel" enableType="multi" multiMapping="false" download="false" closeTransactional="false">
+                <enableExpression><![CDATA[${asn.receiveLocation.type} != 'STORAGE']]></enableExpression>
+                <mappings/>
+                <actions>
+	                <action managerName="wmsASNManager" methodName="multiCancelASN" parameter="obj"/>
+                </actions>
+                <forwards>
+	                <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="close" title="close" process="wmsASNProcess.close" enableType="multi" multiMapping="false" download="false" closeTransactional="false">
+                <enableExpression><![CDATA[${asn.receiveLocation.type} != 'STORAGE']]></enableExpression>
+                <mappings/>
+                <actions>
+	                <action managerName="wmsASNManager" methodName="multiCloseASN" parameter="obj"/>
+                </actions>
+                <forwards>
+	                <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="reOPen" title="reOPen" process="wmsASNProcess.reOPen" enableType="multi" multiMapping="false" download="false" closeTransactional="false">
+                <enableExpression><![CDATA[${asn.receiveLocation.type} != 'STORAGE']]></enableExpression>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+            
+            
+             <tableDirectPrint id="printLabel" title="printLabel" process="wmsASNProcess.print" enableType="multi" multiMapping="true" download="false" closeTransactional="false" raq="printLabel.raq">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="objs" className="list">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsTclASNManager" methodName="printLabel" parameter="objs"/>
+                </actions>
+                <forwards/>
+            </tableDirectPrint>
+            
+        </process>
+        <process id="wmsTclASNProcess">
+            <tableCommit id="label" title="label" process="wmsTclASNProcess.label" enableType="multi" multiMapping="false" download="false" closeTransactional="false">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                </actions>
+                <forwards/> 
+            </tableCommit>
+            
+            
+            <tablePopup id="printWmsASN" title="printWmsASN" process="wmsTclASNProcess.printWmsASN" enableType="single" containId="true" pageId="printWmsASNPage">
+                <enableExpression/>
+            </tablePopup>
+            
+        </process>
+    </main>
+    <detail/>
+</page>

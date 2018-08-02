@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainQCRegPage" title="maintainQCRegPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.receiving.WmsReceivedRecord" width="800" height="400" onClose="refreshParent" mainEntrance="false">
+        <workflow/>
+        <datasource><![CDATA[SELECT record.id,
+item.code,
+item.name,
+record.receivedQty,
+record.pallet,
+record.carton,
+record.inventoryStatus,
+itemKey.lotInfo.storageDate,
+itemKey.lotInfo.productDate,
+itemKey.lotInfo.expireDate,
+itemKey.lotInfo.supplierCode 
+FROM WmsReceivedRecord record
+LEFT JOIN record.asnDetail asnDetail
+LEFT JOIN asnDetail.item item
+LEFT JOIN record.itemKey itemKey
+WHERE asnDetail.asn.id={maintainWmsASNPage.id}
+]]></datasource>
+        <columns>
+            <column id="record.id" title="record.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+            <column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+            <column id="record.receivedQty" title="record.receivedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+            <column id="record.pallet" title="record.pallet" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+            <column id="record.carton" title="record.carton" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+            <column id="record.inventoryStatus" title="record.inventoryStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+            <column id="itemKey.lotInfo.storageDate" title="itemKey.lotInfo.storageDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" language="false"/>
+            <column id="itemKey.lotInfo.productDate" title="itemKey.lotInfo.productDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" language="false"/>
+            <column id="itemKey.lotInfo.expireDate" title="itemKey.lotInfo.expireDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" language="false"/>
+            <column id="itemKey.lotInfo.supplierCode" title="itemKey.lotInfo.supplierCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+        </columns>
+    </maintainPage>
+</pages>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="modifyQuickShippingPage">
+    <main/>
+    <detail>
+        <process id="wmsTclWorkDocProcess">
+            <tablePopup id="addDetail" title="addDetail" process="wmsTclWorkDocProcess.addDetail" enableType="none" containId="false" pageId="maintainPopupQuickShippingPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="deleteDetail" title="deleteDetail" process="wmsTclWorkDocProcess.deleteDetail" enableType="single" multiMapping="false" download="false" closeTransactional="false">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsTclWorkDocManager" methodName="deleteMoveDocDetail" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+        </process>
+    </detail>
+</page>

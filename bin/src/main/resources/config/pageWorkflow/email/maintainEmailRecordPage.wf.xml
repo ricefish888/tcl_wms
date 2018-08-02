@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainEmailRecordPage">
+    <main>
+        <process id="emailProcess">
+            <tablePopup id="view" title="view" process="emailProcess.view" enableType="single" containId="true" pageId="viewEmailRecordPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="resend" title="resend" process="emailProcess.resend" enableType="single" multiMapping="false" download="false" closeTransactional="false">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="emailRecordManager" methodName="resend" parameter="obj"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+        </process>
+    </main>
+    <detail>
+        <process/>
+    </detail>
+</page>

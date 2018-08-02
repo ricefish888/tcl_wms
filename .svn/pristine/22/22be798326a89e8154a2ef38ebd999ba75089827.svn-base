@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="addProductionOrderDetailPage">
+    <main>
+        <process id="productionOrderProcess">
+            <formCommit id="addDetail" title="addDetail" process="productionOrderProcess.addDetail" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="new">
+                <enableExpression/>
+                <mappings>
+                	<mapping id="po.id" className="long">
+                        <entries/>
+                    </mapping>       
+                </mappings>
+                <actions>
+                    <action managerName="productionOrderManager" methodName="addDetail" parameter="po.id,obj"/>
+                </actions>
+                <forwards>
+                    <forward name="resetWindow" newEnabled="true" editEnabled="true"/>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+            <formCommit id="modifyDetail" title="modifyDetail" process="productionOrderProcess.modifyDetail" enableType="none" download="false" visibleType="edit">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="po.id" className="long">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="productionOrderManager" methodName="addDetail" parameter="po.id,obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="closeWindow" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

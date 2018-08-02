@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editWmsPickTicketDetailPage" title="editWmsPickTicketDetailPage" entityClass="com.vtradex.wms.server.model.entity.pickticket.WmsPickTicketDetail" width="250" height="300">
+        <workflow/>
+        <initListeners>
+            <initListener id="pickTicketDetail.lineNo" managerName="wmsPickticketManager" methodName="getMaxLineNoByPickTicketDetail" newEnabled="true" editEnabled="false"/>
+<!--             <initListener id="pickTicketDetail.lotInfo" managerName="wmsItemManager" methodName="getLotRuleTackersByPageMap" newEnabled="false" editEnabled="true"/> -->
+        </initListeners>
+        <inputUIs>
+            <hidden id="pickTicketDetail.id" title="pickTicketDetail.id" reserve="false"/>
+            <text id="pickTicketDetail.lineNo" title="pickTicketDetail.lineNo" row="1" col="1" readOnly="true" required="true" reserve="false" forceOverride="false" focusUI="true" inVisible="false" validator="positiveNumber" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <remote id="pickTicketDetail.item.id" title="pickTicketDetail.item.id" row="2" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="false" focusUI="false" inVisible="false" editModel="uneditable" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,物料编码,物料描述" intercepter="lotInfoInterceptor">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT
+item.id,
+item.code,
+item.name
+FROM WmsItem item,WmsItemFactory wmsItemFactory
+WHERE item.status = 'ENABLED'
+AND item.masterGroup.id in (select company.masterGroup.id from WmsCompany company where company.id= ${pickTicket.company.id}) 
+AND item.id = wmsItemFactory.item.id
+AND wmsItemFactory.factory.code = ${pickTicket.userField1}
+AND (item.code LIKE :param OR item.name LIKE :param)
+ORDER BY item.id]]></hql>
+                <eventListeners>
+                    <eventListener id="pickTicketDetail.packageUnit.id" index="3" refreshUI="false"/>
+<!--                    	<eventListener id="pickTicketDetail.lotInfo" index="1" refreshUI="false"/> -->
+                </eventListeners>
+            </remote>
+            <list id="pickTicketDetail.packageUnit.id" title="pickTicketDetail.packageUnit.id" row="3" col="1" span="1" width="120" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT
+packageUnit.id,
+packageUnit.unit
+FROM WmsPackageUnit packageUnit
+WHERE 1=1
+AND packageUnit.item.id = ${pickTicketDetail.item.id}
+ORDER BY packageUnit.convertFigure desc]]></hql>
+                <eventListeners/>
+            </list>
+            <text id="pickTicketDetail.expectedPackQty" title="pickTicketDetail.expectedPackQty" row="4" col="1" defaultValue="" readOnly="false" required="true" reserve="false" forceOverride="false" focusUI="false" inVisible="false" validator="positiveNumber" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <list id="pickTicketDetail.inventoryStatus" title="pickTicketDetail.inventoryStatus" row="5" col="1" width="120" readOnly="false" required="false" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT inventoryState.name,inventoryState.name
+				 FROM WmsInventoryState inventoryState
+				 WHERE inventoryState.masterGroup.id in (select company.masterGroup.id from WmsCompany company where company.id= ${pickTicket.company.id}) 
+				 AND inventoryState.isShip = 'Y'
+				 AND inventoryState.status = 'ENABLED'
+				 ORDER BY inventoryState.id]]></hql>
+                <eventListeners/>
+            </list>
+<!--             <complex id="pickTicketDetail.lotInfo" title="pickTicketDetail.lotInfo" row="6" col="1" span="2" type="shipLotInfo"/> -->
+        </inputUIs>
+    </editPage>
+</pages>

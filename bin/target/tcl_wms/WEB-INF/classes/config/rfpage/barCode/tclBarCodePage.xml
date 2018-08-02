@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--交货输入页面模板 -->
+<RFFormPage id="tclBarCodePage" title="tclBarCodePage">
+	<RFForm>
+		<inputs>
+			<RFText id="barCodeInput" title="barCodeInput" tip="barCodeInput" onFoucs="false">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="barCodeBt" title="barCodeBt" action="tclRfDeliveryManager.checkCode" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

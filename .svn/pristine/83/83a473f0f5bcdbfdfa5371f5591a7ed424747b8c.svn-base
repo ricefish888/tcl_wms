@@ -1,0 +1,62 @@
+package com.vtradex.wms.server.model.entity.production;
+
+import com.vtradex.thorn.server.model.Entity;
+import com.vtradex.wms.server.model.entity.item.WmsPackageUnit;
+import com.vtradex.wms.server.model.entity.pickticket.WmsPickTicketDetail;
+
+/***
+ * 生产订单明细  拣货单明细  之间的关联关系
+ * @author administrator
+ *
+ */
+public class ProductionOrderDetailPtDetail extends Entity {
+	 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3640787607286433509L;
+
+	/**生产订单明细*/
+	private ProductionOrderDetail productionOrderDetail;
+	
+	/**拣配单明细*/
+	private WmsPickTicketDetail pickticketDetail;
+	
+	/**关联 数量*/
+	private Double quantityBu=0D;
+	
+	private WmsPackageUnit unit;
+
+	public ProductionOrderDetail getProductionOrderDetail() {
+		return productionOrderDetail;
+	}
+
+	public void setProductionOrderDetail(ProductionOrderDetail productionOrderDetail) {
+		this.productionOrderDetail = productionOrderDetail;
+	}
+
+	public WmsPickTicketDetail getPickticketDetail() {
+		return pickticketDetail;
+	}
+
+	public void setPickticketDetail(WmsPickTicketDetail pickticketDetail) {
+		this.pickticketDetail = pickticketDetail;
+	}
+
+	public Double getQuantityBu() {
+		return quantityBu;
+	}
+
+	public void setQuantityBu(Double quantityBu) {
+		this.quantityBu = quantityBu;
+	}
+
+	public WmsPackageUnit getUnit() {
+		return unit;
+	}
+
+	public void setUnit(WmsPackageUnit unit) {
+		this.unit = unit;
+	}
+
+}

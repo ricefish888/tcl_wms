@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 容器拣货输入拣货确认数量 -->
+<RFFormPage id="pickRFPickNumberPage" title="pickRFPickNumberPage">
+	<RFDisplay id="pickDisplay" load="tclRfPickticketManager.showWmsTaskInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+		             拣货单号:{workCode}
+		              产线:{productLine}
+		              产线描述:{lineStr}
+			 订单日期:{orderDate}
+			目标库位:{toLocCode}
+			{itemInfos}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>	
+			 拣货单号:{workCode}
+		              产线:{productLine}
+		              产线描述:{lineStr}
+			 订单日期:{orderDate}
+			目标库位:{toLocCode}
+			{itemInfos}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="pickNumberInput" title="pickNumberInput" tip=""
+				 onFoucs="true">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="pickPickNumberScan" title="pickPickNumberScan" action="tclRfPickticketManager.inputPickNumberCommit" validate="" onFoucs="false"/>
+			<!-- <RFButton id="pickExceptionScan" title="pickExceptionScan" action="rfPickticketManager.inputExceptionCommit" validate="" onFoucs="false"/> -->
+		</buttons>
+	</RFForm>
+</RFFormPage>

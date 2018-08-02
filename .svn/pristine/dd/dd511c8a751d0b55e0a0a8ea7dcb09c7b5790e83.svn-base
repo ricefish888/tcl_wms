@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editWmsAccountCloseDayPage" title="editWmsAccountCloseDayPage" entityClass="com.vtradex.wms.server.model.entity.base.WmsAccountCloseDay" width="500" height="230" onClose="refreshParent">
+        <workflow/>
+        <initListeners/>
+        <inputUIs>
+            <hidden id="account.id" title="account.id" reserve="false"/>
+        
+             <date id="account.accountCloseTime" title="account.accountCloseTime" row="2" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" showTime="true" manualEditable="true" defaultCurrentDate="false">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+             </date>
+             <date id="account.maxAccountCloseTime" title="account.maxAccountCloseTime" row="2" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" showTime="true" manualEditable="true" defaultCurrentDate="false">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+             </date>
+        </inputUIs>
+    </editPage>
+</pages>

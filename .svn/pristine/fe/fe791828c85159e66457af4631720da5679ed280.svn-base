@@ -1,0 +1,93 @@
+package com.vtradex.wms.server.service.item;
+
+import java.util.Date;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import com.vtradex.thorn.server.service.BaseManager;
+import com.vtradex.wms.server.model.entity.bol.WmsBol;
+import com.vtradex.wms.server.model.entity.inventory.WmsInventory;
+import com.vtradex.wms.server.model.entity.inventory.WmsStorageDaily;
+import com.vtradex.wms.server.model.entity.item.WmsItem;
+import com.vtradex.wms.server.model.entity.receiving.WmsASNDetail;
+import com.vtradex.wms.server.model.entity.workdoc.WmsTask;
+
+public interface TclMessageManager extends BaseManager{
+	
+	/**生成发送给sap的单号以及报文*/
+	@Transactional
+	void genSendToSapLog();
+	/** 
+	* @Title: WMS-SAP创建物料属性日志
+	* @Description:createItemLog 
+	* @return void   
+	* @author <a href="huayang.yuan@tech.vtradex.com">袁华洋</a>  
+	* @date 2017-7-18 上午10:52:30  
+	* @throws 
+	*/
+	@Transactional
+	void createItemLog(WmsItem item);
+	/** 
+	* @Title: 创建库存日结
+	* @Description: createDaylyInventory 
+	* @return void   
+	* @author <a href="huayang.yuan@tech.vtradex.com">袁华洋</a>  
+	* @date 2017-7-19 下午3:19:34  
+	* @throws 
+	*/
+	@Transactional
+	void createDailyInventory(WmsStorageDaily storageDaily);
+	
+	/**这个无参的创建日结方法供接口调用*/
+	@Transactional
+	void createDailyInventory();
+	
+	/**
+	 * 收货信息写到中间表回传sap
+	 */
+	@Transactional
+	void sendReceiveInfo2SAP(WmsASNDetail detail,Double receiveQty);
+	/**
+	 * 取消收货信息写到中间表回传sap
+	 */
+	@Transactional
+	void sendCancelReceiveInfo2SAP(WmsASNDetail asnDetail,Double cancleQty);
+	
+	/**
+	 * 质检转合格接口--质检确认回传SAP
+	 * @param detail
+	 * @param QcQty
+	 */
+	@Transactional
+	void sendQcRecordInfo2SAP(WmsASNDetail detail,String qcStatus ,Double QcQty);
+	
+	/**
+	 * 发料-发运时回传SAP
+	 * @param detail
+	 * @param inventory
+	 * @param pickQty
+	 */
+	@Transactional
+	void sendProductionShipInfo(Long detailId,WmsInventory inventory,Double pickQty);
+	
+	/**
+	 * 库存调拨--一个仓库两个工厂之间的调拨
+	 */
+	@Transactional
+	void sendChangeTypeInfo(WmsInventory inventory,Double newFactoryQty,String newFactoryCode);
+	
+	/**
+	 * 生产订单入库JIT下线出库
+	 * @param inventory
+	 * @param task
+	 * @param qty
+	 */
+	@Transactional
+	void shipJITDownLine(WmsInventory inventory,WmsTask task,Double qty);
+	
+	/**
+	 * 销售出库单传SAP
+	 */
+	@Transactional
+	void sendOutDeliveryShipInfo(WmsBol bol);
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editWmsItemKeeperPage">
+    <main>
+        <process id="itemKeeperProcess">
+            <formCommit id="save" title="save" process="itemKeeperProcess.new" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="new">
+                <enableExpression/>
+                <mappings/>
+                <actions>     
+                   <action managerName="wmsItemKeeperManager" methodName="store" parameter="obj"/>       
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <!-- <forward name="resetWindow" newEnabled="true" editEnabled="true"/> -->
+                </forwards>
+            </formCommit>
+            <formCommit id="edit" title="edit" process="itemKeeperProcess.edit" enableType="none" download="false" visibleType="edit">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                   <action managerName="wmsItemKeeperManager" methodName="store" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="closeWindow" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

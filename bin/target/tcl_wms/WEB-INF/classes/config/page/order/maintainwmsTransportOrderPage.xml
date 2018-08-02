@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainwmsTransportOrderPage" title="maintainwmsTransportOrderPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.order.WmsTransportOrder" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT 
+wmsTransportOrder.id,
+wmsTransportOrder.code,
+wmsTransportOrder.supplier.code,
+wmsTransportOrder.supplier.name,
+wmsTransportOrder.orderDate,
+wmsTransportOrder.status,
+wmsTransportOrder.updateInfo.creator,
+wmsTransportOrder.updateInfo.createdTime,
+wmsTransportOrder.updateInfo.lastOperator,
+wmsTransportOrder.updateInfo.updateTime
+ FROM WmsTransportOrder wmsTransportOrder 
+LEFT JOIN wmsTransportOrder.supplier  
+ WHERE 1=1 
+ ORDER BY wmsTransportOrder.id DESC
+ ]]></datasource>
+        <columns>
+            <column id="wmsTransportOrder.id" title="wmsTransportOrder.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="wmsTransportOrder.code" title="wmsTransportOrder.code" visible="true" width="200" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wmsTransportOrder.supplier.code" title="wmsTransportOrder.supplier.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wmsTransportOrder.supplier.name" title="wmsTransportOrder.supplier.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wmsTransportOrder.orderDate" title="wmsTransportOrder.orderDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="wmsTransportOrder.status" title="wmsTransportOrder.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsTransportOrderStatus"/>
+            <column id="purchaseOrder.updateInfo.creator" title="purchaseOrder.updateInfo.creator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.updateInfo.createdTime" title="purchaseOrder.updateInfo.createdTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="purchaseOrder.updateInfo.lastOperator" title="purchaseOrder.updateInfo.lastOperator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.updateInfo.updateTime" title="purchaseOrder.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+        </columns>
+    </maintainPage>
+</pages>

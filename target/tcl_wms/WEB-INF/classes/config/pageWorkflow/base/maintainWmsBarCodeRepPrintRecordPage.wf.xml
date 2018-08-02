@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsBarCodeRepPrintRecordPage">
+    <main>
+        <process id="wmsBarCodeRepPrintRecordProcess">
+            <tablePopup id="print" title="print" process="wmsBarCodeRepPrintRecordProcess.print" enableType="multi" containId="true" pageId="printWmsBarCodeRepPrintRecordPage" managerName="wmsTclASNManager" methodName="print">
+                <enableExpression/>
+            </tablePopup>
+        </process>
+    </main>
+    <detail/>
+</page>

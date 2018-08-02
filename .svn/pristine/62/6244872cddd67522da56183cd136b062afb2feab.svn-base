@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.order.PurchaseOrderDetail" table="PURCHASE_ORDER_DETAIL">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">TSEQ_PURCHASE_ORDER_DETAIL</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+
+		<many-to-one name="purchaseOrder" class="com.vtradex.wms.server.model.entity.order.PurchaseOrder">
+			<column name="PURCHASE_ORDER_ID" not-null="true" unique-key="UK_PURCHASE_ORDER_DETAIL"/>
+		</many-to-one>
+		<many-to-one name="factory" class="com.vtradex.wms.server.model.entity.base.WmsSapFactory">
+			<column name="WMSSAPFACTORY_ID"  />
+		</many-to-one>	
+		<property name="lineNo" type="integer" column="LINE_NO" not-null="false" unique-key="UK_PURCHASE_ORDER_DETAIL"/>
+		
+		<many-to-one name="item" class="com.vtradex.wms.server.model.entity.item.WmsItem">
+			<column name="ITEM_ID" not-null="true"/>
+		</many-to-one>
+		<property name="expectedQty" type="double" column="EXPECTED_QTY" not-null="true"/>
+		<property name="receivedQty" type="double" column="RECEIVED_QTY" not-null="true"/>
+		<many-to-one name="packageUnit" class="com.vtradex.wms.server.model.entity.item.WmsPackageUnit">
+			<column name="PACKAGE_UNIT_ID" not-null="true"/>
+		</many-to-one>
+		<property name="expectedPackQty" type="double" column="EXPECTED_PACK_QTY" not-null="true"/>
+		<property name="allotQty" type="double" column="ALLOT_QTY" not-null="true"/>
+		<property name="inventoryStatus" type="string" column="INVENTORY_STATUS" length="100"/>
+		<property name="receivedDate" type="timestamp" column="RECEIVED_DATE" />
+		<property name="receivedLoc" type="string" length="50" column="RECEIVED_LOC" />
+		<property name="ebelp" type="string" length="50" column="EBELP" />
+		<property name="pstyp" type="string" length="10" column="PSTYP" />
+		<property name="userField1" type="string" column="USER_FIELD_1" length="50"/>
+        <property name="userField2" type="string" column="USER_FIELD_2" length="50"/>
+        <property name="userField3" type="string" column="USER_FIELD_3" length="50"/>
+        <property name="userField4" type="string" column="USER_FIELD_4" length="50"/>
+        <property name="userField5" type="string" column="USER_FIELD_5" length="50"/>
+
+		
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID" />
+			<property name="creator" type="string" length="50" column="CREATOR" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME" />
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID" />
+			<property name="lastOperator" type="string" length="50" column="LAST_OPERATOR" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME" />
+		</component>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.base.WmsSupplierPrintCount" table="WMS_SUPPLIER_PRINT_COUNT">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_WMS_SUPPLIER_PRINT_COUNT</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        <property name="supplier" type="string" column="SUPPLIER" length="50"/>
+        <property name="supplierName" type="string" column="SUPPLIER_NAME" length="100"/>
+        <property name="clientIp" type="string" column="CLIENT_IP" length="50"/>
+        <property name="printTimes" type="int" column="PRINT_TIMES" />
+        <property name="printType" type="string" column="PRINT_TYPE" length="50"/>
+        <many-to-one name="asnDetail" class="com.vtradex.wms.server.model.entity.receiving.WmsASNDetail">
+			<column name="ASN_DETAIL_ID"/>
+		</many-to-one>
+        <property name="lineCount" type="int" column="LINE_COUNT"/>
+        <property name="asnCode" type="string" column="ASN_CODE" length="100"/>
+        
+        <component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" length="50" column="CREATOR"/>
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" length="50" column="LAST_OPERATOR"/>
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+	 </class>
+</hibernate-mapping>

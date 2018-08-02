@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsSupplierPage" title="maintainWmsSupplierPage" mainEntrance="true" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.base.WmsSupplier">
+        <workflow/>
+        <datasource><![CDATA[SELECT supplier.id,
+supplier.code,
+supplier.name,
+supplier.status,
+supplier.contact.country,
+supplier.contact.province,
+supplier.contact.city,
+supplier.email1,
+supplier.email2,
+supplier.email3,
+supplier.contact.contactName,
+supplier.contact.telephone,
+supplier.contact.mobile,
+supplier.contact.fax,
+supplier.contact.postCode,
+supplier.contact.address,
+supplier.accountGroup,
+supplier.searchStr,
+supplier.remark
+ FROM WmsSupplier supplier
+ WHERE 1=1  
+ ORDER BY supplier.code]]></datasource>
+        <columns>
+            <column id="supplier.id" title="supplier.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="supplier.code" title="supplier.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.name" title="supplier.name" width="240" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.status" title="supplier.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsSapWarehouseStatus"/>        
+            <column id="supplier.contact.country" title="supplier.contact.country" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.contact.province" title="supplier.contact.province" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.contact.city" title="supplier.contact.city" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.email1" title="supplier.email1" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.email2" title="supplier.email2" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.email3" title="supplier.email3" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.contact.contactName" title="supplier.contact.contactName" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.contact.telephone" title="supplier.contact.telephone" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.contact.mobile" title="supplier.contact.mobile" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.contact.fax" title="supplier.contact.fax" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.contact.postCode" title="supplier.contact.postCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.contact.address" title="supplier.contact.address" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.accountGroup" title="supplier.accountGroup" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.searchStr" title="supplier.searchStr" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.remark" title="supplier.remark" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            </columns>
+    </maintainPage>
+</pages>

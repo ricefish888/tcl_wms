@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 查询列表页面模板 -->
+<RFListPage id="TclMovePlanBySkuLocationPage" title="TclMovePlanBySkuLocationPage">
+	<RFSearchUI id="moveCodeSearch" text="moveCodeSearch" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="moveId" title="moveId" width="50" enumType="" hidden="true" />
+		<RFTh id="moveCode" title="moveCode" width="250" enumType="" hidden="false" />
+		<RFTh id="qty" title="qty" width="250" enumType="" hidden="false" />
+		<DataSource type="HQL">
+			<statement>
+				<![CDATA[
+				 SELECT 
+				 move.id AS moveId,
+				 move.code as moveCode,
+				 CONCAT(CONCAT(cast(move.pickedQty,string), '/'), cast(move.qty,string)) AS qty
+					    FROM WmsWorkDoc move 
+					    WHERE 1=1 
+					    AND move.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN} 
+						AND move.status IN ('ENABLED','IN_OPERATION')
+						AND move.type = 'MOVE'
+					    /~moveCodeSearch: AND move.code like '%{moveCodeSearch}%' ~/
+				ORDER BY move.id asc
+				]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

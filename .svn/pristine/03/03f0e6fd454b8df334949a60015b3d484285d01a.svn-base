@@ -1,0 +1,14 @@
+package com.vtradex.wms.server.model.entity.production;
+/**
+ * 配送单类型
+ * @author fs
+ * @date 2017-8-4 11:38:43
+ */
+public interface WmsWorkDocType {
+
+	/**直接出库*/
+	public static String OUT_DIREC = "OUT_DIREC";
+	
+	/**线边交接*/
+	public static String XBJJ = "XBJJ";
+}

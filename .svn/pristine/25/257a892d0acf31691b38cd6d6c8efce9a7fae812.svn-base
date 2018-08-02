@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.pickticket.WmsPickTicket" table="WMS_PICK_TICKET">
+        
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_WMS_PICKTICKET</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        <version name="version" column="VERSION" type="long"/>
+        
+        <many-to-one name="warehouse" class="com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse">
+			<column name="WAREHOUSE_ID" not-null="true"/>
+		</many-to-one>
+		
+		<many-to-one name="company" class="com.vtradex.wms.server.model.entity.item.WmsCompany">
+			<column name="COMPANY_ID"/>
+		</many-to-one>
+		
+        <property name="code" type="string" column="CODE" length="50" not-null="true" unique-key="UK_PICKTICKET" />
+      	<many-to-one name="waveDoc" class="com.vtradex.wms.server.model.entity.pickticket.WmsWaveDoc">
+			<column name="WAVE_DOC_ID"/>
+		</many-to-one>
+		<many-to-one name="billType" class="com.vtradex.wms.server.model.entity.item.WmsBillType">
+			<column name="BILL_TYPE_ID"/>
+		</many-to-one>
+		
+		 <many-to-one name="supplier" class="com.vtradex.wms.server.model.entity.base.WmsSupplier">
+			<column name="SUPPLIER_ID"/>
+		</many-to-one>
+		
+		
+		<property name="isOriginal" column="IS_ORIGINAL" type="yes_no"/>
+		<property name="isExecutable" column="IS_EXECUTABLE" type="yes_no"/>
+		<property name="originalId" type="long" column="ORIGINAL_ID"/>
+		<property name="isHold" column="IS_HOLD" type="yes_no"/>
+		<property name="status" type="string" column="STATUS" length="25" />
+		<property name="qty" type="double" column="QTY" not-null="true"/>		
+		<property name="allocateQty" type="double" column="ALLOCATE_QTY" not-null="true"/>	
+		<property name="pickQty" type="double" column="PICK_QTY" not-null="true"/>
+		<property name="shipQty" type="double" column="SHIP_QTY" not-null="true"/>	
+		<property name="relatedBill1" type="string" length="50" column="RELATED_BILL1"/>
+		<property name="relatedBill2" type="string" length="50" column="RELATED_BILL2"/>
+		<property name="relatedBill3" type="string" length="50" column="RELATED_BILL3"/>
+		<many-to-one name="customer" class="com.vtradex.wms.server.model.entity.base.WmsCustomer">
+			<column name="CUSTOMER_ID"/>
+		</many-to-one>
+		<property name="shipToName" type="string" length="100" column="SHIP_TO_NAME"/>
+		<component name="contact" class="com.vtradex.wms.server.model.component.Contact">
+            <property name="country" type="string" column="C_COUNTRY" length="100"/>
+             <property name="province" type="string" column="C_PROVINCE" length="100"/>
+            <property name="city" type="string" column="C_CITY" length="50"/>
+            <property name="address" type="string" column="C_ADDRESS" length="255"/>
+            <property name="postCode" type="string" column="C_POSTCODE" length="10"/>
+            <property name="contactName" type="string" column="C_CONTACT_NAME" length="50"/>
+            <property name="mobile" type="string" column="C_MOBILE" length="100"/>
+            <property name="telephone" type="string" column="C_TELEPHONE" length="50"/>
+            <property name="fax" type="string" column="C_FAX" length="50"/>
+            <property name="email" type="string" column="C_EMAIL" length="100" />
+        </component>
+        <property name="orderDate" type="timestamp" column="ORDER_DATE"/>
+        <property name="priority" type="int" column="PROIRITY"/>
+        <property name="intendShipDate" column="INTEND_SHIP_DATE" type="timestamp"/>
+		<property name="expectedPickFinishDate" column="EXPECTED_PICK_FINISH_DATE" type="timestamp"/>
+		<property name="finshDate" column="FINSH_DATE" type="timestamp"/>
+        <property name="description" column="DESCRIPTION" type="string" length="255"/>
+        <many-to-one name="shipDock" class="com.vtradex.wms.server.model.entity.warehouse.WmsDock">
+            <column name="SHIP_DOCK_ID" />
+        </many-to-one>
+        <many-to-one name="shipLocation" class="com.vtradex.wms.server.model.entity.warehouse.WmsLocation">
+            <column name="SHIP_LOCATION_ID" />
+        </many-to-one>
+        <many-to-one name="carrier" class="com.vtradex.wms.server.model.entity.base.WmsCarrier">
+			<column name="CARRIER_ID"/>
+		</many-to-one>
+        <property name="requireArriveDate" column="REQUIRE_ARRIVE_DATE" type="timestamp"/>
+        <property name="allowShortShip" column="ALLOW_SHORT_SHIP" type="yes_no"/>
+        <property name="userField1" type="string" length="50" column="USER_FIELD1"/>
+		<property name="userField2" type="string" length="50" column="USER_FIELD2"/>
+		<property name="userField3" type="string" length="50" column="USER_FIELD3"/>
+		<property name="userField4" type="string" length="50" column="USER_FIELD4"/>
+		<property name="userField5" type="string" length="50" column="USER_FIELD5"/>
+		<property name="userField6" type="string" length="50" column="USER_FIELD6"/>
+		<property name="userField7" type="string" length="50" column="USER_FIELD7"/>
+		<property name="userField8" type="string" length="50" column="USER_FIELD8"/>
+		<property name="userField9" type="string" length="50" column="USER_FIELD9"/>
+		<property name="userField10" type="string" length="50" column="USER_FIELD10"/>
+		<property name="userField11" type="string" length="50" column="USER_FIELD11"/>
+		<property name="userField12" type="string" length="50" column="USER_FIELD12"/>
+		<property name="userField13" type="string" length="50" column="USER_FIELD13"/>
+		<property name="userField14" type="string" length="50" column="USER_FIELD14"/>
+		<property name="userField15" type="string" length="50" column="USER_FIELD15"/>
+		<property name="userField16" type="string" length="50" column="USER_FIELD16"/>
+		<property name="userField17" type="string" length="50" column="USER_FIELD17"/>
+		<property name="userField18" type="string" length="50" column="USER_FIELD18"/>
+		<property name="userField19" type="string" length="50" column="USER_FIELD19"/>
+		<property name="userField20" type="string" length="50" column="USER_FIELD20"/>
+		<property name="userField21" type="string" length="50" column="USER_FIELD21"/>
+		<property name="userField22" type="string" length="50" column="USER_FIELD22"/>
+	    <property name="userField23" type="string" length="50" column="USER_FIELD23"/>
+		<property name="userField24" type="string" length="50" column="USER_FIELD24"/>
+		<set name="details" inverse="true" lazy="false" cascade="all-delete-orphan">
+			<key column="PICK_TICKET_ID"/>
+			<one-to-many class="com.vtradex.wms.server.model.entity.pickticket.WmsPickTicketDetail"/>
+		</set>
+	    <property name="allowCross" column="ALLOW_CROSS" type="yes_no"/>
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID" />
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME" />
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID" />
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME" />
+		</component>
+		<property name="route" type="string" length="100" column="ROUTE"/>
+		<property name="allowLotSwap" column="ALLOW_LOT_SWAP" type="yes_no"/>
+		<property name="waitReplenish" column="WAIT_REPLENISH" type="yes_no"/>
+	 </class>
+</hibernate-mapping>

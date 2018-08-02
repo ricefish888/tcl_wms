@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsSystemValuesPage">
+    <main>
+        <process id="wmsSystemValuesProcess">
+            <tablePopup id="edit" title="edit" process="wmsSystemValuesProcess.edit" enableType="single" containId="true" pageId="editSysTemValuesPage">
+            </tablePopup>
+        </process>
+    </main>
+    <detail/>
+</page>

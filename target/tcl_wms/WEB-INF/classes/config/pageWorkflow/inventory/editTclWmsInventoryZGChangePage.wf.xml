@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editTclWmsInventoryZGChangePage">
+    <main>      
+        <process id="wmsInventoryProcess">
+            <formCommit id="zgchange" title="zgchange" process="wmsInventoryProcess.zgchange" enableType="none" download="false" confirmMessage="是否确认调拨？">
+                <enableExpression/>
+                <mappings>
+                	<mapping id="qty" className="double">
+                        <entries/>
+                    </mapping>
+                    <mapping id="newFactoryCode" className="string">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsTclInventoryManageManager" methodName="changeHouseInZG" parameter="obj,qty,newFactoryCode"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+</page>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainAddWmsTransportOrderDetailPage" title="maintainAddWmsTransportOrderDetailPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.production.WmsDeliveryOrderDetail"  width="1100" height="450"  mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[select 
+orderDetail.id,
+orderDetail.deliveryOrder.warehouse.name,
+orderDetail.factory.name,
+orderDetail.deliveryOrder.code,
+orderDetail.item.code,
+orderDetail.item.name,
+orderDetail.planQuantityBu,
+orderDetail.delivedQuantityBu,
+orderDetail.quantity,
+(orderDetail.theDeliveryQuantityBu - orderDetail.quantity) as  theDeliveryQuantityBu,
+(select w.theDeliveryQuantityBu - w.quantity from WmsDeliveryOrderDetail w where w.id=orderDetail.id ) as amount
+FROM WmsDeliveryOrderDetail orderDetail
+LEFT JOIN  orderDetail.item
+LEFT JOIN  orderDetail.packageUnit
+LEFT JOIN  orderDetail.deliveryOrder
+LEFT JOIN  orderDetail.factory
+LEFT JOIN  orderDetail.deliveryOrder.warehouse
+WHERE 1=1
+AND (orderDetail.theDeliveryQuantityBu - orderDetail.quantity) >0
+AND orderDetail.deliveryOrder.status in ('ACTIVE','PARTIALRECEIPT')
+AND orderDetail.deliveryOrder.confirmStatus = 'CONFIRM'
+AND orderDetail.deliveryOrder.supplier.id = {wmsTransportOrder.supplier.id}
+ORDER BY orderDetail.id]]></datasource>
+        <columns>
+            <column id="orderDetail.id" title="orderDetail.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="orderDetail.deliveryOrder.warehouse.name" title="orderDetail.deliveryOrder.warehouse.name" visible="true" width="200" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="orderDetail.factory.name" title="orderDetail.factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="orderDetail.deliveryOrder.code" title="orderDetail.deliveryOrder.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="orderDetail.item.code" title="orderDetail.item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="orderDetail.item.name" title="orderDetail.item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="orderDetail.planQuantityBu" title="orderDetail.planQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="orderDetail.delivedQuantityBu" title="orderDetail.delivedQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="orderDetail.quantity" title="orderDetail.quantity" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="theDeliveryQuantityBu" title="orderDetail.theDeliveryQuantityBu1" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="amount" title="amount" visible="true" sortable="false" horizonAlign="center" verticalAlign="middle" dataType="double" inputUI="true"/>
+        </columns>
+    </maintainPage>
+</pages>

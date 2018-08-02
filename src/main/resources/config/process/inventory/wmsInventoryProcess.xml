@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="wmsInventoryProcess" control="status">
+
+	<task id="new" title="新建">
+	</task>
+
+	<task id="qtyAdjust" title="数量调整">
+	</task>
+
+	<task id="lotInfoAdjust" title="批次属性调整">
+	</task>
+
+	<task id="stateAdjust" title="库存状态调整">
+	</task>
+
+	<task id="cancelReceipt" title="取消收货">
+	</task>
+
+	<task id="backUp" title="生产领料退拣">
+	</task>
+
+	<task id="conversionPackage" title="转换包装">
+	</task>
+
+	<task id="moveByPallet" title="托盘移位">
+	</task>
+
+	<task id="unlockByStatus" title="解锁">
+	</task>
+
+	<task id="lockByStatus" title="锁定">
+	</task>
+
+	<task id="cargoTransfer" title="货权转移">
+	</task>
+
+	<task id="countAdjust" title="盈亏调整">
+	</task>
+
+	<task id="change" title="调拨">
+	</task>
+
+	<task id="allocation" title="正残品调拨">
+	</task>
+
+	<task id="normalBackUp" title="退拣">
+	</task>
+
+	<task id="ylBackUp" title="预留出库退拣">
+	</task>
+	<!-- T1库位退拣 -->
+	<task id="dbBackUp" title="预留出库退拣">
+	</task>
+	<task id="changehouse" title="库间调拨">
+	</task>
+	<!-- 线体退拣 -->
+	<task id="xtBackUp" title="按产线退拣">
+	</task>
+	
+	<!-- 移位 -->
+	<task id="transposing" title="移位">
+	</task>
+	<!-- 自管仓间调拨 -->
+	<task id="zgchange" title="自管仓间调拨">
+	</task>
+	
+</process>

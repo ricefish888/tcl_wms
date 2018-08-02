@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 标准输入货品 -->
+<RFFormPage id="pickAllRFPage" title="pickAllRFPage">
+	<RFDisplay id="pickDisplay" load="tclRfPickticketManager.showWorkDocInfos">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+		              作业单号:{workCode}
+		              产线:{productLine}
+		              产线描述:{lineStr}
+			 订单日期:{orderDate}
+			{itemInfos}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>	
+		             作业单号:{workCode}
+		             产线:{productLine}
+		             产线描述:{lineStr}
+			订单日期:{orderDate}
+			{itemInfos}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<buttons>
+			<RFButton id="pickAllScan" title="pickAllScan" action="tclRfPickticketManager.workDocCommit" validate="tclRfPickticketManager.isPickAllCommit" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

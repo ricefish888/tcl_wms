@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsDeliveryOrderPage">
+    <main>
+        <process id="wmsDeliveryOrderProcess">
+            <tablePopup id="new" title="new" process="wmsDeliveryOrderProcess.new" enableType="none" containId="false" pageId="modifyWmsDeliveryOrderPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="modify" title="modify" process="wmsDeliveryOrderProcess.modify" enableType="single" containId="true" pageId="modifyWmsDeliveryOrderPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="view" title="view" process="wmsDeliveryOrderProcess.view" enableType="single" containId="true" pageId="viewWmsDeliveryOrderPage">
+                <enableExpression/>
+            </tablePopup>
+            
+             <tableCommit id="active" title="active" process="wmsDeliveryOrderProcess.active" enableType="multi" multiMapping="false" download="false" confirmMessage="是否确认生效此条记录？">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                	<action managerName="wmsDeliveryOrderManager" methodName="activeDeliveryOrder" parameter="obj"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="unActive" title="unActive" process="wmsDeliveryOrderProcess.unActive" enableType="multi" multiMapping="false" download="false" confirmMessage="是否确认失效此条记录？">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+            
+            <tableCommit id="received" title="received" process="wmsDeliveryOrderProcess.received" enableType="multi" multiMapping="true" download="false" closeTransactional="false">
+                <enableExpression><![CDATA[${deliveryOrder.confirmStatus} == 'OPEN']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsDeliveryOrderManager" methodName="received" parameter="objs"/>
+                </actions> 
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="confirm" title="confirm" process="wmsDeliveryOrderProcess.confirm" enableType="multi" multiMapping="true" download="false" closeTransactional="false">
+                <enableExpression><![CDATA[${deliveryOrder.confirmStatus} == 'RECEIVED']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsDeliveryOrderManager" methodName="confirm" parameter="objs"/>
+                </actions> 
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            
+             <tablePopup id="import" title="import" process="wmsDeliveryOrderProcess.import" enableType="none" containId="false" pageId="importWmsDeliveryOrderPage">
+                <enableExpression/>
+             </tablePopup>
+ 
+        </process>
+    </main>
+    <detail/>
+</page>

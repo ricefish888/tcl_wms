@@ -1,0 +1,204 @@
+package com.vtradex.wms.server.service.production;
+
+import java.io.File;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import com.vtradex.thorn.server.service.BaseManager;
+import com.vtradex.wms.server.model.entity.item.WmsItem;
+import com.vtradex.wms.server.model.entity.item.WmsPackageUnit;
+import com.vtradex.wms.server.model.entity.pickticket.WmsPickTicket;
+import com.vtradex.wms.server.model.entity.pickticket.WmsPickTicketDetail;
+import com.vtradex.wms.server.model.entity.production.ProductionOrder;
+import com.vtradex.wms.server.model.entity.production.ProductionOrderDetail;
+import com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse;
+
+/**
+ * 
+ * 生产订单业务处理接口
+ * 
+ * @author <a href="zhen.lei@vtradex.com">Yogurt_lei</a>
+ * 
+ * @date 2017年7月5日 上午9:52:38
+ */
+public interface ProductionOrderManager extends BaseManager {
+    /**
+     * 
+     * 拣配工单导入
+     *
+     * @param rowDataMap
+     *
+     * @author Yogurt_lei
+     *
+     * @date 2017年7月5日 上午9:53:52
+     */
+    @Transactional
+    void importPickingOrder(Map<String, String> rowDataMap);
+    
+    /**
+     * 
+     * 工单开始结束时间导入
+     *
+     * @param rowDataMap
+     *
+     * @author Yogurt_lei
+     *
+     * @date 2017年7月5日 上午9:54:43
+     */
+    @Transactional
+    void importOrderHandleTime(Map<String, String> rowDataMap);
+    
+    /**
+	 * 新增ProductionOrderDetail
+	 * @param asnId
+	 * @param detail
+	 * @param expectedQuantity
+	 */
+	@Transactional
+	void addDetail(Long id ,ProductionOrderDetail productionOrderDetail);
+	
+	
+	@Transactional
+	 List<WmsPickTicket> creatPickTicketByProductionOrder(List<ProductionOrder> productionOrderList);
+	
+	/**
+	 * 移出明细
+	 * @param details 
+	 */
+	@Transactional
+	void removeDetails(ProductionOrderDetail productionOrderDetail);
+//	/**
+//	 * 冰箱工厂根据生产线生成拣配单。
+//	 * @param refirgeratorFactory
+//	 */
+//	@Transactional
+//	void createRefirgeratorFactory(List<ProductionOrder> refirgeratorFactory,List<WmsPickTicket> picks);
+//	
+//
+//	/**
+//	 * 洗衣机工厂根据生产订单生成拣配单，
+//	 * @param washerFactory
+//	 */
+//	@Transactional
+//	void createPtBywasherFactory(List<ProductionOrder> washerFactory,List<WmsPickTicket> picks);
+	
+	/**
+	 * 货主 名称默认   默认货主编码D   工单生成的拣货单单据类型编码SCLLD
+	 * 单据类型
+	 * @param warehouse
+	 * @param company
+	 * @param orderDate
+	 */
+	@Transactional
+	WmsPickTicket createWmsPickTicketByProductionOrder(WmsWarehouse warehouse,Date orderDate,String billCode);
+	
+	/**
+	 * 
+	 * 恰时预警 
+	 *
+	 * @author Yogurt_lei
+	 *
+	 * @date 2017年7月25日 下午4:58:10
+	 */
+	@Transactional
+	void onTimeWarning(Date choseDate);
+	
+	/**
+	 * 创建拣配单明细
+	 * @param pickTicket
+	 * @param item
+	 * @param packageUnit
+	 * @param expectedQty
+	 * @return
+	 */
+	@Transactional
+	WmsPickTicketDetail creatWmsPickTicketDetail(WmsPickTicket pickTicket,WmsItem item,WmsPackageUnit packageUnit,Double expectedQty);
+	/**
+	 * 保存捡货单明细宇生产单明细关系
+	 * @param productionOrderDetail
+	 * @param pickTicketDetail
+	 * @param quantityBu
+	 */
+	@Transactional
+	void storeProductionOrderDetailPtDetail(ProductionOrderDetail productionOrderDetail,WmsPickTicketDetail pickTicketDetail,Double quantityBu);
+	
+	
+	/**
+	 * 拣配工单导入
+	 * @param file
+	 */
+	@Transactional
+	List<WmsPickTicket> importProductionFile(File file);
+	/**
+	 * 拣配工单导入
+	 * 定时任务调用此方法
+	 */
+	@Transactional
+	List<WmsPickTicket> importProductionOrder();
+ 
+	/**
+	 * 取消拣配单
+	 */
+	@Transactional
+	void cancleWmsPickTicket(ProductionOrder order);
+	
+	/**
+	 * 失效工单需要校验此工单是否已经分配拣货
+	 * @param order
+	 */
+	@Transactional
+	void unActiveProductOrder(ProductionOrder order);
+	
+	/**
+	 * 校验工厂是不是当前仓库下面的
+	 * @param facCode
+	 * @param poCode
+	 * @param isException  是否抛异常
+	 */
+	@Transactional
+	Boolean validateFactory(String facCode,String poCode,Boolean isException,Long warehouseId);
+	/**
+	 * 修改生产订单明细单独下发标识
+	 * @param poDetail
+	 */
+	@Transactional
+	void changeAlonePick(ProductionOrderDetail poDetail);
+	
+	/**
+	 * 有单独下发标识的单独生成拣货单
+	 */
+	
+	void createPickByAlonePick();
+	/**
+	 * 单独下发导入
+	 * @param rowDataMap
+	 */
+	void importAlonePick(Map<String, String> map);
+	/**
+	 * 明细取消拣配
+	 * @param poDetail
+	 */
+	@Transactional
+	void canclePickByAlonePick(ProductionOrderDetail poDetail);
+	/**
+     * 工单导入时把数据全部插到数据表WmsPickingProductionOrder中，
+     * 同时生成一个ThornTask定时去跑
+     * @param file
+     */
+	@Transactional
+	void genProdOrderImportTask(File file);
+	/**
+	 * 删除工单导入记录
+	 */
+	@Transactional
+	void deletePickingProductionOrder();
+	/**
+	 * 工单重新打开后，无法自动下发，需要修改下发数量后再次下发
+	 * @param poDetail
+	 */
+	@Transactional
+	void changeXfQty(ProductionOrderDetail poDetail);
+}

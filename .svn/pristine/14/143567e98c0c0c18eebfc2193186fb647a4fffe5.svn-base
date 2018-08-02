@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsInventoryManagerPage">
+    <main>
+        <process id="wmsInventoryProcess">
+        	<tablePopup id="new" title="new" process="wmsInventoryProcess.new" enableType="none" containId="false" maintain="false" pageId="editWmsInventoryPage">
+        		<enableExpression/>
+            </tablePopup>
+            <tablePopup id="lockByStatus" title="lockByStatus" process="wmsInventoryProcess.lockByStatus" enableType="single" containId="true" pageId="lockInventoryByCondition">
+                <enableExpression><![CDATA[${inventory.qty} > 0  && ${inventory.operationStatus} == "NORMAL" && ${inventory.lockStatus}=='false' && ${inventory.location.type}=='STORAGE']]></enableExpression>
+            </tablePopup>
+            <tablePopup id="unlockByStatus" title="unlockByStatus" process="wmsInventoryProcess.unlockByStatus" enableType="single" containId="true" pageId="unlockInventoryByCondition">
+                <enableExpression><![CDATA[${inventory.qty} > 0 && ${inventory.operationStatus} == "NORMAL" && ${inventory.lockStatus}=='true' && ${inventory.location.type}=='STORAGE']]></enableExpression>
+            </tablePopup>
+        	<tablePopup id="qtyAdjust" title="qtyAdjust" process="wmsInventoryProcess.qtyAdjust" enableType="single" containId="true" maintain="false" pageId="editWmsInventoryQtyAdjustPage">
+        		<enableExpression><![CDATA[${inventory.operationStatus}=='NORMAL' && ${inventory.lockStatus}=='false' && ${inventory.location.type}=='STORAGE']]></enableExpression>
+            </tablePopup>
+        	<tablePopup id="lotInfoAdjust" title="lotInfoAdjust" process="wmsInventoryProcess.lotInfoAdjust" enableType="single" containId="true" maintain="false" pageId="editWmsInventoryLotInfoAdjustPage">
+        		<enableExpression><![CDATA[${inventory.operationStatus}=='NORMAL' && ${inventory.lockStatus}=='false' && ${inventory.location.type}=='STORAGE']]></enableExpression>
+            </tablePopup>
+        	<tablePopup id="stateAdjust" title="stateAdjust" process="wmsInventoryProcess.stateAdjust" enableType="single" containId="true" maintain="false" pageId="editWmsInventoryStateAdjustPage">
+        		<enableExpression><![CDATA[${inventory.operationStatus}=='NORMAL' && ${inventory.lockStatus}=='false' && ${inventory.location.type}=='STORAGE']]></enableExpression>
+            </tablePopup>
+            <tablePopup id="moveByPallet" title="moveByPallet" process="wmsInventoryProcess.moveByPallet" enableType="single" containId="true" maintain="false" pageId="editWmsInventoryMoveByPalletPage">
+        		<enableExpression><![CDATA[${inventory.operationStatus}=='NORMAL' && ${inventory.pallet}!='-' && (${inventory.location.type}=='STORAGE' || ${inventory.location.type}=='SHIP')]]></enableExpression>
+            </tablePopup>
+        	<tablePopup id="cargoTransfer" title="cargoTransfer" process="wmsInventoryProcess.cargoTransfer" enableType="single" containId="true" maintain="false" pageId="editInventoryCargoTransferPage">
+        		<enableExpression><![CDATA[${inventory.operationStatus}=='NORMAL' && ${inventory.location.type}=='STORAGE' && ${inventory.lockStatus}=='false']]></enableExpression>
+            </tablePopup>
+        	<tablePopup id="change" title="change" process="wmsInventoryProcess.change" enableType="single" containId="true" maintain="false" pageId="editTclWmsInventoryChangePage">
+        		<enableExpression><![CDATA[${inventory.operationStatus}=='NORMAL' && ${inventory.location.type}=='STORAGE' && ${inventory.lockStatus}=='false']]></enableExpression>
+            </tablePopup>    
+            <tablePopup id="allocation" title="allocation" process="wmsInventoryProcess.allocation" enableType="single" containId="true" maintain="false" pageId="editTclWmsInventoryAllocationPage">
+             <enableExpression><![CDATA[${inventory.operationStatus}=='NORMAL' && ${inventory.location.type}=='STORAGE' && ${inventory.lockStatus}=='false']]></enableExpression>
+            </tablePopup>
+            <tablePopup id="changehouse" title="changehouse" process="wmsInventoryProcess.changehouse" enableType="single" containId="true" maintain="false" pageId="editTclWmsInventoryChangeHousePage">
+        		<!-- <enableExpression><![CDATA[${inventory.operationStatus}=='NORMAL' && ${inventory.location.type}=='STORAGE' && ${inventory.lockStatus}=='false' && ${inventory.warehouse.code} =='VMI']]></enableExpression> -->
+                <enableExpression><![CDATA[${inventory.operationStatus}=='NORMAL' && ${inventory.location.type}=='STORAGE' && ${inventory.lockStatus}=='false' ]]></enableExpression>
+            </tablePopup>
+            <tablePopup id="zgchange" title="zgchange" process="wmsInventoryProcess.zgchange" enableType="single" containId="true" maintain="false" pageId="editTclWmsInventoryZGChangePage">
+        		<enableExpression><![CDATA[${inventory.operationStatus}=='NORMAL' && ${inventory.location.type}=='STORAGE' && ${inventory.lockStatus}=='false']]></enableExpression>
+            </tablePopup> 
+            
+            <tablePopup id="transposing" title="transposing" process="wmsInventoryProcess.transposing" enableType="single" containId="true" maintain="false" pageId="editTclWmsInventoryTransposingPage">
+               <enableExpression><![CDATA[${inventory.operationStatus}=='NORMAL' && 
+                                          ${inventory.location.type}=='STORAGE' &&
+                                          ${inventory.lockStatus}=='false']]>
+               </enableExpression>
+            </tablePopup>
+            
+        </process>
+        
+        <process id="tclWmsInventoryProcess">
+         <tablePopup id="modify" title="modifySupplier" process="tclWmsInventoryProcess.modify" enableType="single" containId="true" maintain="false" pageId="editTclWmsInventorySupplierPage">
+        		 <enableExpression><![CDATA[${inventory.operationStatus}=='NORMAL' &&
+        		                            ${inventory.location.type}=='STORAGE' && 
+        		                            ${inventory.lockStatus}=='false' &&
+                                            ${inventory.itemKey.lotInfo.supplierCode}=='XN' &&
+                                            (${inventory.warehouse.code} =='XYJ' || ${inventory.warehouse.code}=='BX')]]></enableExpression>
+         </tablePopup>
+         
+         <tablePopup id="modifyXT" title="modifyXT" process="tclWmsInventoryProcess.modifyXT" enableType="single" containId="true" maintain="false" pageId="editTclWmsInventoryXTPage">
+        		  <enableExpression><![CDATA[${inventory.operationStatus}=='NORMAL' && ${inventory.location.code}=='XBC' && ${inventory.lockStatus}=='false']]></enableExpression> 
+         </tablePopup> 
+             
+         
+        
+        </process>
+        <process id="tclWmsInventoryCountProcess"> 
+     
+        <tablePopup id="import" title="import" process="tclWmsInventoryCountProcess.import" enableType="none" containId="false" pageId="importWmsInventoryPage">
+                <enableExpression/>
+         </tablePopup>   
+                      
+         <tablePopup id="print" title="print" process="tclWmsInventoryCountProcess.print" enableType="multi" containId="true" pageId="printPage">
+                <enableExpression/>
+         </tablePopup>   
+        </process>
+    </main>
+</page>

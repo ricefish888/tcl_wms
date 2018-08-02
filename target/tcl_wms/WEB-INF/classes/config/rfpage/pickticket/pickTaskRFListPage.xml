@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 标准拣货查询列表页面模板 -->
+<RFListPage id="pickTaskRFListPage" title="pickTaskRFListPage">
+	<RFSearchUI id="workCodeSearch" text="workCodeSearch" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="taskId" title="taskId" width="50" enumType="" hidden="true" />
+		<RFTh id="itemCode" title="itemCode" width="80" enumType="" hidden="false" />
+		<RFTh id="itemName" title="itemName" width="80" enumType="" hidden="false" />
+		<RFTh id="relatedBillCode" title="relatedBillCode" width="80" enumType="" hidden="false" />
+		<RFTh id="date" title="date" width="60" enumType="" hidden="false" />
+		<RFTh id="productLine" title="productLine" width="40" enumType="" hidden="false" />
+		<RFTh id="userField5" title="userField5" width="60" enumType="" hidden="false" />
+		<RFTh id="qty" title="qty" width="50" enumType="" hidden="false" />
+		<DataSource type="HQL">
+			<statement>
+				<![CDATA[
+				 SELECT 
+				 MIN(task.id) AS taskId,
+				 task.item.code as itemCode,
+				 substr(task.item.name,0,6) as itemName,
+				 substr(work.productOrderCode,5) as relatedBillCode,
+				 Min(to_char(pick.orderDate,'MMdd')) as date,
+				 work.productLine as productLine,
+				 work.userField5 as userField5,
+				 SUM(task.planQty-task.pickedQty) AS qty
+					    FROM WmsTask task ,WmsPickTicket pick
+					    LEFT JOIN task.workDoc work
+					    LEFT JOIN work.keeper keeper
+	  				    WHERE 1=1 
+					    AND work.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN} 
+						AND task.status IN ('ENABLED','IN_OPERATION')
+						AND task.type = 'PICKING'
+						AND keeper.id=#{SESSION_USERS}
+						AND task.planQty-task.pickedQty>0
+						AND work.relatedBillCode=pick.code
+					    /~workCodeSearch: 
+					    	AND (work.code = '{workCodeSearch}' 
+					    		or task.item.code='{workCodeSearch}'
+					    		or substr(work.productOrderCode,5)='{workCodeSearch}'
+					    		or work.productLine='{workCodeSearch}'
+					    		or to_char(pick.orderDate,'MMdd')='{workCodeSearch}'
+					    		or work.userField5='{workCodeSearch}') ~/
+					    GROUP BY task.item.code,task.item.name,task.itemKey.lotInfo.lot,work.code,
+					    work.productOrderCode,work.productLine,work.userField5
+				ORDER BY task.item.code,work.code
+				]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

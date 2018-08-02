@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"> 
+    
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.base.WmsShippingLotTruck" table="WMS_SHIPPINGLOT_TRUCK">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_WMS_SHIPPINGLOT_TRUCK</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id> 
+        
+		<many-to-one name="warehouse" class="com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse">
+			<column name="WAREHOUSE_ID" not-null="true"/>
+		</many-to-one>
+		
+		<many-to-one name="company" class="com.vtradex.wms.server.model.entity.item.WmsCompany">
+			<column name="COMPANY_ID" not-null="true"/>
+		</many-to-one>
+		
+		<many-to-one name="location" class="com.vtradex.wms.server.model.entity.warehouse.WmsLocation">
+			<column name="LOCATION_ID" not-null="true"/>
+		</many-to-one>
+		
+		<many-to-one name="item" class="com.vtradex.wms.server.model.entity.item.WmsItem">
+			<column name="ITEM_ID" not-null="true"/>
+		</many-to-one>
+		
+		<many-to-one name="packageUnit" class="com.vtradex.wms.server.model.entity.item.WmsPackageUnit">
+			<column name="PACKAGEUNIT_ID" not-null="true"/>
+		</many-to-one>
+		
+		<component name="lotInfo" class="com.vtradex.wms.server.model.component.LotInfo">
+			<property name="lot" type="string" column="LOT" length="50"/>
+			<property name="storageDate" type="date" column="STORAGE_DATE"/>
+			<property name="productDate" type="date" column="PRODUCT_DATE"/>
+			<property name="expireDate" type="date" column="EXPIRE_DATE"/>
+			<property name="qaDate" type="date" column="QA_DATE"/>
+		    <property name="soiCode" type="string" column="SOI" length="50"/>
+		    <property name="asnCustomerBill" type="string" column="ASN_CUSTOMER_BILL" length="50"/>
+		    <property name="supplierCode" type="string" column="SUPPLIER_CODE" length="50"/>
+		    <property name="serialNo" type="string" column="SERIAL_NO" length="100"/>
+		    <property name="erpCode" type="string" column="ERP_CODE" length="100"/>
+	       	<property name="extendPropC1"  type="string" column="EXTEND_PROPC1" length="50"/>
+        	<property name="extendPropC2"  type="string" column="EXTEND_PROPC2" length="50"/>
+			<property name="extendPropC3"  type="string" column="EXTEND_PROPC3" length="50"/>
+			<property name="extendPropC4"  type="string" column="EXTEND_PROPC4" length="50"/>
+			<property name="extendPropC5"  type="string" column="EXTEND_PROPC5" length="50"/>
+			<property name="extendPropC6"  type="string" column="EXTEND_PROPC6" length="50"/>
+			<property name="extendPropC7"  type="string" column="EXTEND_PROPC7" length="50"/>
+			<property name="extendPropC8"  type="string" column="EXTEND_PROPC8" length="50"/>
+			<property name="extendPropC9"  type="string" column="EXTEND_PROPC9" length="50"/>
+			<property name="extendPropC10" type="string" column="EXTEND_PROPC10" length="50"/>
+	       	<property name="extendPropC11" type="string" column="EXTEND_PROPC11" length="50"/>
+        	<property name="extendPropC12" type="string" column="EXTEND_PROPC12" length="50"/>
+			<property name="extendPropC13" type="string" column="EXTEND_PROPC13" length="50"/>
+			<property name="extendPropC14" type="string" column="EXTEND_PROPC14" length="50"/>
+			<property name="extendPropC15" type="string" column="EXTEND_PROPC15" length="50"/>
+			<property name="extendPropC16" type="string" column="EXTEND_PROPC16" length="50"/>
+			<property name="extendPropC17" type="string" column="EXTEND_PROPC17" length="50"/>
+			<property name="extendPropC18" type="string" column="EXTEND_PROPC18" length="50"/>
+			<property name="extendPropC19" type="string" column="EXTEND_PROPC19" length="50"/>
+			<property name="extendPropC20" type="string" column="EXTEND_PROPC20" length="50"/>
+		</component>
+		
+		
+		<property name="billType" type="string" column="BILL_TYPE" length="50"/>
+		<property name="relateCode" type="string" column="RELATE_CODE" length="50"/>
+		<property name="realteId" type="long" column="RELATE_ID"/>
+		<property name="subRelateId" type="long" column="SUBRELATE_ID"/>
+		<property name="lineNo" type="string" column="LINE_NO" length="100"/>
+		<property name="qty" type="double" column="QTY" />
+		<property name="returnQty" type="double" column="RETURN_QTY" />
+		<property name="inventoryStatus" type="string" column="INVENTORY_STATUS" length="255"/>
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+	</class>
+</hibernate-mapping>

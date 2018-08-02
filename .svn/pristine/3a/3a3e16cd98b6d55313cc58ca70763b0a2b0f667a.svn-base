@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+	<maintainPage id="maintainPopupQuickShippingPage" title="maintainPopupQuickShippingPage" autoQuery="false" entityClass="com.vtradex.wms.server.model.entity.inventory.WmsInventory" width="1000" height="450" onClose="refreshParent">
+		<workflow />
+		<datasource><![CDATA[SELECT
+inventory.id, 
+location.code,
+inventory.pallet,
+inventory.carton,
+itemKey.lotInfo.serialNo,
+item.code,
+item.name,
+packageUnit.unit,
+inventory.packQty,
+0 AS shipPackQty,
+inventory.lockStatus,
+itemKey.lotInfo.lot,
+itemKey.lotInfo.storageDate,
+itemKey.lotInfo.productDate,
+itemKey.lotInfo.supplierCode,
+itemKey.lotInfo.extendPropC13,
+itemKey.lotInfo.extendPropC14,
+itemKey.lotInfo.extendPropC15
+FROM WmsInventory inventory 
+LEFT JOIN inventory.location location
+LEFT JOIN inventory.item item
+LEFT JOIN inventory.packageUnit packageUnit
+LEFT JOIN inventory.itemKey itemKey
+WHERE 1=1
+AND (inventory.location.code={workDoc.userField1} or inventory.location.code='XBS')
+AND inventory.qty > 0
+AND inventory.operationStatus= 'NORMAL'
+AND inventory.location.countLock=false
+AND inventory.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}
+
+ORDER BY inventory.id]]></datasource>
+		<columns>
+			<column id="inventory.id" title="inventory.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" />
+			<column id="location.code" title="location.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" />
+			<column id="inventory.pallet" title="inventory.pallet" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" />
+			<column id="inventory.carton" title="inventory.carton" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" />
+			<column id="itemKey.lotInfo.serialNo" title="itemKey.lotInfo.serialNo" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" />
+			<column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" />
+			<column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" />
+			<column id="packageUnit.unit" title="packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" />
+			<column id="inventory.packQty" title="inventory.packQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" />
+			<column id="shipPackQty" title="shipPackQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" inputUI="text" />
+			<column id="inventory.lockStatus" title="inventory.lockStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="booleanFormat"/>
+			<column id="itemKey.lotInfo.lot" title="itemKey.lotInfo.lot" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" />
+			<column id="itemKey.lotInfo.storageDate" title="itemKey.lotInfo.storageDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" />
+			<column id="itemKey.lotInfo.productDate" title="itemKey.lotInfo.productDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" />
+			<column id="itemKey.lotInfo.supplierCode" title="itemKey.lotInfo.supplierCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+		    <column id="itemKey.lotInfo.extendPropC13" title="itemKey.lotInfo.extendPropC13" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+		    <column id="itemKey.lotInfo.extendPropC14" title="itemKey.lotInfo.extendPropC14" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+		    <column id="itemKey.lotInfo.extendPropC15" title="itemKey.lotInfo.extendPropC15" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+		</columns>
+	</maintainPage>
+</pages>

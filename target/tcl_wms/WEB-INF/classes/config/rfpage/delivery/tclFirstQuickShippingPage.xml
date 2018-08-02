@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--创建出库单输入页面模板 -->
+<RFFormPage id="tclFirstQuickShippingPage" title="tclFirstQuickShippingPage">
+	<RFForm>
+		<inputs>
+			<RFText id="remarkInput" title="remarkInput" tip="remarkInput" onFoucs="false">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="confirmScan" title="confirmScan" action="tclRfBolManager.createWmsWorkDoc" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

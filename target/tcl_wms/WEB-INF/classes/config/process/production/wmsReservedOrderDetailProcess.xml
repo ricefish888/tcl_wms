@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="wmsReservedOrderDetailProcess" control="-">
+
+	<task id="new" title="新建">
+	</task>
+
+	<task id="edit" title="修改">
+	</task>
+
+	<task id="delete" title="删除">
+	</task>
+
+	<task id="createPick" title="批量生成拣货单">
+	</task>
+
+	<task id="cancelPick" title="取消拣配">
+	</task>
+
+	<task id="createASN" title="批量创建收货单">
+	</task>
+
+	<task id="cancelASN" title="取消收货">
+	</task>
+	
+	<task id="cancelShip" title="取消出库">
+	</task>
+
+</process>

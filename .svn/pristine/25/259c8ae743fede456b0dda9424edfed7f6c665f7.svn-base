@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="wmsCostCenterProcess" control="-">
+
+	<task id="import" title="导入">
+	</task>
+
+</process>

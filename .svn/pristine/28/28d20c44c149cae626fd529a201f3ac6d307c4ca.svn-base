@@ -1,0 +1,11 @@
+package com.vtradex.wms.server.model.entity.order;
+
+public interface OrderType {
+
+	
+	/**工单 */
+	public static final String GD = "GD";
+	
+	/**预留单 */
+	public static final String YLD = "YLD";
+}

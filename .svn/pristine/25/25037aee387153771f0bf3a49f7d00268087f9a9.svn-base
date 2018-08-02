@@ -1,0 +1,111 @@
+package com.vtradex.wms.rfserver.service.pickticket.pojo;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.vtradex.rf.common.RfConstant;
+import com.vtradex.rf.common.exception.RfBusinessException;
+import com.vtradex.wms.rfserver.service.pickticket.TclRfPickticketManager;
+import com.vtradex.wms.server.helper.WmsBarCodeParse;
+import com.vtradex.wms.server.model.entity.workdoc.WmsTask;
+import com.vtradex.wms.server.model.entity.workdoc.WmsTaskGroup;
+import com.vtradex.wms.server.model.entity.workdoc.WmsWorkDoc;
+import com.vtradex.wms.server.model.enums.WmsTaskStatus;
+import com.vtradex.wms.server.model.enums.WmsTaskType;
+import com.vtradex.wms.server.service.workdoc.WmsWorkDocManager;
+
+
+
+public class DefaultTclRfPickticketManager extends DefaultRfPickticketManager implements TclRfPickticketManager{
+	
+	protected WmsWorkDocManager wmsWorkDocManager;
+
+	public DefaultTclRfPickticketManager(WmsWorkDocManager wmsWorkDocManager) {
+		super(wmsWorkDocManager);
+		this.wmsWorkDocManager = wmsWorkDocManager;
+ 
+	}
+ 
+	/**
+	 * 
+	 * @Title: inputItemCommit
+	 * 
+	 * @Description: 输入货品
+	 *
+	 * @return Map    
+	 *
+	 * @throws 
+	 *
+	 * @author <a href="mailto:wencheng.liu@vtradex.com"/>刘文成/a>
+	 *
+	 * @date 2016年11月30日 下午4:23:00
+	 */
+	@Override
+	public Map inputItemCommit(Map workDocMap) {
+		// TODO Auto-generated method stub
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.putAll(workDocMap);
+		String itemCodeStr=workDocMap.get("pickItemInput") == null?null:workDocMap.get("pickItemInput").toString();
+		if(null==itemCodeStr||"".equals(itemCodeStr)){
+			throw new RfBusinessException("this.item.can.not.be.null");
+		}
+		
+		//条码中解析物料编码
+		Map infos = WmsBarCodeParse.parse(itemCodeStr);
+		String itemCode = (String)infos.get(WmsBarCodeParse.KEY_ITEMCODE);
+		
+		
+		
+		//检查该库位是否在任务组或者作业单中
+		long taskId = workDocMap.get("taskId") == null ? null
+				: Long.valueOf(workDocMap.get("taskId").toString());
+		WmsTask task=commonDao.load(WmsTask.class, taskId);
+		
+		WmsWorkDoc workDoc=commonDao.load(WmsWorkDoc.class, task.getWorkDoc().getId());
+		if(task.getTaskGroup()!=null){
+			WmsTaskGroup group=commonDao.load(WmsTaskGroup.class, task.getTaskGroup().getId());
+			String hql="from WmsTask task where task.taskGroup.id=:groupId "
+					+ " and task.fromLocation.id=:locId and task.status in (:status)"
+					+ " and task.type=:type and (task.item.code=:itemCode or task.item.barCode=:itemCode or task.item.barCode2=:itemCode)";
+			List<WmsTask> tasks=commonDao.findByQuery(hql, 
+					new String[]{"groupId","locId","status","type","itemCode"}, 
+					new Object[]{group.getId(),task.getFromLocation().getId(),
+					Arrays.asList(WmsTaskStatus.ENABLED,WmsTaskStatus.IN_OPERATION),WmsTaskType.PICKING,itemCode});
+			if(tasks.size()<=0){
+				throw new RfBusinessException("this.item.and.loc.is.not.in.the.group");
+			}
+			task=tasks.get(0);
+		}else{
+			String hql="from WmsTask task where task.workDoc.id=:workDocId "
+					+ " and task.fromLocation.id=:locId and task.status in (:status)"
+					+ " and task.type=:type and (task.item.code=:itemCode or task.item.barCode=:itemCode or task.item.barCode2=:itemCode)";
+			List<WmsTask> tasks=commonDao.findByQuery(hql, 
+					new String[]{"workDocId","locId","status","type","itemCode"}, 
+					new Object[]{workDoc.getId(),task.getFromLocation().getId(),
+					Arrays.asList(WmsTaskStatus.ENABLED,WmsTaskStatus.IN_OPERATION),WmsTaskType.PICKING,itemCode});
+			if(tasks.size()<=0){
+				throw new RfBusinessException("this.item.and.loc.is.not.in.the.workDoc");
+			}
+			task=tasks.get(0);
+		}
+		//设置移位数量
+		Map<String, Object> qtyMap = new HashMap<String, Object>();
+		qtyMap.put("task.id", task.getId());
+		Double qty=wmsWorkDocManager.getPickedQty(qtyMap);
+		result.put(RfConstant.FORWARD_VALUE, "success");
+		//持久MAP
+    	Map<String, Object> perResult = new HashMap<String, Object>();
+		perResult.putAll(workDocMap);
+		perResult.put("taskId", task.getId());
+		perResult.put("pickNumber", qty);
+		perResult.put("pickNumberInput", qty);
+        result.put(RfConstant.PERSISTENT_VALUE, perResult);//将持久map放入返回map中
+        result.put(RfConstant.CLEAR_VALUE, "true");
+		return result;
+	
+	}
+	
+	
+}

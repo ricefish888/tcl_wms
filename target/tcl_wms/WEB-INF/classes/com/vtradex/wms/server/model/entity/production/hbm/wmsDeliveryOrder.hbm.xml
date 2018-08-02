@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.production.WmsDeliveryOrder" table="WMS_DELIVERY_ORDER">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_DELIVERY_ORDER</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        
+        <discriminator column="DISCRIMINATOR" type="string"></discriminator>
+        <version name="version" column="VERSION" type="long"></version>
+		
+		<many-to-one name="warehouse" class="com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse">
+			<column name="WAREHOUSE_ID" not-null="true"/>
+		</many-to-one>
+		<property name="code" type="string" column="CODE" length="50" />
+		<property name="sapCode" type="string" column="SAP_CODE" length="50" />
+		<property name="status" type="string" column="STATUS" length="50"/>
+		
+		 
+		<many-to-one name="supplier" class="com.vtradex.wms.server.model.entity.base.WmsSupplier">
+			<column name="SUPPLIER_ID"/>
+		</many-to-one>
+		
+		<property name="deliveryDate" type="timestamp" column="DELIVERY_DATE"/>
+		
+		<property name="type" type="string" column="TYPE" length="50" />
+		
+		<property name="createdType" type="string" column="CREATED_TYPE" length="50"/>
+		
+		<property name="project" type="string" column="PROJECT" length="50"/>
+			
+		<set name="details" inverse="true" lazy="true" cascade="all-delete-orphan">
+			<key column="DELIVERYORDER_ID"/>
+			<one-to-many class="com.vtradex.wms.server.model.entity.production.WmsDeliveryOrderDetail"></one-to-many>
+		</set>	
+			 
+		<property name="confirmor" type="string" column="CONFIRMOR" length="50" />
+		<property name="confirmTime" type="timestamp" column="CONFIRM_TIME"/>
+		<property name="confirmStatus" type="string" column="CONFIRM_STATUS" length="50"/>
+		<property name="receiver" type="string" column="RECEIVER" length="50" />
+		<property name="receiveTime" type="timestamp" column="RECEIVE_TIME"/>
+		<property name="billTypeName" type="string" column="BILLTYPE_NAME" length="50" />
+		
+		<many-to-one name="customer" class="com.vtradex.wms.server.model.entity.base.WmsCustomer">
+			<column name="CUSTOMER_ID"/>
+		</many-to-one>
+		
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+         
+	</class>
+</hibernate-mapping>

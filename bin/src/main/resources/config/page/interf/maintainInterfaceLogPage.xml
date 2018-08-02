@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainInterfaceLogPage" title="maintainInterfaceLogPage" autoQuery="true" entityClass="com.vtradex.thorn.server.model.interfaceLog.InterfaceLog" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT lf.id,
+lf.type,
+lf.fromSYS,
+lf.toSYS,
+lf.request,
+lf.status,
+lf.logID,
+lf.errorLog,
+lf.requestTime 
+ from InterfaceLog lf
+where 1=1 order by lf.id desc]]></datasource>
+        <columns>
+            <column id="lf.id" title="lf.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="lf.type" title="lf.type" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="InterfaceLogType"/>
+            <column id="lf.fromSYS" title="lf.fromSYS" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="lf.toSYS" title="lf.toSYS" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="lf.request" title="lf.request" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="lf.status" title="lf.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="InterfaceLogStatus" width="60"/>
+            <column id="lf.logID" title="lf.logID" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="lf.errorLog" title="lf.errorLog" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" width="400"/>
+            <column id="lf.requestTime" title="lf.requestTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+        </columns>
+    </maintainPage>
+</pages>

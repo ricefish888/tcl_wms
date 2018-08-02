@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainCrontabLogPage" title="maintainCrontabLogPage" pageLocale="false" autoQuery="true" entityClass="com.vtradex.tms.server.model.task.CrontabLog" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[
+        select cl.id,
+        cl.crontabName,
+        cl.beginTime,
+        cl.endTime,
+        cl.result,
+        cl.remark 
+        from CrontabLog cl
+        where 1=1 
+        order by cl.id desc
+        ]]></datasource>
+        <columns>
+            <column id="cl.id" title="id" pageLocale="false" visible="false" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="cl.crontabName" title="cl.crontabName" pageLocale="false" visible="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="cl.beginTime" title="cl.runBeginDate" pageLocale="false" visible="true" horizonAlign="center" verticalAlign="middle" width="150" dataType="date" format="dateFormat" formatParam="y-m-d h:m:s" />
+            <column id="cl.endTime" title="cl.runEndDate" pageLocale="false" visible="true" horizonAlign="center" verticalAlign="middle" width="150" dataType="date" format="dateFormat" formatParam="y-m-d h:m:s" />
+            <column id="cl.result" title="cl.result" pageLocale="false" visible="true" horizonAlign="center" verticalAlign="middle" width="100" dataType="string"/>
+            <column id="rl.remark" title="cl.remark" pageLocale="false" visible="true" horizonAlign="center" verticalAlign="middle" width="500" dataType="string"/>
+        </columns>
+    </maintainPage>
+</pages>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainTclWmsInventoryCountPage">
+    <main>      
+        <process id="tclWmsInventoryCountProcess">
+            <tablePopup id="again" title="again" process="tclWmsInventoryCountProcess.again" enableType="none" containId="false" pageId="editTclWmsInventoryCountPage">
+                <enableExpression/>
+            </tablePopup>
+        </process>
+    </main>
+</page>

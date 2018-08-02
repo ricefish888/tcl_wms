@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--交货输入页面模板 -->
+<RFFormPage id="tclItemBackInPage3" title="tclItemBackInPage3">
+	<RFDisplay id="qtyDisplay" load="tclRfOrderManager.poInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			已发运数量: {shipQty}
+			已扫描数量: {scanedQty}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>
+			已发运数量: {shipQty}
+			已扫描数量: {scanedQty}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="qtyInput" title="qtyInput" tip="qtyInput" onFoucs="true" validator="numberValidator">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="confirmBt" title="confirmBt" action="tclRfOrderManager.confirm" validate="" onFoucs="false"/>
+			<RFButton id="editBt" title="editBt" action="tclRfOrderManager.editRecord" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

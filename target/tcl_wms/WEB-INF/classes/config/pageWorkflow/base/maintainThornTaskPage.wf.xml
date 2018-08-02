@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainThornTaskPage">
+    <main>
+        <process id="thornTaskProcess">
+            <tableCommit id="rerun" title="rerun" process="thornTaskProcess.rerun" enableType="multi" download="false" >
+                <enableExpression><![CDATA[${task.status} == 'FAIL']]></enableExpression>
+                <mappings/>
+                <actions/>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

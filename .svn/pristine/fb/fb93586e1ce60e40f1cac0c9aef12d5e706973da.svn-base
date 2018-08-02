@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editWmsDeliveryOrderDetailPage">
+    <main>
+        <process id="wmsDeliveryOrderProcess">
+            <formCommit id="addDetail" title="addDetail" process="wmsDeliveryOrderProcess.addDetail" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="new">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="deliveryOrder.id" className="long"/>
+                    <mapping id="wdod.purchaseOrderDetail.id" className="long">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsDeliveryOrderManager" methodName="addPoDetail" parameter="deliveryOrder.id, wdod.purchaseOrderDetail.id, obj"/>
+                </actions>
+                <forwards>
+                    <forward name="resetWindow" newEnabled="true" editEnabled="true"/>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>    
+            <formCommit id="addDetail" title="addDetail" process="wmsDeliveryOrderProcess.addDetail" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="edit">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="deliveryOrder.id" className="long"/>
+                    <mapping id="wdod.purchaseOrderDetail.id" className="long">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsDeliveryOrderManager" methodName="addPoDetail" parameter="deliveryOrder.id, wdod.purchaseOrderDetail.id, obj"/>
+                </actions>
+                <forwards>
+                    <forward name="resetWindow" newEnabled="true" editEnabled="true"/>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>    
+        </process>
+    </main>
+</page>

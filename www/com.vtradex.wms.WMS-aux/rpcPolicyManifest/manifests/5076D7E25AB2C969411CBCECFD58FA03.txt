@@ -1,0 +1,2 @@
+serviceClass: com.vtradex.thorn.client.rpc.RemoteQueryService
+path: 04E8B9756506F3713C5487F430E8CE0E.gwt.rpc

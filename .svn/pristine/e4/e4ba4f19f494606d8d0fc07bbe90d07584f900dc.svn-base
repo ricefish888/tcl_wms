@@ -1,0 +1,244 @@
+package com.vtradex.wms.server.model.entity.production;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.vtradex.thorn.server.model.VersionalEntity;
+import com.vtradex.wms.server.model.entity.base.WmsSapFactory;
+import com.vtradex.wms.server.model.entity.item.WmsItem;
+import com.vtradex.wms.server.model.entity.item.WmsPackageUnit;
+import com.vtradex.wms.server.utils.DoubleUtils;
+
+public class WmsReservedOrderDetail extends VersionalEntity {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7041242262236624875L;
+
+	private WmsReservedOrder reservedOrder;
+	
+	/**行项目*/
+	private String lineNo;
+	
+	/**行项目删除标记*/
+	private String deleteFlag;
+	
+	/**最后发货  最后发货X*/
+	private String zhfh; 
+	
+	
+	private WmsItem item;
+	/**基本计量单位*/
+	private WmsPackageUnit unit;
+	   
+	
+	/**工厂*/
+	private WmsSapFactory factory;
+	
+	/**发出库位*/
+	private String shipLoc;
+	
+	/**需求日期*/
+	private Date requestDate;
+	
+	/**需求量*/
+	private Double quantity=0D;
+	
+	/**提货数*/
+	private Double thQty=0D;
+	
+	/**借贷标识*/
+	private String jdFlag;
+	
+	/**已分配数量BU*/
+	private Double allocatedQuantityBu=0D;
+	
+	/**已经拣货数量BU*/
+	private Double pickedQuantityBu=0D;
+	
+	/**已发运数量BU*/
+	private Double shippedQuantityBu=0D;
+	/**行项目备注*/
+	private String lineNoRemark;
+	
+	/**预留项目*/
+	private String project;
+	
+	public void addAllocatedQuantityBu(Double qty) {
+       this.allocatedQuantityBu = DoubleUtils.add(this.allocatedQuantityBu, qty);
+    }
+	    
+    public void subAllocatedQuantityBu(Double qty) {
+        this.allocatedQuantityBu = DoubleUtils.sub(this.allocatedQuantityBu, qty);
+    }
+    public void addPickedQuantityBu(Double qty) {
+        this.pickedQuantityBu = DoubleUtils.add(this.pickedQuantityBu, qty);
+    }
+    
+    public void subPickedQuantityBu(Double qty) {
+        this.pickedQuantityBu = DoubleUtils.sub(this.pickedQuantityBu, qty);
+    }
+    public void addShippedQuantityBu(Double qty) {
+        this.shippedQuantityBu = DoubleUtils.add(this.shippedQuantityBu, qty);
+    }
+
+    /**
+     * 获取未分配数量
+     */
+	public Double getUnAllocateQty() {
+		return DoubleUtils.sub(this.quantity, this.allocatedQuantityBu) ;       
+	}
+    /**
+     * 获取拣货
+     */
+	public Double getUnPickedQty() {
+	    return DoubleUtils.sub(this.allocatedQuantityBu, this.pickedQuantityBu) ;       
+	}
+    /**
+     * 获取未发运
+     */
+	public Double getUnShippedQty() {
+	    return DoubleUtils.sub(this.pickedQuantityBu, this.shippedQuantityBu) ;       
+	}
+	
+	public WmsReservedOrder getReservedOrder() {
+		return reservedOrder;
+	}
+
+	public void setReservedOrder(WmsReservedOrder reservedOrder) {
+		this.reservedOrder = reservedOrder;
+	}
+
+	public String getProject() {
+		return project;
+	}
+
+	public void setProject(String project) {
+		this.project = project;
+	}
+
+	public String getLineNoRemark() {
+		return lineNoRemark;
+	}
+
+	public void setLineNoRemark(String lineNoRemark) {
+		this.lineNoRemark = lineNoRemark;
+	}
+
+	public String getLineNo() {
+		return lineNo;
+	}
+
+	public void setLineNo(String lineNo) {
+		this.lineNo = lineNo;
+	}
+
+	public String getDeleteFlag() {
+		return deleteFlag;
+	}
+
+	public void setDeleteFlag(String deleteFlag) {
+		this.deleteFlag = deleteFlag;
+	}
+
+	public String getZhfh() {
+		return zhfh;
+	}
+
+	public void setZhfh(String zhfh) {
+		this.zhfh = zhfh;
+	}
+
+	public WmsItem getItem() {
+		return item;
+	}
+
+	public void setItem(WmsItem item) {
+		this.item = item;
+	}
+
+	public WmsPackageUnit getUnit() {
+		return unit;
+	}
+
+	public void setUnit(WmsPackageUnit unit) {
+		this.unit = unit;
+	}
+
+	public WmsSapFactory getFactory() {
+		return factory;
+	}
+
+	public void setFactory(WmsSapFactory factory) {
+		this.factory = factory;
+	}
+
+	public String getShipLoc() {
+		return shipLoc;
+	}
+
+	public void setShipLoc(String shipLoc) {
+		this.shipLoc = shipLoc;
+	}
+
+	public Date getRequestDate() {
+		return requestDate;
+	}
+
+	public void setRequestDate(Date requestDate) {
+		this.requestDate = requestDate;
+	}
+
+	public Double getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(Double quantity) {
+		this.quantity = quantity;
+	}
+
+	public Double getThQty() {
+		return thQty;
+	}
+
+	public void setThQty(Double thQty) {
+		this.thQty = thQty;
+	}
+
+	public String getJdFlag() {
+		return jdFlag;
+	}
+
+	public void setJdFlag(String jdFlag) {
+		this.jdFlag = jdFlag;
+	}
+
+	public Double getAllocatedQuantityBu() {
+		return allocatedQuantityBu;
+	}
+
+	public void setAllocatedQuantityBu(Double allocatedQuantityBu) {
+		this.allocatedQuantityBu = allocatedQuantityBu;
+	}
+
+	public Double getPickedQuantityBu() {
+		return pickedQuantityBu;
+	}
+
+	public void setPickedQuantityBu(Double pickedQuantityBu) {
+		this.pickedQuantityBu = pickedQuantityBu;
+	}
+
+	public Double getShippedQuantityBu() {
+		return shippedQuantityBu;
+	}
+
+	public void setShippedQuantityBu(Double shippedQuantityBu) {
+		this.shippedQuantityBu = shippedQuantityBu;
+	} 
+	
+	
+
+}

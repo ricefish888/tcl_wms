@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsItemFactoryPage">
+    <main>
+        <process id="itemFactoryProcess">
+            <tablePopup id="new" title="new" process="itemFactoryProcess.new" enableType="none" containId="false" maintain="false" pageId="editItemFactoryPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="edit" title="edit" process="itemFactoryProcess.edit" enableType="single" containId="true" pageId="editItemFactoryPage">
+            </tablePopup>
+        </process>
+    </main>
+    <detail/>
+</page>

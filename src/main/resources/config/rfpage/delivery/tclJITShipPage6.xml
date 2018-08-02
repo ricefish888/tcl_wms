@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--输入页面模板 -->
+<RFFormPage id="tclJITShipPage6" title="tclJITShipPage6">
+	<RFDisplay id="deliveryDisplay" load="tclRfBolManager.showTaskInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			工单号:{poCode}
+			物料编码:{itemCode}
+			物料名称:{itemName}
+			计划数量:{planQty}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>
+			工单号:{poCode}
+			物料编码:{itemCode}
+			物料名称:{itemName}
+			计划数量:{planQty}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<buttons>
+			<RFButton id="delDetailBt" title="delDetailBt" action="tclRfBolManager.delDetail" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

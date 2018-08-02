@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainPopupOrderPage" title="maintainPopupOrderPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.production.ProductionOrderDetail" width="1000" height="450" onClose="refreshParent" mainEntrance="false">
+        <workflow/>
+        <datasource><![CDATA[SELECT pod.id,
+po.code,
+po.beginDate,
+po.productLine,
+po.beCreatPt,
+item.code,
+item.name,
+pod.planQuantityBu,
+pod.allocatedQuantityBu,
+pod.dealDlanQuantityBu,
+pod.pickedQuantityBu,
+pod.shippedQuantityBu,
+(pod.planQuantityBu-pod.allocatedQuantityBu),
+pod.packageUnit.unit,
+pod.remark 
+ FROM ProductionOrderDetail pod 
+left join pod.productionOrder po 
+left join pod.item item
+where 1=1 
+and item.userFieldV2={workDoc.userField3}
+and pod.planQuantityBu - pod.allocatedQuantityBu>0
+]]></datasource>
+        <columns>
+            <column id="pod.id" title="pod.id" visible="true" width="60" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="po.code" title="po.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+            <column id="po.beginDate" title="po.beginDate" visible="true" width="80" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" format="dateFormat" formatParam="y-m-d" />
+            <column id="po.productLine" title="po.productLine" visible="true" width="50" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+            <column id="po.beCreatPt" title="po.beCreatPt" visible="true" width="100" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="enumFormat" formatParam="booleanFormat"/>
+            <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+            <column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+            <column id="pod.planQuantityBu" title="pod.planQuantityBu" visible="true" width="80" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+            <column id="pod.allocatedQuantityBu" title="pod.allocatedQuantityBu" visible="true" width="60" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+            <column id="pod.dealDlanQuantityBu" title="pod.dealDlanQuantityBu" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+            <column id="pod.pickedQuantityBu" title="pod.pickedQuantityBu" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+            <column id="pod.shippedQuantityBu" title="pod.shippedQuantityBu" visible="true" width="80" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" language="false"/>
+            <column id="allocatedQty" title="allocatedQty" visible="true" sortable="false" horizonAlign="center" verticalAlign="middle" dataType="double" inputUI="text" language="false"/>
+            <column id="pod.packageUnit.unit" title="pod.packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+            <column id="pod.remark" title="pod.remark" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+        </columns>
+    </maintainPage>
+</pages>

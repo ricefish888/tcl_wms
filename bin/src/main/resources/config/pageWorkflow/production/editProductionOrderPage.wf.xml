@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editProductionOrderPage">
+    <main>
+        <process id="productionOrderProcess">
+            <formCommit id="save" title="save" process="productionOrderProcess.new" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="new">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <!-- <action managerName="wmsPurchaseOrderManager" methodName="saveOrUpdate" parameter="obj"/> -->
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+            <formCommit id="modify" title="modify" process="productionOrderProcess.modify" enableType="none" download="false" visibleType="edit">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                  <!--   <action managerName="wmsPurchaseOrderManager" methodName="saveOrUpdate" parameter="obj"/> -->
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+       <detail>
+        <process id="productionOrderProcess">
+            <tablePopup id="addDetail" title="addDetail" process="productionOrderProcess.addDetail" enableType="none" containId="false" pageId="addProductionOrderDetailPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="modifyDetail" title="modifyDetail" process="productionOrderProcess.modifyDetail" enableType="single" containId="true" pageId="addProductionOrderDetailPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="removeDetails" title="removeDetails" process="productionOrderProcess.removeDetails" enableType="multi" download="false" confirmMessage="是否删除生产订单明细!">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="productionOrderManager" methodName="removeDetails" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+        </process>
+    </detail>
+</page>

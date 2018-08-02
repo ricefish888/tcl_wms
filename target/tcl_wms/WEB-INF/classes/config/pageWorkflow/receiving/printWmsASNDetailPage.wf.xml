@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="printWmsASNDetailPage">
+    <main>
+        <process id="wmsTclASNProcess">
+            <formDirectPrint id="printWmsASNDetail" title="printWmsASNDetail" process="wmsTclASNProcess.printWmsASNDetail" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="signle" raq="printLabel.raq">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="printNumber" className="int">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsTclASNManager" methodName="printWmsASNDetail" parameter="parentObj,printNumber"/>
+                </actions>
+                <forwards>
+                    <forward name="resetWindow" newEnabled="false" editEnabled="false"/>
+                </forwards>
+            </formDirectPrint>
+        </process>
+    </main>
+    <detail/>
+</page>

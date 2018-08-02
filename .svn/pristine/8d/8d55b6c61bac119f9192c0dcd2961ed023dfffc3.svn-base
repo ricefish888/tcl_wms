@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <modifyDetailPage id="modifyWmsTransferBOLPage" title="modifyWmsTransferBOLPage" entityClass="com.vtradex.wms.server.model.entity.bol.WmsBol" onClose="refreshParent" width="900" height="380">
+        <initListeners/>
+        <modify>
+            <inputUIs>
+                <hidden id="bol.id" title="bol.id" reserve="false"/>
+                <hidden id="bol.customer.id" title="bol.customer.id" reserve="false"/>
+                <text id="bol.code" title="bol.code" row="1" col="1" readOnly="true" required="false" reserve="false" forceOverride="false" focusUI="false" inVisible="false" editModel="uneditable" length="20" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <date id="bol.expectedDeliveryTime" title="bol.expectedDeliveryTime" row="1" col="2" readOnly="false" required="true" reserve="false" forceOverride="false" inVisible="false" showTime="true" manualEditable="true" defaultCurrentDate="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </date>
+                <remote id="bol.ptId" title="bol.ptId" row="1" col="3" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="editable" multiple="false" manualEditable="true" displayColumn="2" percentSignPosition="both" displayedTableHead="序号,拣货单号">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT 
+w.id,
+w.code
+FROM WmsPickTicket w
+LEFT JOIN w.billType
+LEFT JOIN w.warehouse
+LEFT JOIN w.warehouse.baseOrganization
+WHERE w.status = 'PICK_FINISHED'
+AND w.billType.code = 'DBCKD'
+AND w.warehouse.baseOrganization.id = {SESSION_BASE_ORGAN}
+AND (w.code LIKE :param )
+AND w.pickQty > (SELECT SUM(pickTicketDetail.planedShipQty) FROM WmsPickTicketDetail pickTicketDetail WHERE pickTicketDetail.pickTicket.id = w.id) 
+ 		]]></hql>
+                    <eventListeners/>
+                </remote>
+                <text id="bol.weight" title="bol.weight" row="2" col="1" readOnly="false" required="false" reserve="false" forceOverride="true" inVisible="false" length="50" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="bol.volume" title="bol.volume" row="2" col="2" readOnly="false" required="false" reserve="false" forceOverride="true" inVisible="false" length="20" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="bol.type" title="bol.type" row="3" col="1" defaultValue="DB" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="true" language="false" length="20" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+            </inputUIs>
+        </modify>
+        <detail entityClass="com.vtradex.wms.server.model.entity.bol.WmsBolDetail">
+            <datasource><![CDATA[SELECT bolDetail.id,pickTicketDetail.id,pickTicket.code,pickTicketDetail.lineNo,item.code,item.name,bolDetail.planQty,bolDetail.pickedQty  FROM WmsBolDetail bolDetail 
+            LEFT JOIN bolDetail.pickTicketDetail pickTicketDetail
+            LEFT JOIN bolDetail.pickTicketDetail.pickTicket pickTicket
+            LEFT JOIN bolDetail.pickTicketDetail.item item
+ WHERE 1=1
+ AND bolDetail.bol.id = {bol.id}]]></datasource>
+            <columns>
+                <column id="bolDetail.id" title="ID" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="pickTicketDetail.id" title="pickTicketDetail.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="pickTicket.code" title="pickTicket.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="pickTicketDetail.lineNo" title="pickTicketDetail.lineNo" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="bolDetail.planQty" title="bolDetail.planQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="bolDetail.pickedQty" title="qty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+            </columns>
+        </detail>
+    </modifyDetailPage>
+</pages>

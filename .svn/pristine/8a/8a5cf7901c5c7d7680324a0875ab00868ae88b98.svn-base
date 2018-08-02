@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--交货输入页面模板 -->
+<RFListPage id="tclItemBackInPage2" title="tclItemBackInPage2">
+	<RFSearchUI id="InputCode" text="InputCode" width="200" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="detail.id" title="detail.id" width="100" enumType="" hidden="true" />
+		<RFTh id="po.code" title="po.code" width="350" enumType="" hidden="false" />
+		<RFTh id="detail.item.code" title="detail.item.code" width="350" enumType="" hidden="false" />
+		<RFTh id="detail.item.name" title="detail.item.name" width="350" enumType="" hidden="false" />
+			<DataSource type="HQL">
+				<statement>
+				<![CDATA[
+SELECT detail.id,
+po.code,
+detail.item.code,
+detail.item.name
+FROM ProductionOrderDetail detail
+ LEFT JOIN detail.item
+ LEFT JOIN detail.packageUnit
+ LEFT JOIN detail.productionOrder po
+ WHERE 1=1
+  AND 
+(
+ detail.id in
+(
+    SELECT wslt.subRelateId FROM WmsShippingLotTruck wslt
+    WHERE 1=1
+    AND wslt.lotInfo.extendPropC17=${barCode}
+    AND wslt.billType='SCLLD'
+    AND wslt.updateInfo.createdTime>=(sysdate -7)
+)
+)
+ /~InputCode: and order.code like '%{InputCode}%' ~/
+				]]>
+				</statement>
+			</DataSource>
+		</RFTable>
+</RFListPage>

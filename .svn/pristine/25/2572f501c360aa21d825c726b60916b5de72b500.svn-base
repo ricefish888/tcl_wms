@@ -1,0 +1,4 @@
+##\u8ba4\u8bc1
+mail.smtp.auth=true
+mail.smtp.starttls.enable=true
+#mail.smtp.timeout=5000 #\u8d85\u65f6\u65f6\u95f4\uff0c\u7f3a\u7701\u503c\u4e0d\u8d85\u65f6 \u5355\u4f4d\u6beb\u79d2

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--交货输入页面模板 -->
+<RFListPage id="tclDeliveryRFPage9" title="tclDeliveryRFPage9">
+	<RFSearchUI id="workInputCode" text="workInputCode" width="200" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="workDoc.id" title="workDoc.id" width="100" enumType="" hidden="true" />
+		<RFTh id="workDoc.code" title="workDoc.code" width="120" enumType="" hidden="false" />
+		<RFTh id="workDoc.productLine" title="workDoc.productLine" width="80" enumType="" hidden="false" />
+		<RFTh id="workDoc.userField5" title="workDoc.userField5" width="100" enumType="" hidden="false" />
+		<RFTh id="workDoc.productOrderCode" title="workDoc.productOrderCode" width="130" enumType="" hidden="false" />
+			<DataSource type="HQL">
+				<statement>
+				<![CDATA[
+ SELECT DISTINCT 
+ workDoc.id, 
+ workDoc.code,
+ workDoc.productLine,
+ workDoc.userField5,
+ workDoc.productOrderCode 
+ FROM WmsBolDetail wmsBolDetail 
+ LEFT JOIN wmsBolDetail.pickTicketDetail pickTicketDetail
+ LEFT JOIN pickTicketDetail.item item
+ LEFT JOIN pickTicketDetail.pickTicket pickTicket
+ LEFT JOIN pickTicket.warehouse warehouse
+ LEFT JOIN wmsBolDetail.workDoc workDoc
+ WHERE 1=1
+ AND  wmsBolDetail.isPacking = 'N'
+ AND  wmsBolDetail.bol.id is null 
+ AND pickTicket.billType.code='SCLLD'
+ AND 
+ (
+ 	  (${warehouseId}='2' and pickTicket.userField1 in ('2000','2100') )
+ 		or
+ 	  (${warehouseId}='3' and pickTicket.userField1 in ('1000','1100') )
+ )
+ AND  warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN} 	
+ 
+ AND workDoc.keeper.department=(select u.department from ThornUser u where u.id =#{SESSION_USERS}) 
+ 
+ /~workInputCode: and (workDoc.code = '{workInputCode}'
+ 				or workDoc.productLine = '{workInputCode}'
+ 				or workDoc.userField5 like '%{workInputCode}%'
+ 				or workDoc.productOrderCode = '{workInputCode}'
+ 				or item.code = '{workInputCode}' ) ~/
+ ORDER BY  workDoc.id DESC
+				]]>
+				</statement>
+			</DataSource>
+		</RFTable>
+</RFListPage>

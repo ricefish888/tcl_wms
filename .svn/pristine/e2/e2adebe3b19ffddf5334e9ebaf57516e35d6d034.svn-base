@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainTclWmsInventoryCountPage">
+    <main>      
+        <process id="tclWmsInventoryCountProcess">
+            <tablePopup id="again" title="again" process="tclWmsInventoryCountProcess.again" enableType="none" containId="false" pageId="editTclWmsInventoryCountPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="initInvCount" title="initInvCount" process="tclWmsInventoryCountProcess.initInvCount" enableType="none" multiMapping="false" download="false" closeTransactional="false" confirmMessage="confirm.maintainTclWmsInventoryCountPage.initInvCount">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="tclMessageManager" methodName="initDailyInventory"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+        </process>
+    </main>
+</page>

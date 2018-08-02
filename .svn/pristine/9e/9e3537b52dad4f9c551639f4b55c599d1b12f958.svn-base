@@ -1,0 +1,1326 @@
+package com.vtradex.wms.server.service.production.pojo;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+
+
+
+
+
+
+
+
+import com.vtradex.thorn.server.exception.BusinessException;
+import com.vtradex.thorn.server.model.EntityFactory;
+import com.vtradex.thorn.server.model.security.ThornUser;
+import com.vtradex.thorn.server.service.WorkflowManager;
+import com.vtradex.thorn.server.service.pojo.DefaultBaseManager;
+import com.vtradex.thorn.server.util.LocalizedMessage;
+import com.vtradex.thorn.server.web.security.BaseOrganizationHolder;
+import com.vtradex.thorn.server.web.security.UserHolder;
+import com.vtradex.wms.server.model.entity.base.MidSurpplierUser;
+import com.vtradex.wms.server.model.entity.base.Wms2SapInterfaceLogType;
+import com.vtradex.wms.server.model.entity.base.WmsFactoryWarehouse;
+import com.vtradex.wms.server.model.entity.base.WmsFactoryXmlb;
+import com.vtradex.wms.server.model.entity.base.WmsSapFactory;
+import com.vtradex.wms.server.model.entity.base.WmsWarning;
+import com.vtradex.wms.server.model.entity.base.WmsWarningStatus;
+import com.vtradex.wms.server.model.entity.base.WmsWarningType;
+import com.vtradex.wms.server.model.entity.email.EmailRecordType;
+import com.vtradex.wms.server.model.entity.item.WmsItem;
+import com.vtradex.wms.server.model.entity.item.WmsItemJITAtt;
+import com.vtradex.wms.server.model.entity.item.WmsPackageUnit;
+import com.vtradex.wms.server.model.entity.order.ConfirmStatus;
+import com.vtradex.wms.server.model.entity.order.OrderType;
+import com.vtradex.wms.server.model.entity.order.PurchaseOrderDetail;
+import com.vtradex.wms.server.model.entity.order.WmsArrivalDelivery;
+import com.vtradex.wms.server.model.entity.order.WmsProductionOrderMeetInfo;
+import com.vtradex.wms.server.model.entity.pickticket.WmsPickTicket;
+import com.vtradex.wms.server.model.entity.pickticket.WmsPickTicketDetail;
+import com.vtradex.wms.server.model.entity.pickticket.WmsPickTicketDetailRequire;
+import com.vtradex.wms.server.model.entity.production.DeliveryOrderDetailPtDetail;
+import com.vtradex.wms.server.model.entity.production.ProductionOrder;
+import com.vtradex.wms.server.model.entity.production.ProductionOrderDetail;
+import com.vtradex.wms.server.model.entity.production.ProductionOrderStatus;
+import com.vtradex.wms.server.model.entity.production.WmsDeliveryOrder;
+import com.vtradex.wms.server.model.entity.production.WmsDeliveryOrderBillType;
+import com.vtradex.wms.server.model.entity.production.WmsDeliveryOrderCreatedType;
+import com.vtradex.wms.server.model.entity.production.WmsDeliveryOrderDetail;
+import com.vtradex.wms.server.model.entity.production.WmsDeliveryOrderStatus;
+import com.vtradex.wms.server.model.entity.production.WmsReservedOrder;
+import com.vtradex.wms.server.model.entity.production.WmsReservedOrderDetail;
+import com.vtradex.wms.server.model.entity.production.WmsReservedOrderType;
+import com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse;
+import com.vtradex.wms.server.model.enums.BaseStatus;
+import com.vtradex.wms.server.model.enums.WmsInventoryOperationStatus;
+import com.vtradex.wms.server.model.enums.WmsLocationType;
+import com.vtradex.wms.server.model.enums.WmsLotCategoryType;
+import com.vtradex.wms.server.model.enums.WmsPickTicketStatus;
+import com.vtradex.wms.server.model.enums.WmsPickticketGenType;
+import com.vtradex.wms.server.model.enums.WmsSOQueryRequireType;
+import com.vtradex.wms.server.service.emailrecord.EmailRecordManager;
+import com.vtradex.wms.server.service.interf.InterfaceLogManager;
+import com.vtradex.wms.server.service.model.interfaceLog.InterfaceLogTaskType;
+import com.vtradex.wms.server.service.production.ProductionOrderManager;
+import com.vtradex.wms.server.service.production.WmsDeliveryOrderManager;
+import com.vtradex.wms.server.service.sap.SapRowDataDealManager;
+import com.vtradex.wms.server.service.sequence.WmsBussinessCodeManager;
+import com.vtradex.wms.server.utils.DateUtil;
+import com.vtradex.wms.server.utils.DoubleUtils;
+import com.vtradex.wms.server.utils.StringHelper;
+import com.vtradex.wms.webservice.sap.model.SapDeliveryOrder;
+import com.vtradex.wms.webservice.sap.model.SapDeliveryOrderArray;
+import com.vtradex.wms.webservice.sap.model.SapPo;
+import com.vtradex.wms.webservice.sap.model.SapPoArray;
+import com.vtradex.wms.webservice.sap.model.SapProductOrder;
+import com.vtradex.wms.webservice.sap.model.SapProductOrderArray;
+import com.vtradex.wms.webservice.sap.model.Wms2SapSupplierDocStatus;
+import com.vtradex.wms.webservice.sap.model.Wms2SapSupplierDocType;
+import com.vtradex.wms.webservice.sap.model.Wms2SapSupplierStatus;
+import com.vtradex.wms.webservice.utils.EmailHelper;
+import com.vtradex.wms.webservice.utils.ExcelHelper;
+import com.vtradex.wms.webservice.utils.WebServiceHelper;
+import com.vtradex.wms.webservice.utils.XmlObjectConver;
+
+public class DefaultWmsDeliveryOrderManager extends DefaultBaseManager implements WmsDeliveryOrderManager {
+    
+	 private WmsBussinessCodeManager wmsBussinessCodeManager;
+	 private WorkflowManager workflowManager;
+	 private InterfaceLogManager interfaceLogManager;
+	 private SapRowDataDealManager sapRowDataDealManager;
+	 private ProductionOrderManager productionOrderManager;
+    
+	 public DefaultWmsDeliveryOrderManager(WmsBussinessCodeManager wmsBussinessCodeManager, WorkflowManager workflowManager ,InterfaceLogManager interfaceLogManager,
+			SapRowDataDealManager sapRowDataDealManager,ProductionOrderManager productionOrderManager) {
+        this.wmsBussinessCodeManager = wmsBussinessCodeManager;
+        this.workflowManager = workflowManager;
+        this.interfaceLogManager = interfaceLogManager;
+    	this.sapRowDataDealManager=sapRowDataDealManager;
+    	this.productionOrderManager = productionOrderManager;
+	 }
+	
+	@Override
+    public void addPoDetail(Long doId, Long podId, WmsDeliveryOrderDetail dod) {
+	    
+	    if (dod.getTheDeliveryQuantityBu()>dod.getPlanQuantityBu()) {
+	        throw new BusinessException("本次交货数量不能大于计划交货数量!");
+	    }
+	    PurchaseOrderDetail pod = commonDao.load(PurchaseOrderDetail.class, podId);
+	    if (dod.getPlanQuantityBu()>pod.getExpectedQty()) {
+	        throw new BusinessException("计划交货数量不能大于采购单期待数量!");
+	    }
+	    if (pod.getExpectedQty()-dod.getDelivedQuantityBu()-dod.getPlanQuantityBu()<0) {
+	        throw new BusinessException("该采购单可交货数量不足!【计划数量-已交货数量-分配数量】< 0!");
+	    }
+	    
+	    WmsDeliveryOrder deliveryOrder = commonDao.load(WmsDeliveryOrder.class, doId);
+        pod.setAllotQty(dod.getPlanQuantityBu()); //采购明细分配数量=计划交货数量
+        pod.getPurchaseOrder().refreshAllotQty();
+        
+        if (dod.isNew()) {
+            dod.setFactory(pod.getPurchaseOrder().getSapFactory());
+            dod.setKcdd(pod.getReceivedLoc());
+            dod.setPurchaseOrderDetail(pod);
+            dod.setDeliveryOrder(deliveryOrder);
+            deliveryOrder.addDetail(dod);
+        }
+        commonDao.store(dod);
+    }
+
+    @Override
+    public void storeWmsDeliveryOrder(WmsDeliveryOrder wmsDeliveryOrder) {
+        if (wmsDeliveryOrder.isNew()) {
+            WmsWarehouse wh = (WmsWarehouse)commonDao.findByQueryUniqueResult("FROM WmsWarehouse warehouse WHERE warehouse.baseOrganization.id = :baseOrganizationId", 
+                    new String[] {"baseOrganizationId"}, new Object[] {BaseOrganizationHolder.getThornBaseOrganization().getId()});
+            wmsDeliveryOrder.setWarehouse(wh);
+            String code = wmsBussinessCodeManager.generateCodeByRule(wh, "DL");
+            wmsDeliveryOrder.setCode(code);
+            wmsDeliveryOrder.setCreatedType(WmsDeliveryOrderCreatedType.HAND);
+            wmsDeliveryOrder.setBillTypeName(WmsDeliveryOrderBillType.CGBILLTYPE);
+            
+            workflowManager.doWorkflow(wmsDeliveryOrder, "wmsDeliveryOrderProcess.new");
+        }
+    }
+    
+    public String getMaxLineNo(Map<String, Object> param) {
+
+        Integer lineNo = (Integer) commonDao.findByQueryUniqueResult("SELECT MAX(detail.lineNo) "
+                + "FROM WmsDeliveryOrderDetail detail WHERE detail.deliveryOrder.id = :deliveryOrderId",
+                        new String[] { "deliveryOrderId" },
+                        new Object[] { (Long) param.get("deliveryOrder.id") });
+        if (lineNo == null || lineNo.intValue() == 0) {
+            lineNo = 1;
+        } else {
+            lineNo += 1;
+        }
+
+        return lineNo.toString();
+    }
+
+    public void removeDetails(List<WmsDeliveryOrderDetail> details) {
+        WmsDeliveryOrder deliveryOrder = commonDao.load(WmsDeliveryOrder.class, details.get(0).getDeliveryOrder().getId());
+        for (WmsDeliveryOrderDetail detail : details) {
+            deliveryOrder.removeDetail(detail);
+            commonDao.delete(detail);
+        }
+        
+        this.commonDao.store(deliveryOrder);
+    }
+    
+    @Override
+    public void confirm(List<WmsDeliveryOrder> dos) {
+        for (WmsDeliveryOrder po : dos) {
+            po.setConfirmTime(new Date());
+            po.setConfirmor(UserHolder.getUser().getName());
+            po.setConfirmStatus(ConfirmStatus.CONFIRM);
+            this.commonDao.store(po);
+            createWms2SapInterfacelog(po,po.getConfirmStatus());
+        }
+        
+    }
+
+    private void createWms2SapInterfacelog(WmsDeliveryOrder po,String status) {
+    	Wms2SapSupplierDocStatus wsds = new Wms2SapSupplierDocStatus();
+    	wsds.setType(Wms2SapSupplierDocType.DELIVERY);
+    	wsds.setOrderNo(po.getCode());
+    	if(ConfirmStatus.CONFIRM.equals(status)){
+    		wsds.setStatus(Wms2SapSupplierStatus.CONFIRMED);
+    	}else if(ConfirmStatus.RECEIVED.equals(status)){
+    		wsds.setStatus(Wms2SapSupplierStatus.VIEWED);
+    	}else{
+    		wsds.setStatus(Wms2SapSupplierStatus.OPENED);
+    	}
+    	String xml = XmlObjectConver.toXML(wsds) ;
+    	interfaceLogManager.createWmsToSapInterfaceLog(InterfaceLogTaskType.SEND_SURPPLIERBUSINESS, Wms2SapInterfaceLogType.SURPPLIERBUSINESSBACK, xml, po.getId(),po.getCode());
+	
+	}
+
+
+	@Override
+    public void received(List<WmsDeliveryOrder> dos) {
+        for (WmsDeliveryOrder po : dos) {
+            po.setReceiveTime(new Date());
+            po.setReceiver(UserHolder.getUser().getName());
+            po.setConfirmStatus(ConfirmStatus.RECEIVED);
+            this.commonDao.store(po);
+            createWms2SapInterfacelog(po,po.getConfirmStatus());
+        }
+        
+    }
+    
+	public void test(){
+		calculationWmsDeliveryOrder(DateUtil.formatStrToDateYMD("2016-06-01"));
+	}
+	
+	
+	
+	/**
+	 * @author haibin.deng	
+	 * @Descriptioin 根据日期查询出未取消且有发货计划的生产订单，算出总库存数量，此总库存数量即为总需求数量。
+	 */
+	public void calculationWmsDeliveryOrder(Date startDate){
+		List<Object[]> productionOrderLists = calculationProductionOrderRequirement(startDate); //取生产订单
+		List<Object[]> reservedOrderLists = calculationWmsReservedOrderRequirement();//预留单数量
+		List<Object[]> deliveryOrders = findDeliveryOrders();//取销售交货单
+		List<Object[]> totalProductionOrderLists = unitListUtils(productionOrderLists, reservedOrderLists,deliveryOrders);
+		StringBuffer sb = new StringBuffer("");
+		Boolean EXCEPTION_FLAG= Boolean.FALSE;
+		for (Object[] listValue  : totalProductionOrderLists) {
+			String itemCode = listValue[0].toString();
+			Double productionCount = Double.valueOf(listValue[1].toString());
+			WmsSapFactory sapFactory = this.commonDao.load(WmsSapFactory.class, Long.valueOf(listValue[2].toString()));
+			
+
+			//取可用库存
+			Double itemInventoryCount = countWmsItemInventoryByFactory(itemCode, sapFactory.getCode());
+			
+			//取未交货的交货单  在途库存
+			Double deliveryOrderDetailCount =  findWmsDeliveryOrderDetailUnfinishedTaskByItemAndFactory(itemCode, sapFactory.getId());
+			
+			Double demandQuantity = itemInventoryCount + deliveryOrderDetailCount;
+			if (DoubleUtils.compareByPrecision(demandQuantity, productionCount, 3) >= 1) {
+				sb.append(itemCode).append(",");
+				continue;
+				
+			}
+			
+			//取采购订单明细
+			List<PurchaseOrderDetail> purchaseOrderDetailList = findPurchaseOrder(itemCode,sapFactory.getId());
+		 	if (purchaseOrderDetailList.isEmpty()) {
+		 		WmsWarning wa = EntityFactory.getEntity(WmsWarning.class);
+//		 		String code = wmsBussinessCodeManager.generateCodeByRule(warehouse, WmsWarningType.GEN_DELIVERY);
+//		 		wa.setCode(code);
+		 		wa.setType(WmsWarningType.GEN_DELIVERY);
+		 		wa.setStatus(WmsWarningStatus.OPEN);
+		 		wa.setWarningInfo("物料编码"+itemCode+"仓库"+sapFactory.getName()+"("+sapFactory.getCode()+")未找到的可用的采购订单，无法生成交货单");
+		 		WebServiceHelper.println(wa.getWarningInfo());
+		 		commonDao.store(wa);
+		 		EXCEPTION_FLAG = Boolean.TRUE;
+		 		continue; 
+		 	}
+		 	
+		 	//需要生成交货单的物料数量
+			Double tmpDemandQuantity = productionCount - demandQuantity;
+		 	for (PurchaseOrderDetail purchaseOrderDetail : purchaseOrderDetailList) {
+		 		if (tmpDemandQuantity.doubleValue() <= 0D) {
+					break;
+				}
+		 		Double tmpPodQty = purchaseOrderDetail.getExpectedQty() - purchaseOrderDetail.getAllotQty();
+		 		
+				WmsFactoryWarehouse fFactoryWarehouse = findWmsFactoryWarehouse(sapFactory.getId(),purchaseOrderDetail.getPstyp());
+				if (null == fFactoryWarehouse) {
+					throw new BusinessException("factory.warehouse.not.found.by.factory", new String[]{sapFactory.getName()});
+				}
+				WmsWarehouse warehouse = fFactoryWarehouse.getWarehouse();
+		 		
+		 		
+		 		WmsDeliveryOrderDetail deliveryOrderDetail = creatWmsDeliveryOrder(startDate, purchaseOrderDetail,warehouse);
+			 	if (tmpDemandQuantity.doubleValue() > tmpPodQty.doubleValue()){
+			 		deliveryOrderDetail.setPlanQuantityBu(tmpPodQty.doubleValue());
+//			 		deliveryOrderDetail.setTheDeliveryQuantityBu(tmpPodQty.doubleValue());
+			 		purchaseOrderDetail.addAllotQty(tmpPodQty.doubleValue());
+			 		tmpDemandQuantity -= tmpPodQty.doubleValue();
+			 	}else {
+			 		deliveryOrderDetail.setPlanQuantityBu(tmpDemandQuantity);
+//			 		deliveryOrderDetail.setTheDeliveryQuantityBu(tmpDemandQuantity);
+			 		purchaseOrderDetail.addAllotQty(tmpDemandQuantity);
+			 		tmpDemandQuantity = 0D;
+			 	}
+		 		this.commonDao.store(purchaseOrderDetail);
+		 		purchaseOrderDetail.getPurchaseOrder().refreshAllotQty();
+		 		this.commonDao.store(deliveryOrderDetail);
+		 		this.commonDao.store(deliveryOrderDetail.getDeliveryOrder());
+		 		produceEmailRecord(deliveryOrderDetail.getDeliveryOrder(), deliveryOrderDetail);//发送邮件
+			
+		 		WmsDeliveryOrder wmsDeliveryOrder = deliveryOrderDetail.getDeliveryOrder();
+		 		workflowManager.doWorkflow(wmsDeliveryOrder, "wmsDeliveryOrderProcess.active");
+		 		this.activeDeliveryOrder(wmsDeliveryOrder);
+		 	}
+		}
+		
+		if(EXCEPTION_FLAG) {
+			LocalizedMessage.addMessage("操作成功，但生成了预警，请查看预警");
+		}
+		else {
+			LocalizedMessage.addMessage("操作成功");
+		}
+	}
+	
+	private List<Object[]> unitListUtils(List<Object[]> productionOrderLists, 
+				List<Object[]> reservedOrderLists,List<Object[]> deliveryOrders){
+		List<Object[]> returnValueList = new ArrayList<Object[]>();
+		productionOrderLists.addAll(reservedOrderLists);
+		productionOrderLists.addAll(deliveryOrders);
+		for (Object[] objects : productionOrderLists) {
+			addRequestNumberList(returnValueList, objects);
+		}
+		return returnValueList;
+	}
+	
+	private void addRequestNumberList(List<Object[]> returnValueList , Object[] desObj){
+		Boolean flag = Boolean.FALSE;
+		for (Object[] tmpObj : returnValueList) {
+			if (String.valueOf(tmpObj[0].toString()).equals(String.valueOf(desObj[0].toString())) && 
+					Long.valueOf(tmpObj[2].toString()) == Long.valueOf(desObj[2].toString())) {//内容相同
+				Double tmpNumber = Double.valueOf(tmpObj[1].toString()) + Double.valueOf(desObj[1].toString());
+				tmpObj[1] = tmpNumber;
+				flag =  Boolean.TRUE;
+			}
+		}
+		if (flag == Boolean.FALSE) {
+			returnValueList.add(desObj);
+		}
+	}
+	
+	private WmsDeliveryOrderDetail creatWmsDeliveryOrder(Date startDate,PurchaseOrderDetail purchaseOrderDetail,WmsWarehouse warehouse){
+
+ 		WmsDeliveryOrder deliveryOrder = EntityFactory.getEntity(WmsDeliveryOrder.class);
+		deliveryOrder.setWarehouse(warehouse);
+		String code = wmsBussinessCodeManager.generateCodeByRule(warehouse, "DL");
+		deliveryOrder.setCode(code);
+//		deliveryOrder.setDeliveryDate(startDate);
+		deliveryOrder.setDeliveryDate(new Date());
+		deliveryOrder.setCreatedType(WmsDeliveryOrderCreatedType.SYSTEM);
+		
+		deliveryOrder.setBillTypeName(WmsDeliveryOrderBillType.CGBILLTYPE);
+		deliveryOrder.setProject("000010");
+		
+	 	deliveryOrder.setSupplier(purchaseOrderDetail.getPurchaseOrder().getSupplier());
+	 	workflowManager.doWorkflow(deliveryOrder, "wmsDeliveryOrderProcess.new");
+	 	
+	 	activeDeliveryOrder(deliveryOrder);//交货单自动生效
+	 	
+	 	WmsDeliveryOrderDetail deliveryOrderDetail = EntityFactory.getEntity(WmsDeliveryOrderDetail.class);
+	 	deliveryOrderDetail.setDeliveryOrder(deliveryOrder);
+	 	deliveryOrderDetail.setPurchaseOrderDetail(purchaseOrderDetail);
+	 	deliveryOrderDetail.setPoNo(purchaseOrderDetail.getPurchaseOrder().getCode());
+	 	deliveryOrderDetail.setPoDetailNo(purchaseOrderDetail.getEbelp());
+	 	deliveryOrderDetail.setLineNo(purchaseOrderDetail.getLineNo());
+	 	deliveryOrderDetail.setItem(purchaseOrderDetail.getItem());
+	 	deliveryOrderDetail.setPackageUnit(purchaseOrderDetail.getPackageUnit());
+	 	deliveryOrderDetail.setFactory((purchaseOrderDetail.getPurchaseOrder().getSapFactory()));
+	 	return deliveryOrderDetail;
+	}
+	
+	
+	/**
+	 * 
+	 * @param srcMap
+	 * @param addMap
+	 */
+	public void mapApendUtils(Map<String,Double> srcMap , Map<String,Double> addMap){
+
+		for (Map.Entry<String,Double> addEntiry : addMap.entrySet()) {
+			if (srcMap.containsKey(addEntiry.getKey())) {
+				srcMap.put(addEntiry.getKey(),DoubleUtils.add(srcMap.get(addEntiry.getKey()), addEntiry.getValue()));
+			} else {
+				srcMap.put(addEntiry.getKey(), addEntiry.getValue());
+			}
+		}
+	}
+	
+	public void produceEmailRecord(WmsDeliveryOrder deliveryOrder,WmsDeliveryOrderDetail deliveryOrderDetail){
+//		EmailRecord emailRecord = EntityFactory.getEntity(EmailRecord.class);
+//		emailRecord.setReceiver(deliveryOrder.getSupplier().getContact().getContactName());
+//		emailRecord.setEmailBox(deliveryOrder.getSupplier().getContact().getEmail());
+//		emailRecord.setTheme("零件配送");
+//		StringBuffer sb = new StringBuffer("请于: ").append(DateUtil.formatDateYMDToStr(deliveryOrder.getDeliveryDate())).
+//				append("配送货品编码: ").append(deliveryOrderDetail.getItem().getCode()).append("到")
+//				 .append(deliveryOrderDetail.getFactory().getName());
+//		emailRecord.setContent(sb.toString());
+//		emailRecord.setStatus(InterfaceLogStatus.STAT_READY);
+//		this.commonDao.store(emailRecord);
+//		
+		
+		String subject =EmailHelper.getTheme(EmailRecordType.DELIVERY2SUPPLIER, deliveryOrder.getCode());
+		List<String> infos = new ArrayList<String>();
+		infos.add(deliveryOrder.getCode());
+		String content = EmailHelper.getEmailContent(EmailRecordType.DELIVERY2SUPPLIER, infos);
+		MidSurpplierUser msu = (MidSurpplierUser)commonDao.findByQueryUniqueResult("FROM MidSurpplierUser msu where msu.sid=:ms", "ms", deliveryOrder.getSupplier().getId());
+		if(null!=msu){
+			ThornUser user = commonDao.load(ThornUser.class, msu.getUid());
+			//每个邮箱发邮件
+			String emails = user.getEmail();
+			if(null == emails){
+				return;
+			}
+			String [] ems = emails.split("\\|");
+			for (String em : ems) {
+				EmailRecordManager emailRecordManager = (EmailRecordManager)applicationContext.getBean("emailRecordManager");
+				emailRecordManager.storeEmailRecordWaitSend(user.getLoginName(),em,subject,content,EmailHelper.getEmailCc(),EmailRecordType.DELIVERY2SUPPLIER, deliveryOrder.getCode());
+			}
+		}
+		
+	}
+	
+	
+	public WmsItem findWmsItem(String code){
+		String hql = " FROM WmsItem item WHERE item.code =:code AND item.status =:status";
+		return (WmsItem) this.commonDao.findByQueryUniqueResult(hql, new String[]{"code","status"}, new Object[]{code,BaseStatus.ENABLED});
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<PurchaseOrderDetail> findPurchaseOrder(String itemCode, Long factoryId){
+		String hql = " select pod FROM PurchaseOrderDetail pod WHERE pod.item.code =:code "
+				+ " AND pod.allotQty < pod.expectedQty "
+				+ " AND pod.purchaseOrder.sapFactory.id =:factoryId "
+//				+ " ORDER BY pod.purchaseOrder.creatDate ASC ,(pod.expectedQty - pod.allotQty) DESC";
+				+ " ORDER BY pod.receivedDate ASC ,(pod.expectedQty - pod.allotQty) DESC"; //根据交货日期排序
+		return  this.commonDao.findByQuery(hql, new String[]{"code","factoryId"}, new Object[]{itemCode,factoryId});
+	}
+	
+	
+	/**
+	 * @Descriptioin 库存转换 
+	 * @param listValue
+	 * @return
+	 */
+	private Map<String,Map<Long,Double>> convertListToMap(List<Object[]> listValue){
+		
+		Map<String,Map<Long,Double>> value = new HashMap<String, Map<Long,Double>>();
+		if (null == listValue || listValue.isEmpty()) {
+			return value;
+		}
+		
+		for (Object[] list : listValue) {
+			
+			if (value.containsKey(list[0])) {
+				Map<Long,Double> tmpFactoryMap = value.get(list[0]);
+				 if (tmpFactoryMap.containsKey(list[2])) {
+					 tmpFactoryMap.put(Long.valueOf(list[2].toString()), DoubleUtils.add(tmpFactoryMap.get(list[2]), 
+							 Double.valueOf(list[1].toString())));
+				 } else {
+					 tmpFactoryMap.put(Long.valueOf(list[2].toString()), Double.valueOf(list[1].toString()));
+				 }
+			} else {
+				Map<Long,Double> tmpMap = new HashMap<Long, Double>();
+				 tmpMap.put(Long.valueOf(list[2].toString()), Double.valueOf(list[1].toString()));
+				 value.put(list[0].toString(), tmpMap);
+			}
+		}
+		
+		return value;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<Object[]> calculationProductionOrderRequirement(Date startDate){
+		String hql = "SELECT pod.item.code, SUM(pod.planQuantityBu-pod.allocatedQuantityBu),pod.productionOrder.factory.id  FROM ProductionOrderDetail pod WHERE 1 = 1 "
+				       + " AND pod.productionOrder.status =:status "
+				       + " AND pod.productionOrder.updateInfo.createdTime >=:createdTime "
+				       + " AND (pod.planQuantityBu- pod.allocatedQuantityBu) > 0 "
+				       + " GROUP BY pod.item.code , pod.productionOrder.factory.id";
+		
+		return this.commonDao.findByQuery(hql, new String[]{"status","createdTime"}, new Object[]{
+				ProductionOrderStatus.OPEN,DateUtil.formatStrToDateYMD(DateUtil.formatDateYMDToStr(startDate))});
+	}
+	
+	private List<Object[]> calculationWmsReservedOrderRequirement(){
+		String hql = "SELECT rod.item.code,SUM(rod.quantity-rod.allocatedQuantityBu), "
+						+ "rod.factory.id FROM WmsReservedOrderDetail rod WHERE 1 = 1 "
+						+ " AND rod.reservedOrder.status in(:status) "
+						+ " AND rod.reservedOrder.ydlx in (:ydlx)"
+						+ " AND rod.quantity >0 "
+						+ " GROUP BY rod.item.code , rod.factory.id ";
+		return this.commonDao.findByQuery(hql, new String[]{"status","ydlx"}, new Object[]{
+				Arrays.asList(ProductionOrderStatus.OPEN,ProductionOrderStatus.ACTIVE),
+				Arrays.asList(WmsReservedOrderType.Z01,WmsReservedOrderType.Z03,WmsReservedOrderType.Z311)
+		});
+	}
+	/**查销售交货单*/
+	private List<Object[]> findDeliveryOrders(){
+		String hql = "select d.item.code,sum(d.planQuantityBu-d.delivedQuantityBu),d.factory.id "
+				+ "from WmsDeliveryOrderDetail d where d.deliveryOrder.billTypeName = :billTypeName "
+				+ "AND (d.planQuantityBu-d.delivedQuantityBu) > 0 "
+				+ "AND d.deliveryOrder.status <> :status "
+				+ "group by d.item.code,d.factory.id";
+		return this.commonDao.findByQuery(hql,
+				new String[]{"billTypeName","status"},
+				new Object[]{WmsDeliveryOrderBillType.XSBILLTYPE,WmsDeliveryOrderStatus.FINISH});
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> countWmsItemInventory(){
+		String hql = "SELECT inventory.item.code, SUM(inventory.qty) FROM WmsInventory inventory WHERE (inventory.location.type=:type or inventory.location.type=:type2) "
+				+ " AND inventory.location.countLock =:countLock "
+				+ " AND inventory.status =:status "
+				+ " AND inventory.operationStatus =:operationStatus "
+				+ " AND inventory.qty > 0 "
+				+ " GROUP BY inventory.item.code ";
+		return this.commonDao.findByQuery(hql, new String[]{"type","type2","countLock","status","operationStatus"}, new Object[]{WmsLocationType.RECEIVE,
+				WmsLocationType.STORAGE,Boolean.FALSE,"不良品",WmsInventoryOperationStatus.NORMAL});
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Double countWmsItemInventoryByFactory(String itemCode ,String factoryCode){
+		String hql = "SELECT SUM(inventory.qty) FROM WmsInventory inventory WHERE (inventory.location.type=:type or inventory.location.type=:type2) "
+				+ " AND inventory.location.countLock =:countLock "
+				+ " AND inventory.status <> :status "
+				+ " AND inventory.operationStatus =:operationStatus "
+				+ " AND inventory.item.code =:itemCode "
+				+ " AND inventory.itemKey.lotInfo.extendPropC10 =:factoryCode"
+				+ " AND inventory.qty > 0 ";
+		Double countValue = (Double) this.commonDao.findByQueryUniqueResult(hql, new String[]{"type","type2","countLock","status","operationStatus","itemCode","factoryCode"}, new Object[]{WmsLocationType.RECEIVE,
+				WmsLocationType.STORAGE,Boolean.FALSE,"不良品",WmsInventoryOperationStatus.NORMAL,itemCode,factoryCode});
+		if (null == countValue) {
+			return 0D;
+		} else {
+			return countValue;
+		}
+	}
+	
+	public List<Object[]> findWmsDeliveryOrderDetailUnfinishedTask(){
+		String hql = "SELECT dod.item.code, SUM(dod.planQuantityBu - dod.delivedQuantityBu)  FROM  WmsDeliveryOrderDetail dod WHERE 1 =1 "
+				+ " AND (dod.planQuantityBu - dod.delivedQuantityBu) >0 "
+				+ " GROUP BY dod.item.code ";
+		return this.commonDao.findByQuery(hql);
+	}
+	
+	private Double findWmsDeliveryOrderDetailUnfinishedTaskByItemAndFactory(String itemCode ,Long factoryId){
+		String hql = "SELECT SUM(dod.planQuantityBu - dod.delivedQuantityBu)  FROM  WmsDeliveryOrderDetail dod WHERE dod.item.code =:itemCode "
+				+ " AND dod.factory.id =:factoryId AND (dod.planQuantityBu - dod.delivedQuantityBu) >0 "
+				+ " AND dod.deliveryOrder.billTypeName=:billTypeName";
+		Double returnValue = (Double)this.commonDao.findByQueryUniqueResult(hql, 
+				new String[]{"itemCode","factoryId","billTypeName"}, 
+				new Object[]{itemCode,factoryId,WmsDeliveryOrderBillType.CGBILLTYPE});
+		if (null == returnValue) {
+			return 0D;
+		} else {
+			return returnValue;
+		}
+	}
+	/**查交货数量和*/
+	private Double findDeliveryQtyByItemAndFactory(String itemCode ,Long factoryId){
+		String hql = "SELECT SUM(dod.delivedQuantityBu)  FROM  WmsDeliveryOrderDetail dod WHERE dod.item.code =:itemCode "
+				+ " AND dod.factory.id =:factoryId"
+				+ " AND (dod.planQuantityBu - dod.delivedQuantityBu) >0 ";
+		Double deliverQty = (Double)this.commonDao.findByQueryUniqueResult(hql, new String[]{"itemCode","factoryId"}, new Object[]{
+				itemCode,factoryId
+		});
+		if (null == deliverQty) {
+			return 0D;
+		} else {
+			return deliverQty;
+		}
+	}
+	
+	private List<WmsDeliveryOrderDetail> findWmsDeliveryOrderDetailUnfinishedTaskByItemAndFactoryReturnPojo(String itemCode ,Long factoryId){
+		String hql = " FROM  WmsDeliveryOrderDetail dod WHERE dod.item.code =:itemCode "
+				+ " AND dod.factory.id =:factoryId"
+				+ " AND (dod.planQuantityBu - dod.delivedQuantityBu) >0 "
+				+ " AND dod.deliveryOrder.billTypeName=:billTypeName"
+				+ " ORDER BY dod.deliveryOrder.id ASC,dod.id ASC ";
+		return this.commonDao.findByQuery(hql, 
+				new String[]{"itemCode","factoryId","billTypeName"},
+				new Object[]{itemCode,factoryId,WmsDeliveryOrderBillType.CGBILLTYPE});
+		
+	}
+	
+	private WmsFactoryWarehouse findWmsFactoryWarehouse(Long factoryId,String xmlb){
+		String hql = "  FROM WmsFactoryWarehouse fw WHERE fw.factory.id =:factoryId "
+						+ " AND fw.type =:type";
+		return  (WmsFactoryWarehouse) this.commonDao.findByQueryUniqueResult(hql, new String[]{"factoryId","type"}, new Object[]{factoryId,xmlb});
+		
+	}
+
+	
+	public void activeDeliveryOrder(WmsDeliveryOrder wmsDeliveryOrder){
+		
+		/**单据名称=销售交货单的交货单 生效 生成拣货单*/
+		if(null != wmsDeliveryOrder.getBillTypeName() 
+				&& wmsDeliveryOrder.getBillTypeName().equals(WmsDeliveryOrderBillType.XSBILLTYPE)){
+			Long facId = null;
+			for(WmsDeliveryOrderDetail detail : wmsDeliveryOrder.getDetails()){
+				if(null != facId && detail.getFactory().getId() != facId){
+					throw new BusinessException("此交货单明细工厂不一致,请检查!!");
+				}else{
+					facId = detail.getFactory().getId();
+				}
+			}
+			WmsFactoryWarehouse fFactoryWarehouse = findWmsFactoryWarehouse(facId,WmsFactoryXmlb.BZ);
+			
+			/**创建拣货单*/
+			createPtByDeliveryOrder(wmsDeliveryOrder, fFactoryWarehouse, facId);
+		}else{
+			interfaceLogManager.createWms2SapDeliveryOrder(wmsDeliveryOrder.getId());
+		}
+	}
+	/**创建拣货单*/	
+	private void createPtByDeliveryOrder(WmsDeliveryOrder wmsDeliveryOrder,
+			WmsFactoryWarehouse fFactoryWarehouse,Long facId){
+		WmsPickTicket pickTicket = productionOrderManager.createWmsPickTicketByProductionOrder(fFactoryWarehouse.getWarehouse(), wmsDeliveryOrder.getDeliveryDate(),WmsPickticketGenType.XSJHD);
+		WmsSapFactory fac = commonDao.load(WmsSapFactory.class, facId);
+		pickTicket.setUserField1(fac.getCode()); //工厂编码
+		pickTicket.setUserField2(fac.getName());//工厂名称
+		
+		for (WmsDeliveryOrderDetail d : wmsDeliveryOrder.getDetails()) {
+			WmsPickTicketDetail pickTicketDetail = productionOrderManager.creatWmsPickTicketDetail(pickTicket, d.getItem(), d.getPackageUnit(),d.getPlanQuantityBu());
+			pickTicketDetail.setExpectedPackQty(d.getPlanQuantityBu());
+			/**保存拣货单明细和交货单明细对应表*/
+			DeliveryOrderDetailPtDetail dod = 
+					new DeliveryOrderDetailPtDetail(d, pickTicketDetail, d.getQuantity(), d.getPackageUnit());
+			commonDao.store(dod);
+			addLotInfo(pickTicketDetail);
+		}
+		pickTicket.setRelatedBill1(wmsDeliveryOrder.getCode());
+		pickTicket.setUserField3(WmsPickticketGenType.XSJHD);//来源
+		
+		pickTicket.setAllowShortShip(Boolean.TRUE);//允许短缺发运
+		this.commonDao.store(pickTicket);
+	}
+	/**添加项目类别=标准的批次信息*/
+	private void addLotInfo(WmsPickTicketDetail pickTicketDetail){
+		WmsPickTicketDetailRequire ptdr3 = EntityFactory.getEntity(WmsPickTicketDetailRequire.class);
+		ptdr3.setPickTicketDetail(pickTicketDetail);
+		ptdr3.setLotKey("EXTEND_PROPC8"); //批次属性
+		ptdr3.setLotValue1(WmsFactoryXmlb.BZ); //项目类别
+		ptdr3.setQueryRequire(WmsSOQueryRequireType.E); //等于
+		ptdr3.setLevel(WmsLotCategoryType.FORCEMATCHED);//等级
+		ptdr3.setAllowModified(false); //不允许修改
+		commonDao.store(ptdr3);
+	}
+    public void importProductFile(File file) {
+		
+		//解析.xls文件
+		List<SapProductOrder> orders = readProductFromExcel(file);
+		if(orders.size()==0){
+			throw new BusinessException("导入的数据为空，或者是错误的数据，请重新维护数据");
+		}
+		SapProductOrderArray spoa = new SapProductOrderArray();
+		spoa.setSpos(orders.toArray(new SapProductOrder[]{}));
+		spoa.setTYPE("I");
+		spoa.setMESSAGEID(new Date().toLocaleString());
+		spoa.setROWCNT(orders.size()+"");
+		
+		sapRowDataDealManager.dealSapProductOrder(spoa);
+	}
+	
+	//解析.xls
+	private List<SapProductOrder> readProductFromExcel(File file){
+		
+		List<SapProductOrder> orders=new ArrayList<SapProductOrder>();
+		
+		List<Map<String, Object>> infos=ExcelHelper.parseExcel2List(file);
+		for (Map<String, Object> rowDataMap : infos) {
+			
+			String LINENO = (String)rowDataMap.get("行号");
+			String AUFNR = (String)rowDataMap.get("生产订单号");
+			String WERKS = (String)rowDataMap.get("工厂");
+			String MATNR = (String)rowDataMap.get("物料编码");
+			String AUART = (String)rowDataMap.get("订单类型");
+			String GLTRP = (String)rowDataMap.get("基本完成日期");
+			String GSTRP = (String)rowDataMap.get("基本开始日期");
+			String GAMNG = (String)rowDataMap.get("计划数量");
+			String MAKTX = (String)rowDataMap.get("物料描述");
+			String POSNR = (String)rowDataMap.get("组件项目号");
+			String MATNR1 = (String)rowDataMap.get("物料编码");
+			String BDMNG = (String)rowDataMap.get("需求数量");
+			String MAKTX1 = (String)rowDataMap.get("物料描述");
+			String MTART = (String)rowDataMap.get("物料类型");
+			String XLOEK = (String)rowDataMap.get("删除标识");
+			String KZEAR = (String)rowDataMap.get("最后的发货");
+			String ENMNG = (String)rowDataMap.get("提货数量");
+			String RSNUM = (String)rowDataMap.get("预留号");
+			String BWART = (String)rowDataMap.get("移动类型");
+			String MEINS = (String)rowDataMap.get("成品单位");
+			String MEINS1 = (String)rowDataMap.get("原料单位");
+			String ZPRO_LINE = (String)rowDataMap.get("产线");
+			String ZPRO_NAME = (String)rowDataMap.get("产线描述");
+			
+			if(StringHelper.isNullOrEmpty(AUFNR) ||  StringHelper.isNullOrEmpty(WERKS)){
+				continue;				
+			}
+			SapProductOrder order = new SapProductOrder();
+			
+			order.setLINENO(LINENO);
+			order.setAUFNR(AUFNR);
+			order.setWERKS(WERKS);
+			order.setMATNR(MATNR);
+			order.setAUART(AUART);
+			order.setGLTRP(GLTRP);
+			order.setGSTRP(GSTRP);
+			order.setGAMNG(GAMNG);
+			order.setMAKTX(MAKTX);
+			order.setPOSNR(POSNR);
+			order.setMATNR1(MATNR1);
+			order.setBDMNG(BDMNG);
+			order.setMAKTX1(MAKTX1);
+			order.setMTART(MTART);
+			order.setXLOEK(XLOEK);
+			order.setKZEAR(KZEAR);
+			order.setENMNG(ENMNG);
+			order.setRSNUM(RSNUM);
+			order.setBWART(BWART);
+			order.setMEINS(MEINS);
+			order.setMEINS1(MEINS1);
+			order.setZPRO_LINE(ZPRO_LINE);
+			order.setZPRO_NAME(ZPRO_NAME);
+			orders.add(order);
+
+		}
+		
+		return orders;
+		
+	}
+	
+	
+    public void importOrderHandleTime(File file) {
+		
+		//解析.xls文件
+    	List<Long> productionOrderList = readOrderHandleTimeExcel(file);
+    	if (productionOrderList.isEmpty()) {
+    		throw new BusinessException("导入的生产单查询为空!");
+    	}
+    	dealOrderHandleTime(productionOrderList);
+    }
+	
+    private List<Long> readOrderHandleTimeExcel(File file){
+    	List<Long> productionOrderList = new ArrayList<Long>();
+		List<Map<String, Object>> infos=ExcelHelper.parseExcel2List(file);
+		for (Map<String, Object> rowDataMap : infos) {
+			String code = (String)rowDataMap.get("生产订单号");
+			  ProductionOrder productionOrder = findProductionOrderByCode(code);
+			  if (null == productionOrder) {
+				  throw new BusinessException("find.ProductionOrder.is.empty.by.code",new String[]{code});
+			  }
+			  
+			  for(ProductionOrderDetail detail :productionOrder.getDetails()) {
+				  WmsItem item  = detail.getItem();
+				  if(StringHelper.isNullOrEmpty(item.getUserFieldV1()) || StringHelper.isNullOrEmpty(item.getUserFieldV2())){
+					  //没有交接属性生成预警
+						WmsWarning wa = EntityFactory.getEntity(WmsWarning.class);
+				 		wa.setType(WmsWarningType.ITEM_ATT);
+				 		wa.setStatus(WmsWarningStatus.OPEN);
+				 		wa.setWarningInfo("物料编码"+item.getCode()+"的JIT属性或交接属性不完整");
+				 		commonDao.store(wa);
+				  }
+			  }
+			  
+
+			  productionOrderList.add(productionOrder.getId());
+		}
+		return productionOrderList;
+    }
+    
+	
+	/**
+	 * @Descriptioin 生产订单齐套性检查
+	 */
+   /* public void dealOrderHandleTime(List<Long> productionOrderList){
+    	
+    	List<Object[]> productionOrderDetailCount = countProductionOrderItemNumber(productionOrderList);
+    	
+    	
+    	
+    	for (Object[] objValue : productionOrderDetailCount) {
+    		Double itemCountNumber = Double.parseDouble(objValue[1].toString());
+    		String itemCode = objValue[0].toString();
+    		WmsSapFactory factory = this.commonDao.load(WmsSapFactory.class, Long.valueOf(objValue[2].toString()));
+    		Double totalInventory = countWmsItemInventoryByFactory(itemCode, factory.getCode());
+    		Double tmpItemCountNumber = totalInventory;
+    		List<ProductionOrderDetail> productionOrderDetailList = findProductionOrderDetailByPoId(productionOrderList,itemCode,factory.getId());
+    		ProductionOrder productionOrder = productionOrderDetailList.get(0).getProductionOrder();
+    		for (ProductionOrderDetail productionOrderDetail : productionOrderDetailList) {
+    			if (tmpItemCountNumber.doubleValue() > productionOrderDetail.getPlanQuantityBu().doubleValue()) {
+    				createWmsProductionOrderMeetInfo(productionOrderDetail, Boolean.TRUE);
+    				tmpItemCountNumber -= productionOrderDetail.getPlanQuantityBu().doubleValue();
+    			} else {
+    				createWmsProductionOrderMeetInfo(productionOrderDetail, Boolean.FALSE);
+    			}
+    		}
+    		
+    		
+    		if (DoubleUtils.compareByPrecision(totalInventory, itemCountNumber,3) == -1) {//当不齐套时则需要查询交货单
+    			//当不齐套时则需要查询交货单
+    			List<WmsDeliveryOrderDetail> deliveryOrderDetailList = findWmsDeliveryOrderDetailUnfinishedTaskByItemAndFactoryReturnPojo(itemCode, productionOrder.getFactory().getId());
+    			Double deliveryOrderNumber = itemCountNumber - totalInventory;
+    			for (WmsDeliveryOrderDetail deliveryOrderDetail : deliveryOrderDetailList) {
+    				if (deliveryOrderNumber <= 0D) {
+    					break;
+    				}
+    				Double tmpDeliveryNumber =  deliveryOrderDetail.getPlanQuantityBu().doubleValue() - deliveryOrderDetail.getDelivedQuantityBu().doubleValue();
+    				if (deliveryOrderNumber -  tmpDeliveryNumber > 0) {
+    					deliveryOrderNumber -= tmpDeliveryNumber;
+    					createWmsArrivalDelivery(deliveryOrderDetail, tmpDeliveryNumber, productionOrder.getBeginDate());
+    					deliveryOrderDetail.addTheDeliveryQuantityBu(tmpDeliveryNumber);
+    				} else {
+    					createWmsArrivalDelivery(deliveryOrderDetail, deliveryOrderNumber, productionOrder.getBeginDate());
+    					deliveryOrderDetail.addTheDeliveryQuantityBu(deliveryOrderNumber);
+    					deliveryOrderNumber = 0D;
+    				}
+    				this.commonDao.store(deliveryOrderDetail);
+    			}
+    			
+    			if (deliveryOrderNumber > 0 ) {
+    				WmsWarning wa = EntityFactory.getEntity(WmsWarning.class);
+    				wa.setType(WmsWarningType.QTXYZ);
+    				wa.setStatus(WmsWarningStatus.OPEN);
+    				wa.setWarningInfo("物料编码: "+itemCode +" 工厂: "+factory.getName()+
+    						"根据库存与交货单计算,本次生产计划还缺货"+deliveryOrderNumber);
+    				WebServiceHelper.println(wa.getWarningInfo());
+    				commonDao.store(wa);
+    			}  
+    			
+    		}
+    	}
+    }*/
+	public void dealOrderHandleTime(List<Long> productionOrderList){
+		//预留+生产计划  取总计划
+		Map<String,Map<String,Object>> orderDetailCount = countOrderItemNumber(productionOrderList);
+		
+		
+		Set<String> keys = orderDetailCount.keySet();
+		
+		for(String key : keys) {
+		 
+			String[] values = key.split("#VTRADEX#");
+			Map<String,Object> qtyMap = orderDetailCount.get(key);
+			String itemCode = values[0];//物料编码
+			Long facId = Long.valueOf(values[1]);//工厂ID
+			WmsSapFactory factory = this.commonDao.load(WmsSapFactory.class, facId);
+			Double totalInventory = countWmsItemInventoryByFactory(itemCode, factory.getCode()); //取当前物料+工厂的总库存
+			
+			//根据物料+工厂 取已经安排交货的交货单  sum(交货单明细的本次交货数量)  //TODO:
+			Double deliveryQty = findDeliveryQtyByItemAndFactory(itemCode, facId);
+			totalInventory += deliveryQty;
+			
+			Double tmpItemCountNumber = totalInventory ;
+			ProductionOrder productionOrder = null;
+			if(qtyMap.get("GD_SL")!=null ) {
+				List<ProductionOrderDetail> productionOrderDetailList = findProductionOrderDetailByPoId(productionOrderList,itemCode,factory.getId());
+				productionOrder = productionOrderDetailList.get(0).getProductionOrder();
+				for (ProductionOrderDetail productionOrderDetail : productionOrderDetailList) {
+					if (tmpItemCountNumber.doubleValue() > productionOrderDetail.getPlanQuantityBu().doubleValue()) {
+						
+						 createWmsProductionOrderMeetInfo(productionOrderDetail.getId(),productionOrderDetail.getProductionOrder().getCode(),
+								 productionOrderDetail.getProductionOrder().getBeginDate(),productionOrderDetail.getProductionOrder().getEndDate(), 
+								 productionOrderDetail.getItem(),productionOrderDetail.getPlanQuantityBu(),productionOrderDetail.getPackageUnit(),
+								 productionOrderDetail.getProductionOrder().getFactory(),Boolean.TRUE,OrderType.GD);
+						 tmpItemCountNumber -= productionOrderDetail.getPlanQuantityBu().doubleValue();
+					
+					} else {
+						
+						createWmsProductionOrderMeetInfo(productionOrderDetail.getId(),productionOrderDetail.getProductionOrder().getCode(),
+								 productionOrderDetail.getProductionOrder().getBeginDate(),productionOrderDetail.getProductionOrder().getEndDate(), 
+								 productionOrderDetail.getItem(),productionOrderDetail.getPlanQuantityBu(),productionOrderDetail.getPackageUnit(), 
+								 productionOrderDetail.getProductionOrder().getFactory(),Boolean.FALSE,OrderType.GD);
+					}
+				}
+			}
+			WmsReservedOrder reservedOrder = null;
+			if(qtyMap.get("YL_SL")!=null ) {
+				List<WmsReservedOrderDetail> rodList = findReservedOrderDetail();
+				reservedOrder = rodList.get(0).getReservedOrder();
+				for (WmsReservedOrderDetail rod : rodList) {
+					if (tmpItemCountNumber.doubleValue() > rod.getQuantity().doubleValue()) {
+						 createWmsProductionOrderMeetInfo(rod.getId(),rod.getReservedOrder().getCode(),
+								 rod.getReservedOrder().getJzrq(),rod.getReservedOrder().getJzrq(),rod.getItem(),
+								 rod.getQuantity(),rod.getUnit(),rod.getFactory(),Boolean.TRUE,OrderType.YLD);
+						 tmpItemCountNumber -= rod.getQuantity().doubleValue();
+					} else {
+						createWmsProductionOrderMeetInfo(rod.getId(),rod.getReservedOrder().getCode(),
+								 rod.getReservedOrder().getJzrq(),rod.getReservedOrder().getJzrq(),rod.getItem(),
+								 rod.getQuantity(),rod.getUnit(),rod.getFactory(),Boolean.FALSE,OrderType.YLD);
+					}
+				}
+			}
+			
+			Double itemCountNumber = (Double)(qtyMap.get("GD_SL") == null ? 0d :qtyMap.get("GD_SL")) 
+					+ (Double)(qtyMap.get("YL_SL") == null ? 0d : qtyMap.get("YL_SL"));
+			if (DoubleUtils.compareByPrecision(totalInventory, itemCountNumber,3) == -1) {//当不齐套时则需要查询交货单
+				//当不齐套时则需要查询交货单
+				  List<WmsDeliveryOrderDetail> deliveryOrderDetailList = findWmsDeliveryOrderDetailUnfinishedTaskByItemAndFactoryReturnPojo(itemCode,facId);
+				  Double deliveryOrderNumber = itemCountNumber - totalInventory;
+				  for (WmsDeliveryOrderDetail deliveryOrderDetail : deliveryOrderDetailList) {
+					if (deliveryOrderNumber <= 0D) {
+						break;
+					}
+					Double tmpDeliveryNumber =  deliveryOrderDetail.getPlanQuantityBu().doubleValue() - deliveryOrderDetail.getDelivedQuantityBu().doubleValue();
+					if (deliveryOrderNumber -  tmpDeliveryNumber > 0) {
+						deliveryOrderNumber -= tmpDeliveryNumber;
+						if(null != qtyMap.get("GD_SL")){//工单
+							createWmsArrivalDelivery(deliveryOrderDetail, tmpDeliveryNumber, productionOrder.getBeginDate());
+						}else{//预留单
+							createWmsArrivalDelivery(deliveryOrderDetail, tmpDeliveryNumber, reservedOrder.getJzrq());
+						}
+						deliveryOrderDetail.addTheDeliveryQuantityBu(tmpDeliveryNumber);
+					} else {
+						if(null != qtyMap.get("GD_SL")){//工单
+							createWmsArrivalDelivery(deliveryOrderDetail, deliveryOrderNumber, productionOrder.getBeginDate());
+						}else{
+							createWmsArrivalDelivery(deliveryOrderDetail, deliveryOrderNumber, reservedOrder.getJzrq());
+						}
+						
+						deliveryOrderDetail.addTheDeliveryQuantityBu(deliveryOrderNumber);
+						deliveryOrderNumber = 0D;
+					}
+					this.commonDao.store(deliveryOrderDetail);
+				}
+				  
+				if (deliveryOrderNumber > 0 ) {
+					WmsWarning wa = EntityFactory.getEntity(WmsWarning.class);
+			 		wa.setType(WmsWarningType.QTXYZ);
+			 		wa.setStatus(WmsWarningStatus.OPEN);
+			 		wa.setWarningInfo("物料编码: "+itemCode +" 工厂: "+factory.getName()+
+			 				"根据库存与交货单计算,本次生产计划还缺货"+deliveryOrderNumber);
+			 		WebServiceHelper.println(wa.getWarningInfo());
+			 		commonDao.store(wa);
+				}  
+			  
+			}
+		}
+		//取预留总计划数 X
+		 
+	}
+	private List<WmsReservedOrderDetail> findReservedOrderDetail(){
+		 //当前日期加两天
+		 String date = DateUtil.formatDateYMDToStr(DateUtil.addDayToDate(new Date(), 2));
+		 String hql = "FROM WmsReservedOrderDetail wrd WHERE wrd.reservedOrder.jzrq <= "
+		 			+ "to_date(:date, 'yyyy-mm-dd') ORDER BY wrd.item.code ASC";
+		 List<WmsReservedOrderDetail> yl= this.commonDao.findByQuery(hql, "date",date );
+		 
+		 return yl;
+	}
+	
+	//Map<String,Map<String,Object>>   itemcode_GC - ['YL','GC','100']    List<Object[]>
+	private Map<String,Map<String,Object>> countOrderItemNumber(List<Long> productionOrderListIds){
+		String hql = "SELECT pod.item.code ,SUM(pod.planQuantityBu),pod.productionOrder.factory.id "
+				+ " FROM ProductionOrderDetail pod "
+				+ " WHERE pod.productionOrder.id IN (:productionOrderIds) "
+			      + " GROUP BY pod.item.code,pod.productionOrder.factory.id";
+		 List<Object[]> gd= this.commonDao.findByQuery(hql,"productionOrderIds",productionOrderListIds);
+		 
+		 //当前日期加两天
+		 String date = DateUtil.formatDateYMDToStr(DateUtil.addDayToDate(new Date(), 2));
+		 hql = "SELECT wrd.item.code ,SUM(wrd.quantity),wrd.factory.id "
+		 		+ "FROM WmsReservedOrderDetail wrd WHERE wrd.reservedOrder.jzrq <= "
+		 		+ "to_date(:date, 'yyyy-mm-dd') "
+			      + " GROUP BY wrd.item.code,wrd.factory.id";
+		 List<Object[]> yl= this.commonDao.findByQuery(hql,"date",date );
+		 
+		 Map<String,Map<String,Object>> all = new HashMap<String,Map<String,Object>>() ;
+		 
+		 for(Object[] obj : gd) {
+			 String itemCode = (String)obj[0];
+			 Double qty = (Double)obj[1];
+			 Long fac_id = (Long)obj[2];
+			 
+			 String key = itemCode+"#VTRADEX#"+fac_id;
+			 if(all.get(key)==null) {
+				 all.put(key, new HashMap<String,Object>());
+			 }
+			 Map<String,Object> map = all.get(key);
+			 map.put("GD_SL", qty);
+			 all.put(key, map);
+		 }
+		 for(Object[] obj : yl) {
+			 String itemCode = (String)obj[0];
+			 Double qty = (Double)obj[1];
+			 Long fac_id = (Long)obj[2];
+			 String key = itemCode+"#VTRADEX#"+fac_id;
+			 if(all.get(key)==null) {
+				 all.put(key, new HashMap<String,Object>());
+			 }
+			 Map<String,Object> map = all.get(key);
+			 map.put("YL_SL", qty);
+			 all.put(key, map);
+			
+		 }
+		 
+		 return all;
+	}
+	
+	private List<ProductionOrderDetail> findProductionOrderDetailByPoId(List<Long> productionOrderListIds,String itemCode,Long factoryId){
+		String hql = " FROM ProductionOrderDetail pod WHERE pod.item.code =:itemCode "
+						+ " AND pod.productionOrder.factory.id =:factoryId "
+						+ " AND  pod.productionOrder.id IN (:productionOrderIds) "
+						+ " ORDER BY pod.productionOrder.id ASC ";
+		return this.commonDao.findByQuery(hql, new String[]{"itemCode","factoryId","productionOrderIds"}, new Object[]{itemCode,factoryId,productionOrderListIds});
+	}
+	
+	public void createWmsArrivalDelivery(WmsDeliveryOrderDetail deliveryOrderDetail,Double quantity,Date  deliveryDate){
+		WmsArrivalDelivery arrivalDelivery = EntityFactory.getEntity(WmsArrivalDelivery.class);
+		arrivalDelivery.setDeliveryOrderDetail(deliveryOrderDetail);
+		if (null == deliveryDate) {
+			arrivalDelivery.setDeliveryDate(new Date());
+		} else {
+			Calendar calendar=Calendar.getInstance();   
+			calendar.setTime(new Date()); 
+			calendar.set(Calendar.DAY_OF_MONTH,calendar.get(Calendar.DAY_OF_MONTH)-1);
+			arrivalDelivery.setDeliveryDate(calendar.getTime());
+		}
+		arrivalDelivery.setQuantity(quantity);
+		this.commonDao.store(arrivalDelivery);
+	}
+	
+	private void createWmsProductionOrderMeetInfo(Long detailId,String code,Date beginDate,Date endDate,
+								WmsItem item,Double qty,WmsPackageUnit unit,WmsSapFactory fac, Boolean beMeet,String orderType){
+		WmsProductionOrderMeetInfo pom = EntityFactory.getEntity(WmsProductionOrderMeetInfo.class);
+		pom.setBeMeet(beMeet);
+		pom.setCheckDate(new Date());
+		pom.setType(orderType);
+		pom.setDetailId(detailId);
+		pom.setOrderCode(code);
+		pom.setBeginDate(beginDate);
+		pom.setEndDate(endDate);
+		pom.setItem(item);
+		pom.setPlanQty(qty);
+		pom.setPackageUnit(unit);
+		pom.setFactory(fac);
+		this.commonDao.store(pom);
+	}
+	
+	
+	public ProductionOrder findProductionOrderByCode(String ProductionOrderCode){
+		String hql = " FROM ProductionOrder po WHERE po.code =:code "
+						+ " AND po.status in(:status)";
+		return (ProductionOrder) this.commonDao.findByQueryUniqueResult(hql, new String[]{"code","status"}, new Object[]{ProductionOrderCode,Arrays.asList(ProductionOrderStatus.OPEN,ProductionOrderStatus.ACTIVE)});
+	}
+	
+	
+	
+	/**
+	 * 批量导入PO
+	 */
+    public void importPurchaseOrderFile(File file){
+    	
+    	List<SapPo> sapPo = readPurchaseOrderFromExcel(file);
+    	if(sapPo.size() == 0){
+    		throw new BusinessException("导入的数据为空，或者是错误的数据，请重新维护数据");
+    	}
+    	SapPoArray spa = new SapPoArray();
+    	spa.setSapPos(sapPo.toArray(new SapPo[]{}));
+    	spa.setTYPE("01");
+    	spa.setROWCNT(sapPo.size()+"");
+    	spa.setMESSAGEID(new Date().toLocaleString());
+    	sapRowDataDealManager.dealSapPoOrders(spa);
+		
+	}
+	
+	
+	private List<SapPo> readPurchaseOrderFromExcel(File file){
+		
+		List<SapPo> sapPo = new ArrayList<SapPo>();
+		List<Map<String,Object>> infos = ExcelHelper.parseExcel2List(file);
+		for(Map<String,Object> info : infos){
+			String LINENO = (String) info.get("行号");
+			String EBELN = (String) info.get("采购订单号");
+			String BSART = (String) info.get("采购订单类型");
+			String AEDAT = (String) info.get("订单创建日期");
+			String ERNAM = (String) info.get("订单创建人");
+			String LIFNR = (String) info.get("供应商编码");
+			String EKORG = (String) info.get("采购组织");
+			String EKGRP = (String) info.get("采购组");
+			String EBELP = (String) info.get("项目");
+			String LOEKZ = (String) info.get("删除标识");
+			String PSTYP = (String) info.get("项目类别");
+			String MATNR = (String) info.get("物料号");
+			String TXZ01 = (String) info.get("物料描述");
+			String WERKS = (String) info.get("工厂");
+			String LGORT = (String) info.get("库存地点");
+			String MENGE = (String) info.get("订单数量");
+			String MEINS = (String) info.get("订单单位");
+			String RETPO = (String) info.get("退货标识");
+			String INSMK = (String) info.get("状态");
+			
+			
+			if(StringHelper.isNullOrEmpty(EBELN) 
+			   ||  StringHelper.isNullOrEmpty(BSART)
+			   ||  StringHelper.isNullOrEmpty(AEDAT)
+			   ||  StringHelper.isNullOrEmpty(ERNAM)
+			   ||  StringHelper.isNullOrEmpty(LIFNR)
+			   ||  StringHelper.isNullOrEmpty(EKORG)
+			   ||  StringHelper.isNullOrEmpty(EKGRP)
+			   ||  StringHelper.isNullOrEmpty(EBELP)
+			   ||  StringHelper.isNullOrEmpty(PSTYP)
+			   ||  StringHelper.isNullOrEmpty(MATNR)
+			   ||  StringHelper.isNullOrEmpty(TXZ01)
+			   ||  StringHelper.isNullOrEmpty(WERKS)
+			   ||  StringHelper.isNullOrEmpty(LGORT)
+			   ||  StringHelper.isNullOrEmpty(MENGE)
+			   ||  StringHelper.isNullOrEmpty(MEINS)){
+				continue;				
+			}
+			
+			
+	
+			SapPo sap = new SapPo();
+			
+			sap.setLINENO(LINENO);
+			sap.setEBELN(EBELN);
+			sap.setBSART(BSART);
+			sap.setAEDAT(AEDAT);
+			sap.setERNAM(ERNAM);
+			sap.setLIFNR(LIFNR);
+			sap.setEKORG(EKORG);
+			sap.setEKGRP(EKGRP);
+			sap.setEBELP(EBELP);
+			sap.setLOEKZ(LOEKZ);
+			sap.setPSTYP(PSTYP);
+			sap.setMATNR(MATNR);
+			sap.setTXZ01(TXZ01);
+			sap.setWERKS(WERKS);
+			sap.setLGORT(LGORT);
+			sap.setMENGE(MENGE);
+			sap.setMEINS(MEINS);
+			sap.setRETPO(RETPO);
+			sap.setINSMK(INSMK);
+			
+			sapPo.add(sap);
+		
+		}
+		
+		return sapPo;
+		
+	}
+	
+	
+	//交货单批量导入
+	public void importWmsDeliveryOrderFile(File file){
+		
+        List<SapDeliveryOrder> deliveryOrders = readWmsDeliveryOrderFromExcel(file);
+        
+        if(deliveryOrders.size() == 0){
+    		throw new BusinessException("导入的数据为空，或者是错误的数据，请重新维护数据");
+    	}
+    	
+        SapDeliveryOrderArray doa = new SapDeliveryOrderArray();
+        doa.setSpoas(deliveryOrders.toArray(new SapDeliveryOrder[]{}));
+        doa.setTYPE("I");
+        doa.setROWCNT(deliveryOrders.size()+"");
+        doa.setMESSAGEID(new Date().toLocaleString());
+    	sapRowDataDealManager.dealSapDeliveryOrder(doa);
+	}
+	
+	
+	
+	
+	private List<SapDeliveryOrder> readWmsDeliveryOrderFromExcel(File file){
+		
+		List<SapDeliveryOrder>  deliveryOrders = new ArrayList<SapDeliveryOrder>();
+		
+		List<Map<String,Object>> infos = ExcelHelper.parseExcel2List(file);
+		
+		for(Map<String,Object> info : infos){
+			String LINENO = (String) info.get("行号");
+			String VBELN = (String) info.get("采购交货号");
+			String ERNAM = (String) info.get("创建者");
+			String ERDAT = (String) info.get("创建日期");
+			String BLDAT = (String) info.get("凭证日期");
+			String LFART = (String) info.get("交货类型");
+			String LIFNR = (String) info.get("供应商编码");
+			String TCODE = (String) info.get("事物代码");
+			String POSNR = (String) info.get("项目");
+			String MATNR = (String) info.get("物料号");
+			String WERKS = (String) info.get("工厂");
+			String LGORT = (String) info.get("库存地点");
+			String LFIMG = (String) info.get("交货数量");
+			String MEINS = (String) info.get("基本单位");
+			String VGBEL = (String) info.get("参考凭证");
+			String VGPOS = (String) info.get("参考凭证行项目");
+			String DABMG = (String) info.get("实际交货量");
+			String WBSTK = (String) info.get("货物移动状态");
+			
+			
+			if(StringHelper.isNullOrEmpty(VBELN) 
+					   ||  StringHelper.isNullOrEmpty(ERNAM)
+					   ||  StringHelper.isNullOrEmpty(ERDAT)
+					   ||  StringHelper.isNullOrEmpty(BLDAT)
+					   ||  StringHelper.isNullOrEmpty(LFART)
+					   ||  StringHelper.isNullOrEmpty(LIFNR)
+					   ||  StringHelper.isNullOrEmpty(TCODE)
+					   ||  StringHelper.isNullOrEmpty(POSNR)
+					   ||  StringHelper.isNullOrEmpty(MATNR)
+					   ||  StringHelper.isNullOrEmpty(WERKS)
+					   ||  StringHelper.isNullOrEmpty(LGORT)
+					   ||  StringHelper.isNullOrEmpty(LFIMG)
+					   ||  StringHelper.isNullOrEmpty(MEINS)
+					   ||  StringHelper.isNullOrEmpty(VGBEL)
+					   ||  StringHelper.isNullOrEmpty(VGPOS)){
+						continue;				
+					}
+			
+			
+			
+			SapDeliveryOrder deliveryOrder = new SapDeliveryOrder();
+			
+			deliveryOrder.setLINENO(LINENO);
+			deliveryOrder.setVBELN(VBELN);
+			deliveryOrder.setERNAM(ERNAM);
+			deliveryOrder.setERDAT(ERDAT);
+			deliveryOrder.setBLDAT(BLDAT);
+			deliveryOrder.setLFART(LFART);
+			deliveryOrder.setLIFNR(LIFNR);
+			deliveryOrder.setTCODE(TCODE);
+			deliveryOrder.setPOSNR(POSNR);
+			deliveryOrder.setMATNR(MATNR);
+			deliveryOrder.setWERKS(WERKS);
+			deliveryOrder.setLGORT(LGORT);
+			deliveryOrder.setLFIMG(LFIMG);
+			deliveryOrder.setMEINS(MEINS);
+			deliveryOrder.setVGBEL(VGBEL);
+			deliveryOrder.setVGPOS(VGPOS);
+			deliveryOrder.setDABMG(DABMG);
+			deliveryOrder.setWBSTK(WBSTK);
+			
+			deliveryOrders.add(deliveryOrder);;
+		
+		}
+		return deliveryOrders;		
+	}
+
+	@Override
+	public void unActiveDeliveryOrder(WmsDeliveryOrder deliveryOrder) {
+		//销售交货单生效会生成拣货单,所以生效要删除对应的拣货单
+		if(deliveryOrder.getBillTypeName().equals(WmsDeliveryOrderBillType.XSBILLTYPE)){
+			List<Long> deliverDetailId = new ArrayList<Long>();//交货单明细ID
+			List<Long> middleTableId = new ArrayList<Long>();//交货单明细与拣货单明细管理表
+			List<Long> pdtId = new ArrayList<Long>();//拣货单明细ID
+			List<Long> pickIds = new ArrayList<Long>();//拣货单ID
+			
+			
+			for(WmsDeliveryOrderDetail detail : deliveryOrder.getDetails()){
+				deliverDetailId.add(detail.getId());
+			}
+			String hql = "select d.id,d.pickticketDetail.id,d.pickticketDetail.pickTicket.id  "
+					+ "from DeliveryOrderDetailPtDetail d "
+					+ "where d.deliveryOrderDetail.id in (:ids)";
+			List<Object[]> idValues = commonDao.findByQuery(hql,"ids",deliverDetailId);
+			
+			for(Object[] obj : idValues){
+				middleTableId.add((Long)obj[0]);
+				pdtId.add((Long)obj[1]);
+				pickIds.add((Long)obj[2]);
+			}
+			
+			hql = "from WmsPickTicket p where status<>'OPEN' AND status<>'CLOSED' and p.id in (:ids)";
+			List<WmsPickTicket> pickTickets = commonDao.findByQuery(hql,"ids",pickIds);//已经作业的拣货单
+			if(pickTickets.size() > 0){
+				throw new BusinessException("拣货单已经作业,交货单无法失效");
+			}
+			
+			hql = "from WmsPickTicket p where status='OPEN' and p.id in (:ids)";
+			pickTickets = commonDao.findByQuery(hql,"ids",pickIds);//打开或者关闭的拣货单
+			
+			//删除交货单明细和拣货单明细对应关系表的数据
+			hql = "delete from DeliveryOrderDetailPtDetail w where w.id in (:ids)";
+			commonDao.executeByHql(hql, "ids", middleTableId);
+			
+			//删除bol明细,拣货单明细以及批次信息
+			deleteRelatePickData(pdtId,null,"交货单");
+			
+			//删除拣货单
+			commonDao.deleteAll(pickTickets);
+			
+			
+			/**由于仓单拉动可能生成新的拣货单,所以和老的拣货单失去了关联,这里在找老拣货单*/
+			hql = "select w.id from WmsPickTicket w where w.userField3=:userField3 "
+					+ "and w.relatedBill1=:relatedBill1 and w.allocateQty=0";
+			
+			List<Long> pickTicketIds = commonDao.findByQuery(hql,
+					new String[]{"userField3","relatedBill1"},
+					new Object[]{WmsPickticketGenType.XSJHD,deliveryOrder.getCode()});
+			if(pickTicketIds.size() > 0){
+				hql = "select w.id from WmsPickTicketDetail w where w.pickTicket.id in (:ids)";
+				List<Long> detailIds = commonDao.findByQuery(hql, "ids", pickTicketIds);
+				
+				if(detailIds.size() > 0){
+					//删除拣货单明细、bol明细、批次信息
+					deleteRelatePickData(detailIds,pickTicketIds,"交货单");
+				}
+				
+			}
+		}
+	}
+	
+	/**删除拣货明细以及关联的数据  例如bol明细和批次信息*/
+	public void deleteRelatePickData(List<Long> pdtId,List<Long> pickIds,String type){
+		if(pdtId.size() > 0){
+			//删除拣货单明细的批次信息
+			String hql = "delete from WmsPickTicketDetailRequire w where w.pickTicketDetail.id in (:ids)";
+			commonDao.executeByHql(hql, "ids", pdtId);
+			//删除BOL明细
+			hql = "delete from WmsBolDetail w where w.pickTicketDetail.id in (:ids)";
+			commonDao.executeByHql(hql, "ids", pdtId);
+			
+			//删除拣货单明细
+			hql = "delete from WmsPickTicketDetail w where w.id in (:ids)";
+			commonDao.executeByHql(hql, "ids", pdtId);
+			
+			if(null != pickIds && pickIds.size() > 0){
+				//删除拣货单
+				hql = "delete from WmsPickTicket w where w.id in (:id)";
+				commonDao.executeByHql(hql, "id", pickIds);
+			}
+		}else{//如果拣货明细ID为空,写入日志,方便检查
+			logger.error("========="+type+"失效->拣货单明细ID为空===========");
+		}	
+	}
+}

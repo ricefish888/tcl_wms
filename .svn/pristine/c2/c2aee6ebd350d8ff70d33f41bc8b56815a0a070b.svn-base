@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="detailShipQuickShippingPage">
+    <main/>
+    <detail>
+    	<process id="wmsTclWorkDocProcess">
+            <tableCommit id="detailShip" title="detailShip" process="wmsTclWorkDocProcess.detailShip" enableType="single" closeTransactional="false">
+                <enableExpression><![CDATA[${workDoc.userField2}=='LINE_EDGE']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsTclWorkDocManager" methodName="detailShipQuickShippingTask" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+        </process>
+    </detail>
+</page>

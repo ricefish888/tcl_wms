@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ASN收货输入页面模板 -->
+<RFFormPage id="tclDeliveryAllOutRFPage2" title="tclDeliveryAllOutRFPage2">
+	<RFDisplay id="AllDisplay" load="tclRfDeliveryManager.showdeliveryInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			作业单号: 
+			{deliveryCodeInput}
+			{itemInfos}
+		  
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>
+			作业单号: 
+			{deliveryCodeInput}
+			{itemInfos}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="userNameInput" title="userNameInput" tip="userNameInput" onFoucs="true">
+			</RFText>
+			<RFText id="pswInput" title="pswInput" tip="pswInput" onFoucs="false">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="deliveryOutCommitBt" title="deliveryOutCommitBt" action="tclRfDeliveryManager.deliveryOutCommit" validate="" onFoucs="false"/>
+			<RFButton id="cancelOutBt" title="cancelOutBt" action="tclRfDeliveryManager.cancelOut" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

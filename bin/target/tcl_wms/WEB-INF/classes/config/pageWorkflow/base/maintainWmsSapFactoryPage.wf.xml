@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsSapFactoryPage">
+    <main>
+        <process id="sapFactoryProcess">
+            <tablePopup id="new" title="new" process="sapFactoryProcess.new" enableType="none" containId="false" maintain="false" pageId="editSapFactoryPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="edit" title="edit" process="sapFactoryProcess.edit" enableType="single" containId="true" pageId="editSapFactoryPage">
+            </tablePopup>
+            <tableCommit id="enable" title="enable" process="sapFactoryProcess.enable" enableType="multi" download="false">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="disable" title="disable" process="sapFactoryProcess.disable" enableType="multi" download="false" confirmMessage="是否确认失效此条记录？">
+                <mappings/>
+                <actions/>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

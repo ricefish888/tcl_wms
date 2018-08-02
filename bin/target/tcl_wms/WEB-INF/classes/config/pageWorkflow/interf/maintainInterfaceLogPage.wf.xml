@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainInterfaceLogPage">
+    <main>      
+        <process id="interfaceProcess">
+            <tablePopup id="view" title="view" process="interfaceProcess.view" enableType="single" containId="true" pageId="viewInterfaceLogPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="invokeMethod" title="invokeMethod" process="interfaceProcess.view" enableType="none" multiMapping="false" download="false">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                     <action managerName="productionOrderManager" methodName="invokeMethod" />
+                </actions>
+                <forwards/>
+            </tableCommit>
+        </process>
+    </main>
+</page>

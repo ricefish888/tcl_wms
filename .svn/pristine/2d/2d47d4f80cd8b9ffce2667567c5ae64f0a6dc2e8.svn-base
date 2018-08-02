@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 盘点登记输入库位 -->
+<RFFormPage id="tclCountPlanRFListPage1" title="tclCountPlanRFListPage1">
+	<RFDisplay id="countPlanLocationDisplay" load="tclRfCountPlanManager.showLocationCode">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			库位:{locCode}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>	
+			库位:{locCode}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="countPlanLocationInput" title="countPlanLocationInput" tip=""
+				 onFoucs="true">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="countPlanLocationScan" title="countPlanLocationScan" action="tclRfCountPlanManager.locationInputCommit" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

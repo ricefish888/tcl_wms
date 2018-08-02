@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editPutawayWorkDocPage">
+    <main>
+        <process id="wmsTclPutawayWorkDocProcess">
+            <formCommit id="save" title="save" process="wmsTclPutawayWorkDocProcess.modify" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="none">
+                <enableExpression/>
+                <mappings>
+                </mappings>
+                <actions>
+                    <action managerName="wmsTclWorkDocManager" methodName="modifyKeeper" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="closeWindow" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 按货品计划移位输入库位 -->
+<RFFormPage id="TclMovePlanBySkuLocationPage2" title="TclMovePlanBySkuLocationPage2">
+	<RFDisplay id="movePlanBySkuDisplay" load="tclRfNPMoveBySkuManager.showItemCode">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+		    移位单号:{moveCode}		
+			库位:{locCode}
+			货品编码:{itemCode}
+			货品名称:{itemName}
+			货品条码:{itemBarCode}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>	
+			移位单号:{moveCode}		
+			库位:{locCode}
+			货品编码:{itemCode}
+			货品名称:{itemName}
+			货品条码:{itemBarCode}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="movePlanBySkuItemInput" title="movePlanBySkuItemInput" tip=""
+				 onFoucs="true">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="movePlanBySkuItemScan" title="movePlanBySkuItemScan" action="tclRfNPMoveBySkuManager.itemInputCommit" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.order.WmsTransportOrderDetail" table="WMS_TRANSPORT_ORDER_DETAIL">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">TSEQ_WMSTRANSPORT_ORDERDETAIL</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        <discriminator column="DISCRIMINATOR" type="string"/>
+        <version name="version" column="VERSION" type="long"></version>  
+  
+		<many-to-one name="transportOrder" class="com.vtradex.wms.server.model.entity.order.WmsTransportOrder">
+			<column name="TRANSPORT_ORDER_ID" not-null="true" />
+		</many-to-one>
+		
+		<property name="lineNo" column="LINE_NO" type="integer"/>	
+		
+		<many-to-one name="item" class="com.vtradex.wms.server.model.entity.item.WmsItem">
+			<column name="ITEM_ID" not-null="true" />
+		</many-to-one>
+		
+		<many-to-one name="packageUnit" class="com.vtradex.wms.server.model.entity.item.WmsPackageUnit">
+			<column name="PACKAGEUNIT_ID" not-null="true" />
+		</many-to-one>
+		<property name="quantity" column="QUANTITY" type="double"/>
+		<property name="receiveQty" column="RECEIVE_QTY" type="double"/>
+		<property name="oldQuantity" column="OLD_QUANTITY" type="double"/>
+		
+		<many-to-one name="deliveryOrderDetail" class="com.vtradex.wms.server.model.entity.production.WmsDeliveryOrderDetail">
+			<column name="DELIVERY_ORDERDETAIL_ID" not-null="true" />
+		</many-to-one>
+		
+		<property name="remark" column="REMARK" type="string" length="255"/>
+		<property name="status" column="STATUS" type="string" length="50"/>
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+	</class>
+</hibernate-mapping>

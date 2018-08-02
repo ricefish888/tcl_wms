@@ -1,0 +1,39 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title></title>
+		</head>
+		<script type="text/JavaScript">
+			function queryClick(){
+				var url = "*.htmlServlet";
+				var xmlHttp = new XMLHttpRequest();
+				xmlHttp.open("POST",url,false);
+				xmlHttp.onreadystatechange=function() 	{
+					alert(xmlHttp.readyState + "--" + xmlHttp.status);
+					if (xmlHttp.readyState==4 && xmlHttp.status==200) {
+						alert(xmlHttp.responseText);
+					  document.getElementById("content").html=xmlHttp.responseText;
+					}
+				}
+				xmlHttp.send(null);
+			}
+
+	</script>
+
+	<body>
+
+		<div id="pop-up-form2">
+			<div id="pop-up-onlytree">
+				<div id="tree-scrol-div">
+					<div id="pop-up-tree-content"
+						style="width: 245px; height: 340px; overflow: auto;">
+						<input name="dealer" id="dealer" type="text" />
+						<input name="search" id="search" type="button" value="查询" onClick="queryClick();" />
+					</div>
+					<div id="content">
+                        ssssssss
+					</div>
+				</div>
+			</div>
+		
+	</body>

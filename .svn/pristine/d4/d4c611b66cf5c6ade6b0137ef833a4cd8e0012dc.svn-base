@@ -1,0 +1,175 @@
+package com.vtradex.wms.server.model.entity.production;
+
+import com.vtradex.thorn.server.annotation.UniqueKey;
+import com.vtradex.thorn.server.model.VersionalEntity;
+import com.vtradex.wms.server.model.entity.item.WmsItem;
+import com.vtradex.wms.server.model.entity.item.WmsPackageUnit;
+import com.vtradex.wms.server.utils.DoubleUtils;
+
+/***
+ * 生产订单明细
+ * @author administrator
+ *
+ */
+public class ProductionOrderDetail extends VersionalEntity {
+	
+	private static final long serialVersionUID = 4741167940102225365L;
+
+	@UniqueKey
+	private ProductionOrder productionOrder;
+	
+	@UniqueKey
+	private Integer lineNo;
+	
+	private WmsItem item;
+	
+	/**组件项目号*/
+	private String bomCode;
+	
+	/**计划数量*/
+	private Double planQuantityBu=0D;
+	
+	/**处理后计划数量*/
+	public Double dealDlanQuantityBu=0D;
+	
+	/**已分配数量BU*/
+	public Double allocatedQuantityBu=0D;
+	
+	/**已经拣货数量BU*/
+	public Double pickedQuantityBu=0D;
+	
+	/**已发运数量BU*/
+	public Double shippedQuantityBu=0D;
+	
+	/** 包装单位*/
+	private WmsPackageUnit packageUnit; //都用最小包装来下发
+	
+	private String remark;
+
+    public ProductionOrder getProductionOrder() {
+        return productionOrder;
+    }
+
+    public void setProductionOrder(ProductionOrder productionOrder) {
+        this.productionOrder = productionOrder;
+    }
+
+    public Integer getLineNo() {
+        return lineNo;
+    }
+
+    public void setLineNo(Integer lineNo) {
+        this.lineNo = lineNo;
+    }
+
+    public WmsItem getItem() {
+        return item;
+    }
+
+    public void setItem(WmsItem item) {
+        this.item = item;
+    }
+
+    public String getBomCode() {
+        return bomCode;
+    }
+
+    public void setBomCode(String bomCode) {
+        this.bomCode = bomCode;
+    }
+
+    public Double getPlanQuantityBu() {
+        return planQuantityBu;
+    }
+
+    public void setPlanQuantityBu(Double planQuantityBu) {
+        this.planQuantityBu = planQuantityBu;
+    }
+
+    public Double getDealDlanQuantityBu() {
+        return dealDlanQuantityBu;
+    }
+
+    public void setDealDlanQuantityBu(Double dealDlanQuantityBu) {
+        this.dealDlanQuantityBu = dealDlanQuantityBu;
+    }
+
+    public Double getAllocatedQuantityBu() {
+        return allocatedQuantityBu;
+    }
+
+    public void setAllocatedQuantityBu(Double allocatedQuantityBu) {
+        this.allocatedQuantityBu = allocatedQuantityBu;
+    }
+
+    public Double getPickedQuantityBu() {
+        return pickedQuantityBu;
+    }
+
+    public void setPickedQuantityBu(Double pickedQuantityBu) {
+        this.pickedQuantityBu = pickedQuantityBu;
+    }
+
+    public Double getShippedQuantityBu() {
+        return shippedQuantityBu;
+    }
+
+    public void setShippedQuantityBu(Double shippedQuantityBu) {
+        this.shippedQuantityBu = shippedQuantityBu;
+    }
+
+    public WmsPackageUnit getPackageUnit() {
+        return packageUnit;
+    }
+
+    public void setPackageUnit(WmsPackageUnit packageUnit) {
+        this.packageUnit = packageUnit;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public void addAllocatedQuantityBu(Double qty) {
+        this.allocatedQuantityBu = DoubleUtils.add(this.allocatedQuantityBu, qty);
+    }
+    
+    public void subAllocatedQuantityBu(Double qty) {
+        this.allocatedQuantityBu = DoubleUtils.sub(this.allocatedQuantityBu, qty);
+    }
+    public void addPickedQuantityBu(Double qty) {
+        this.pickedQuantityBu = DoubleUtils.add(this.pickedQuantityBu, qty);
+    }
+    
+    public void subPickedQuantityBu(Double qty) {
+        this.pickedQuantityBu = DoubleUtils.sub(this.pickedQuantityBu, qty);
+    }
+    
+    public void addShippedQuantityBu(Double qty) {
+        this.shippedQuantityBu = DoubleUtils.add(this.shippedQuantityBu, qty);
+    }
+
+    /**
+     * 获取未分配数量
+     */
+    public Double getUnAllocateQty() {
+        return DoubleUtils.sub(this.planQuantityBu, this.allocatedQuantityBu) ;       
+    }
+    /**
+     * 获取拣货
+     */
+    public Double getUnPickedQty() {
+        return DoubleUtils.sub(this.allocatedQuantityBu, this.pickedQuantityBu) ;       
+    }
+    
+    /**
+     * 获取未发运
+     */
+    public Double getUnShippedQty() {
+        return DoubleUtils.sub(this.pickedQuantityBu, this.shippedQuantityBu) ;       
+    }
+}

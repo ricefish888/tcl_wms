@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsCountPlanPage">
+    <main>
+        <process id="countPlanProcess">
+            <tablePopup id="view" title="view" process="countPlanProcess.view" enableType="single" containId="true" pageId="viewWmsCountDetailPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="new" title="new" process="countPlanProcess.new" enableType="none" containId="false" pageId="editWmsCountPlanPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="edit" title="edit" process="countPlanProcess.edit" enableType="single" containId="true" pageId="modifyWmsCountDetailPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="active" title="active" process="countPlanProcess.active" enableType="multi" download="false" closeTransactional="true" confirmMessage="confirm.active">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsCountPlanManager" methodName="active" parameter="obj"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="unActive" title="unActive" process="countPlanProcess.unActive" enableType="multi" download="false" closeTransactional="false" confirmMessage="confirm.unActive">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsCountPlanManager" methodName="unActive" parameter="obj"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+            <tablePopup id="countUpdate" title="countUpdate" process="countPlanProcess.countUpdate" enableType="single" containId="true" pageId="maintainWmsCountRecordPage">
+                <enableExpression><![CDATA[${countPlan.status} == 'ACTIVE' || ${countPlan.status} == 'COUNTING']]></enableExpression>
+            </tablePopup>
+            <!-- <tableCommit id="beCounted" title="beCounted" process="countPlanProcess.beCounted" enableType="multi" download="false" closeTransactional="true" confirmMessage="confirm.beCounted">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsCountPlanManager" methodName="beCounted" parameter="obj"/>
+                </actions>
+                <forwards/>
+            </tableCommit> -->
+            <tableCommit id="close" title="close" process="countPlanProcess.close" enableType="multi" multiMapping="false" download="false" closeTransactional="false" confirmMessage="confirm.close">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <!-- <action managerName="wmsCountPlanManager" methodName="close" parameter="obj"/> -->
+                    <action managerName="wmsTclCountPlanManager" methodName="close" parameter="obj"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="cancel" title="cancel" process="countPlanProcess.cancel" enableType="multi" multiMapping="false" download="false" closeTransactional="false" confirmMessage="confirm.cancelCount">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                </actions>
+                <forwards/>
+            </tableCommit>
+            <tablePopup id="viewWmsCountAdjustWarningType" title="viewWmsCountAdjustWarningType" process="countPlanProcess.viewWmsCountAdjustWarningType" enableType="single" containId="true" pageId="maintainWmsCountAdjustWarningPage">
+                <enableExpression><![CDATA[${countPlan.status} == 'FINISHED']]></enableExpression>
+            </tablePopup>
+        </process>
+    </main>
+    <detail/>
+</page>

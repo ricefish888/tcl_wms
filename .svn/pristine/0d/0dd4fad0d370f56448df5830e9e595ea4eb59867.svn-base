@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainPurchaseOrderPage" title="maintainPurchaseOrderPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.order.PurchaseOrder" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT purchaseOrder.id,
+purchaseOrder.code,
+purchaseOrder.supplier.code,
+purchaseOrder.supplier.name,
+purchaseOrder.sapFactory.code,
+purchaseOrder.sapFactory.name,
+purchaseOrder.bsart,
+purchaseOrder.creatDate,
+purchaseOrder.ekorg,
+purchaseOrder.ekgrp,
+purchaseOrder.qty,
+purchaseOrder.receiveQty,
+purchaseOrder.actualDate,
+purchaseOrder.startReceivedDate,
+purchaseOrder.endReceivedDate,
+purchaseOrder.fromCode,
+purchaseOrder.fromName,
+purchaseOrder.fromContact.telephone,
+purchaseOrder.fromContact.mobile,
+purchaseOrder.fromContact.address,
+purchaseOrder.status,
+purchaseOrder.updateInfo.creator,
+purchaseOrder.updateInfo.createdTime,
+purchaseOrder.updateInfo.lastOperator,
+purchaseOrder.updateInfo.updateTime,
+purchaseOrder.confirmor,
+purchaseOrder.confirmTime,
+purchaseOrder.receiver,
+purchaseOrder.receiveTime,
+purchaseOrder.confirmStatus,
+purchaseOrder.userField1,
+purchaseOrder.userField2 
+ FROM PurchaseOrder purchaseOrder 
+LEFT JOIN purchaseOrder.warehouse warehouse 
+LEFT JOIN purchaseOrder.sapFactory sapFactory
+ WHERE 1=1 
+ ORDER BY purchaseOrder.id DESC
+ ]]></datasource>
+        <columns>
+            <column id="purchaseOrder.id" title="purchaseOrder.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="purchaseOrder.code" title="purchaseOrder.code" visible="true" width="200" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.supplier.code" title="purchaseOrder.supplier.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.supplier.name" title="purchaseOrder.supplier.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.sapFactory.code" title="purchaseOrder.sapFactory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.sapFactory.name" title="purchaseOrder.sapFactory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.bsart" title="purchaseOrder.bsart" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.creatDate" title="purchaseOrder.creatDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="purchaseOrder.ekorg" title="purchaseOrder.ekorg" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.ekgrp" title="purchaseOrder.ekgrp" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.qty" title="purchaseOrder.qty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="6"/>
+            <column id="purchaseOrder.receiveQty" title="purchaseOrder.receiveQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="6"/>
+            <column id="purchaseOrder.actualDate" title="purchaseOrder.actualDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" format="dateFormat"/>
+            <column id="purchaseOrder.startReceivedDate" title="purchaseOrder.startReceivedDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" format="dateFormat"/>
+            <column id="purchaseOrder.endReceivedDate" title="purchaseOrder.endReceivedDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" format="dateFormat"/>
+            <column id="purchaseOrder.fromCode" title="purchaseOrder.fromCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.fromName" title="purchaseOrder.fromName" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.fromContact.telephone" title="purchaseOrder.fromContact.telephone" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.fromContact.mobile" title="purchaseOrder.fromContact.mobile" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.fromContact.address" title="purchaseOrder.fromContact.address" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.status" title="purchaseOrder.status" width="150" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="PurchaseOrderStatus"/>
+            <column id="purchaseOrder.updateInfo.creator" title="purchaseOrder.updateInfo.creator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.updateInfo.createdTime" title="purchaseOrder.updateInfo.createdTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="purchaseOrder.updateInfo.lastOperator" title="purchaseOrder.updateInfo.lastOperator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.updateInfo.updateTime" title="purchaseOrder.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="purchaseOrder.confirmor" title="purchaseOrder.confirmor" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.confirmTime" title="purchaseOrder.confirmTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="purchaseOrder.receiver" title="purchaseOrder.receiver" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.receiveTime" title="purchaseOrder.receiveTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="purchaseOrder.confirmStatus" title="purchaseOrder.confirmStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="ConfirmStatus"/>
+            <column id="purchaseOrder.userField1" title="purchaseOrder.userField1" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.userField2" title="purchaseOrder.userField2" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+        </columns>
+    </maintainPage>
+</pages>

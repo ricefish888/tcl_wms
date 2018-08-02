@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editPutawayWorkDocPage" title="editPutawayWorkDocPage" entityClass="com.vtradex.wms.server.model.entity.workdoc.WmsWorkDoc" width="450" height="300">
+        <workflow/>
+        <inputUIs>
+       		<hidden id="workDoc.id"  reserve="false"/>
+            <remote id="workDoc.keeper.id" title="workDoc.keeper.id" row="2" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="editable" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,代码,名称" >
+                <visibleExpression/>
+                <hql><![CDATA[SELECT keeper.id, keeper.loginName, keeper.name
+ FROM ThornUser keeper
+ WHERE 
+ keeper.id in
+ (
+ 	SELECT u.id FROM ThornUser u,ThornGroup g
+ 	where u.id in elements(g.users)
+ 	AND g.code in ('VMICKBGY_GRP','CKBGY_GRP')
+ )
+ AND 
+ (keeper.loginName LIKE :param OR keeper.name LIKE :param)
+ ORDER BY keeper.id DESC ]]></hql>
+            </remote>
+            </inputUIs>
+    </editPage>
+</pages>

@@ -1,0 +1,107 @@
+package com.vtradex.wms.webservice.utils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.vtradex.thorn.server.exception.BusinessException;
+import com.vtradex.wms.server.model.entity.base.WmsSupplier;
+import com.vtradex.wms.server.model.entity.email.EmailRecordType;
+import com.vtradex.wms.server.utils.StringHelper;
+
+public class EmailHelper {
+
+    /**获取发邮件抄送的地址*/
+    public static String getEmailCc() {
+    	
+    	return getEmailCc("");
+    	
+    }
+    /**获取发邮件抄送的地址*/
+    public static String getEmailCc(String type) {
+//    	return "cc@tcl.com";
+    	return ""; //TCL反馈不需要抄送给固定邮箱。
+    }
+    
+    /**获取邮件主题*/
+    public static String getTheme(String type,String code) {
+    	if(EmailRecordType.PO2SUPPLIER.equals(type)) {
+    		return "采购订单"+code+"下发通知";
+    	}
+    	else if(EmailRecordType.DELIVERY2SUPPLIER.equals(type)) {
+    		return "交货单"+code+"下发通知";
+    	}
+    	else if(EmailRecordType.SUPPLIER_ACCOUNT.equals(type)) {
+    		return "供应商"+code+"账号创建通知";
+    	}
+    	else if(EmailRecordType.CHECKBZSUPPLIER.equals(type)){
+    		return "标准对账单"+code+"下发通知";
+    	}
+    	else if(EmailRecordType.CHECKJSSUPPLIER.equals(type)){
+    		return "寄售对账单"+code+"下发通知";
+    	}
+    	else {
+    		return code;
+    	}
+    }
+    
+    /**获取邮件内容
+     * infos 是占位符的内容
+     * */
+    public static String getEmailContent(String type, List<String> infos) {
+    	String content = "";
+    	if(EmailRecordType.PO2SUPPLIER.equals(type)) {
+    		content= "采购订单{0}已下发到供应商门户平台，请及时登录接收并确认。";
+    	}
+    	else if(EmailRecordType.DELIVERY2SUPPLIER.equals(type)) {
+    		content= "交货单{0}已下发到供应商门户平台，请及时登录接收并确认。";
+    	}
+    	else if(EmailRecordType.SUPPLIER_ACCOUNT.equals(type)) {
+    		content = "供应商账号{0}密码{1}创建成功，请及时登录。";
+    	}
+    	else if(EmailRecordType.CHECKBZSUPPLIER.equals(type)){
+    		content = "标准对账单{0}已下发到供应商门户平台，请及时登录接收并确认。";
+    	}
+    	else if(EmailRecordType.CHECKJSSUPPLIER.equals(type)){
+    		content = "寄售对账单{0}已下发到供应商门户平台，请及时登录接收并确认。";
+    	}
+    	if(infos == null) {
+    		infos=new ArrayList<String>();
+    	}
+    	int i=0;
+    	for(String s : infos) {
+    		content = content.replace("{"+i+"}", s);
+    		i++;
+    	}
+    	return content;
+    }
+    private static boolean checkEmail(String emailaddress) {
+    	return emailaddress.indexOf("@")>0;
+    }
+    /**邮箱验证生成*/
+    public static String getEmailAddress(WmsSupplier supplier){
+		boolean f = false;
+		StringBuffer sb = new StringBuffer();
+		if(!StringHelper.isNullOrEmpty(supplier.getEmail1())){
+			 f = checkEmail(supplier.getEmail1());
+			 if(!f){
+				throw new BusinessException("邮箱格式不正确!!");
+			}
+			sb.append(supplier.getEmail1()+"|");
+		}
+		if(!StringHelper.isNullOrEmpty(supplier.getEmail2())){
+			f = checkEmail(supplier.getEmail2());
+			if(!f){
+				throw new BusinessException("邮箱格式不正确!!");
+			}
+			sb.append(supplier.getEmail2()+"|");
+		}
+		if(!StringHelper.isNullOrEmpty(supplier.getEmail3())){
+			f = checkEmail(supplier.getEmail3());
+			if(!f){
+				throw new BusinessException("邮箱格式不正确!!");
+			}
+			sb.append(supplier.getEmail3()+"|");
+		}
+		return sb.toString();
+    }
+}

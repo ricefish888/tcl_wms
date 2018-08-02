@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editReceiveConfirmAllPage" title="editReceiveConfirmAllPage" entityClass="com.vtradex.wms.server.model.entity.receiving.WmsASN" width="200" height="150" onClose="refreshParent">
+        <workflow/>
+        <initListeners/>
+        <inputUIs>
+            <hidden id="asn.id" title="asn.id" reserve="false"/>
+            <hidden id="asn.company.id" title="asn.company.id" reserve="false"/>
+            <remote id="workerId" title="workerId" row="1" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,编码,名称">
+                <visibleExpression/>
+                <hql><![CDATA[ SELECT worker.id,
+ worker.code,
+ worker.name
+ FROM WmsWorker worker
+ WHERE worker.code LIKE :param
+ AND worker.status='ENABLED' ]]></hql>
+                <eventListeners/>
+            </remote>
+          
+        </inputUIs>
+    </editPage>
+</pages>

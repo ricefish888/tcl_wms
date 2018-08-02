@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editTclWmsInventoryZGChangePage" title="editTclWmsInventoryZGChangePage" entityClass="com.vtradex.wms.server.model.entity.inventory.WmsInventory" width="400" height="350">
+        <workflow/>
+        <initListeners>
+        </initListeners>
+        <inputUIs>
+            <hidden id="inventory.id" title="inventory.id" reserve="false"/>
+            <hidden id="inventory.itemKey.id" title="inventory.itemKey.id" reserve="false"/>
+             <list id="inventory.itemKey.lotInfo.extendPropC10" title="inventory.itemKey.lotInfo.extendPropC10" row="1" col="1" span="1" width="120" readOnly="true" required="false" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+			    <visibleExpression/>
+			    <hql><![CDATA[
+			    SELECT
+ factory.code,
+ factory.name
+ FROM WmsSapFactory factory
+ WHERE 1=1 
+ AND factory.status = 'ENABLED'					
+ order by factory.id desc
+			     ]]></hql>
+			</list>  
+			
+            <list id="newFactoryCode" title="inventory.itemKey.lotInfo.extendPropC11" row="1" col="2" span="1" width="120" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+			    <visibleExpression/>
+			    <hql><![CDATA[
+			    SELECT
+ factory.code,
+ factory.name
+ FROM WmsSapFactory factory
+ WHERE 1=1 
+ AND factory.status = 'ENABLED'		
+ 	AND (	
+ 			'2000'=${inventory.itemKey.lotInfo.extendPropC10} and factory.code in('1000','1100')
+			 		OR '2100'=${inventory.itemKey.lotInfo.extendPropC10} and factory.code in('1000','1100')
+			 		OR '1100'=${inventory.itemKey.lotInfo.extendPropC10} and factory.code in('2000','2100')
+			 		OR '1000'=${inventory.itemKey.lotInfo.extendPropC10} and factory.code in('2000','2100')
+ 		)
+ order by factory.id desc
+			     ]]></hql> 
+			</list> 
+			<numberText id="inventory.qty" title="inventory.qty" row="2" col="1" span="1" readOnly="true" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+            	<visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </numberText>
+            <numberText id="qty" title="qty" row="2" col="2" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+            	<visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </numberText>
+			
+        </inputUIs>
+    </editPage>
+</pages>

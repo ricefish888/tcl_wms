@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editTclWmsInventoryAllocationPage">
+    <main>      
+        <process id="wmsInventoryProcess">
+            <formCommit id="allocation" title="wmsInventoryAllocation" process="wmsInventoryProcess.allocation" enableType="none" download="false" confirmMessage="是否确认调拨？">
+                <enableExpression/>
+                <mappings>
+                    
+                	<mapping id="qty" className="double">
+                        <entries/>
+                    </mapping>
+                    
+                    <mapping id="inventoryStatusId" className="long">
+                        <entries/>
+                    </mapping>
+                    
+                    <mapping id="locationId" className="long">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsTclInventoryManageManager" methodName="changeStatus" parameter="obj,qty,inventoryStatusId,locationId"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+</page>

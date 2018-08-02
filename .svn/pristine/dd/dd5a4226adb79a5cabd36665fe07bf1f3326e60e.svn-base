@@ -1,0 +1,597 @@
+package com.vtradex.wms.rfserver.service.count.pojo;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.vtradex.rf.common.RfConstant;
+import com.vtradex.rf.common.exception.RfBusinessException;
+import com.vtradex.thorn.client.utils.StringUtils;
+import com.vtradex.thorn.server.service.pojo.DefaultBaseManager;
+import com.vtradex.wms.rfserver.service.count.TclRfCountPlanManager;
+import com.vtradex.wms.server.helper.WmsBarCodeParse;
+import com.vtradex.wms.server.model.entity.count.WmsCountDetail;
+import com.vtradex.wms.server.model.entity.count.WmsCountDetailStatus;
+import com.vtradex.wms.server.model.entity.count.WmsCountPlan;
+import com.vtradex.wms.server.model.entity.count.WmsCountRecord;
+import com.vtradex.wms.server.model.entity.item.WmsCompany;
+import com.vtradex.wms.server.model.entity.item.WmsInventoryState;
+import com.vtradex.wms.server.model.entity.item.WmsItem;
+import com.vtradex.wms.server.model.entity.warehouse.WmsLocation;
+import com.vtradex.wms.server.model.enums.BaseStatus;
+import com.vtradex.wms.server.service.count.WmsCountPlanManager;
+
+/**
+ * 
+ * 
+ * @ClassName: TclRfCountPlanManager
+ * 
+ * @author jianxiang.hang
+ *
+ * @date 2017年8月24日 上午09:52:38 
+ *
+ * @Description: 盘点登记
+ */
+public class DefaultTclRfCountPlanManager extends DefaultBaseManager implements TclRfCountPlanManager{
+
+	private WmsCountPlanManager wmsCountPlanManager;
+	public DefaultTclRfCountPlanManager(
+			WmsCountPlanManager wmsCountPlanManager){
+		this.wmsCountPlanManager = wmsCountPlanManager;
+	}
+	
+	/**
+	 * 
+	 * @Title: showLocationCode
+	 * 
+	 * @Description: 按库位的盘点动线号(查询盘点明细为待分配状态)，从小到大提示库位
+	 *
+	 * @return Map    
+	 *
+	 * @throws 
+	 *
+	 * @author wencheng.liu
+	 *
+	 * @date 2016年9月5日 上午10:17:07
+	 */
+	@Override
+	public Map showLocationCode(Map countPlanMap) throws RfBusinessException{
+		Map<String, Object> result = new HashMap<String, Object>();
+		Long countPlanId=countPlanMap.get("countPlanId") == null ? null : Long
+				.valueOf(countPlanMap.get("countPlanId").toString());
+		if(null==countPlanId){
+			countPlanId = countPlanMap.get(RfConstant.ENTITY_ID) == null ? null
+					: Long.valueOf(countPlanMap.get(RfConstant.ENTITY_ID).toString());
+		}
+	    //盘点表清单：按库位的盘点动线号(查询盘点明细为待分配状态)，从小到大提示库位
+	    String hql="from WmsCountDetail detail where detail.countPlan.id=:countPlan "
+	    		+ " and detail.status=:status order by detail.location.checkingSequence asc";
+	    List<WmsCountDetail> details=commonDao.findByQuery(hql,
+	    		new String[]{"countPlan","status"},
+	    		new Object[]{countPlanId,WmsCountDetailStatus.READY_ALLOCATE});
+	    if (details.size() <= 0) {
+			throw new RfBusinessException("没有盘点明细");
+		}
+	    WmsLocation location=commonDao.load(WmsLocation.class, details.get(0).getLocation().getId());
+	    result.put("locCode", location.getCode());
+		return result;
+	}
+
+	/**
+	 * 
+	 * @Title: locationInputCommit
+	 * 
+	 * @Description: 库位输入，校验
+	 *  允许实际扫描的库位不按照系统建议的顺序：
+     *  1）当实际扫描库位不在盘点计划里时，提示错误“该库位不在当前盘点计划内，请重新扫描库位！”；
+     *  2）当实际库位对应盘点明细正在盘点中时，提示”该库位正在盘点,请扫描其他库位！”；
+	 *  明细变成盘点中
+	 * @return Map    
+	 *
+	 * @throws 
+	 *
+	 * @author wencheng.liu
+	 *
+	 * @date 2016年9月5日 上午11:02:32
+	 */
+	@Override
+	public Map locationInputCommit(Map countPlanMap) throws RfBusinessException {
+		Map<String, Object> result = new HashMap<String, Object>();
+		Long countPlanId=countPlanMap.get("countPlanId") == null ? null : Long
+				.valueOf(countPlanMap.get("countPlanId").toString());
+		if(null==countPlanId){
+			countPlanId = countPlanMap.get(RfConstant.ENTITY_ID) == null ? null
+					: Long.valueOf(countPlanMap.get(RfConstant.ENTITY_ID).toString());
+		}
+	    String locCode = countPlanMap.get("countPlanLocationInput") == null?null:countPlanMap.get("countPlanLocationInput").toString();
+		if(locCode==null||"".equals(locCode)){
+			throw new RfBusinessException("库位不能为空");
+		}
+	    //盘点表清单：按库位的盘点动线号(查询盘点明细为待分配状态)，从小到大提示库位
+	    String hql="from WmsCountDetail detail where detail.countPlan.id=:countPlan "
+	    		+ " and detail.location.code=:location";
+	    List<WmsCountDetail> details=commonDao.findByQuery(hql,
+	    		new String[]{"countPlan","location"},
+	    		new Object[]{countPlanId,locCode});
+	    if (details.size() <= 0) {
+			throw new RfBusinessException("库位不在盘点计划中");
+		}
+	    
+	    WmsLocation location=commonDao.load(WmsLocation.class, details.get(0).getLocation().getId());
+	    //判断明细的当前状态
+	    if(WmsCountDetailStatus.COUNT.equals(details.get(0).getStatus())){
+	    	throw new RfBusinessException("库位已经在盘点中");
+	    }
+	    for(WmsCountDetail detail:details){
+	    	detail.setStatus(WmsCountDetailStatus.COUNT);
+	    	commonDao.store(detail);
+	    }
+	    //判断当前库位有没有盘点记录，没有则直接跳到增补盘点页面
+	    String countRecordHql="from WmsCountRecord record where record.countPlan.id=:countPlan "
+	    		+ " and record.location.code=:location order by record.item.id asc";
+	    List<WmsCountRecord> records=commonDao.findByQuery(countRecordHql, 
+	    		new String[]{"countPlan","location"}, new Object[]{countPlanId,locCode});
+	    
+	    //设置永久值
+	    Map<String, Object> perResult = new HashMap<String, Object>();
+	    if(records.size()<=0){
+	    	result.put(RfConstant.FORWARD_VALUE, "successToFive");//跳到增补盘点页面
+	    }else{
+	    	result.put(RfConstant.FORWARD_VALUE, "successToThree");//跳到下个页面
+	    	perResult.put("recordId", records.get(0).getId());
+	    }
+	    perResult.putAll(countPlanMap);
+	    perResult.put("countPlanId", countPlanId);
+	    perResult.put("locationId", location.getId());
+	    result.put(RfConstant.PERSISTENT_VALUE, perResult);
+		result.put(RfConstant.CLEAR_VALUE, "true");
+		return result;
+	}
+
+	/**
+	 * 
+	 * @Title: showItemCode
+	 * 
+	 * @Description: 显示货品名称代码
+	 *
+	 * @return Map    
+	 *
+	 * @throws 
+	 *
+	 * @author wencheng.liu
+	 *
+	 * @date 2016年9月5日 下午2:13:04
+	 */
+	@Override
+	public Map showItemCode(Map countPlanMap) throws RfBusinessException {
+		Map<String, Object> result = new HashMap<String, Object>();
+		Long recordId = countPlanMap.get("recordId") == null ? null : Long
+				.valueOf(countPlanMap.get("recordId").toString());
+		WmsCountRecord record=commonDao.load(WmsCountRecord.class, recordId);
+		WmsLocation location=commonDao.load(WmsLocation.class, record.getLocation().getId());
+		WmsItem item=commonDao.load(WmsItem.class, record.getItem().getId());
+		result.put("location", location.getCode());
+		result.put("itemCode", item.getCode());
+		result.put("itemName", item.getName());
+		return result;
+	}
+
+	/**
+	 * 
+	 * @Title: itemInputCommit
+	 * 
+	 * @Description: 校验货品
+	 *
+	 * @return Map    
+	 *
+	 * @throws 
+	 *
+	 * @author wencheng.liu
+	 *
+	 * @date 2016年9月5日 下午2:18:46
+	 */
+	@Override
+	public Map itemInputCommit(Map countPlanMap) throws RfBusinessException {
+		Map<String, Object> result = new HashMap<String, Object>();
+		Long recordId = countPlanMap.get("recordId") == null ? null : Long.valueOf(countPlanMap.get("recordId").toString());
+		WmsCountRecord record=commonDao.load(WmsCountRecord.class, recordId);
+		WmsItem countItem=commonDao.load(WmsItem.class, record.getItem().getId());
+		
+		String barCode = countPlanMap.get("countPlanItemInput") == null ? null : countPlanMap.get("countPlanItemInput").toString();
+		
+		if(StringUtils.isEmpty(barCode)){
+			throw new RfBusinessException("条码不能为空");
+		}
+		if(-1==barCode.indexOf("_")){
+			throw new RfBusinessException("条码格式不正确");
+		}
+		String hql = "FROM WmsCountRecord r WHERE r.lotInfo.extendPropC17 =:extendPropC17 AND r.countPlan.id=:countPlanId AND r.isCounted ='N' ";
+		List<WmsCountRecord> records = commonDao.findByQuery(hql, new String[]{"extendPropC17","countPlanId"}, new Object[]{barCode,record.getCountPlan().getId()});
+		if(records.isEmpty()){
+			throw new RfBusinessException("条码"+barCode+"不在盘点计划中");
+		}
+		Map map = WmsBarCodeParse.parse(barCode);
+		
+		String itemCode = (String)map.get(WmsBarCodeParse.KEY_ITEMCODE);
+		
+		WmsItem item = (WmsItem)commonDao.findByQueryUniqueResult("from WmsItem item where 1=1 and item.code=:ic", "ic",itemCode);
+		if(null==item){
+			throw new RfBusinessException("该物料不存在!!");
+		}
+		if(!countItem.getCode().equals(item.getCode())){
+			throw new RfBusinessException("物料"+item.getCode()+"不在盘点计划中");
+		}
+		/*if(!(itemCode.equals(item.getCode())
+				||itemCode.equals(item.getBarCode2())
+				||itemCode.equals(item.getBarCode()))){
+			throw new RfBusinessException("this.item.is.error.for.countPlan");
+		}*/
+		result.put(RfConstant.FORWARD_VALUE, "success");
+		//设置永久值
+	    Map<String, Object> perResult = new HashMap<String, Object>();
+	    perResult.putAll(countPlanMap);
+	    perResult.put("recordId", records.get(0).getId());
+	    perResult.put("countPlanNumberInput", records.get(0).getOriginalQty());
+	    result.put(RfConstant.PERSISTENT_VALUE, perResult);
+		result.put(RfConstant.CLEAR_VALUE, "true");
+		return result;
+	}
+
+	/**
+	 * 
+	 * @Title: countPlanItemForNullCommit
+	 * 
+	 * @Description: 缺货登记：及盘点数量为0
+	 * 盘点登记后，如果该库位还有未登记的盘点记录,则跳转至界面3并提示”登记成功”！
+	 * 盘点登记后，如果所有盘点记录已登记,则跳转至界面5并提示”登记成功”！
+	 * @return Map    
+	 *
+	 * @throws 
+	 *
+	 * @author wencheng.liu
+	 *
+	 * @date 2016年9月5日 下午2:25:08
+	 */
+	@Override
+	public Map countPlanItemForNullCommit(Map countPlanMap) throws RfBusinessException {
+		Map<String, Object> result = new HashMap<String, Object>();
+		Long countPlanId=countPlanMap.get("countPlanId") == null ? null : Long
+				.valueOf(countPlanMap.get("countPlanId").toString());
+		Long recordId = countPlanMap.get("recordId") == null ? null : Long
+				.valueOf(countPlanMap.get("recordId").toString());
+		WmsCountRecord record=commonDao.load(WmsCountRecord.class, recordId);
+		List <Double> number=new ArrayList<Double>();
+		number.add(0d);
+		try {
+			wmsCountPlanManager.record(record, number);
+		} catch (Exception e) {
+			throw new RfBusinessException(e.getMessage());
+		}
+		//判断当前库位是否还有未登记的货品
+		String countRecordHql="from WmsCountRecord record where record.countPlan.id=:countPlan "
+	    		+ " and record.location=:location "
+	    		+ " and record.updateInfo.updateTime=record.updateInfo.createdTime "
+	    		+ " order by record.item.id asc";
+		List<WmsCountRecord> records=commonDao.findByQuery(countRecordHql,
+				new String[]{"countPlan","location"}, 
+				new Object[]{countPlanId,record.getLocation()});
+		if(records.size()>0){
+			result.put(RfConstant.FORWARD_VALUE, "successToThree");//跳到输入货品页面
+			//重设永久值recordId
+		    Map<String, Object> perResult = new HashMap<String, Object>();
+		    perResult.putAll(countPlanMap);
+		    perResult.put("recordId", records.get(0).getId());
+		    perResult.put("countPlanItemInput", null);
+		    result.put(RfConstant.PERSISTENT_VALUE, perResult);
+			result.put(RfConstant.CLEAR_VALUE, "true");
+		}else{
+			result.put(RfConstant.FORWARD_VALUE, "successToFive");//跳到增补盘点页面
+		}
+		return result;
+	}
+
+	/**
+	 * 
+	 * @Title: showNumber
+	 * 
+	 * @Description: 显示原始数量
+	 *
+	 * @return Map    
+	 *
+	 * @throws 
+	 *
+	 * @author wencheng.liu
+	 *
+	 * @date 2016年9月5日 下午2:59:25
+	 */
+	@Override
+	public Map showNumber(Map countPlanMap) throws RfBusinessException {
+		Map<String, Object> result = new HashMap<String, Object>();
+		Long recordId = countPlanMap.get("recordId") == null ? null : Long
+				.valueOf(countPlanMap.get("recordId").toString());
+		WmsCountRecord record=commonDao.load(WmsCountRecord.class, recordId);
+		WmsLocation location=commonDao.load(WmsLocation.class, record.getLocation().getId());
+		WmsItem item=commonDao.load(WmsItem.class, record.getItem().getId());
+		result.put("location", location.getCode());
+		result.put("itemCode", item.getCode());
+		result.put("itemName", item.getName());
+		result.put("qty", record.getOriginalQty());
+		return result;
+	}
+
+	/**
+	 * 
+	 * @Title: confirmInputCommit
+	 * 
+	 * @Description:输入盘点数量
+	 *
+	 * @return Map    
+	 *
+	 * @throws 
+	 *
+	 * @author wencheng.liu
+	 *
+	 * @date 2016年9月5日 下午3:02:36
+	 */
+	@Override
+	public Map confirmInputCommit(Map countPlanMap) throws RfBusinessException {
+		Map<String, Object> result = new HashMap<String, Object>();
+		String number = countPlanMap.get("countPlanNumberInput") == null ? null
+				: countPlanMap.get("countPlanNumberInput").toString();
+		Double qty=0d;
+		if (null == number) {
+			throw new RfBusinessException("盘点数量不能为空");
+		}else{
+			//判断数字是否正确
+			try{
+				qty=Double.parseDouble(number);
+			}catch(Exception e){
+				throw new RfBusinessException("数量输入格式有误");
+			}
+			if(qty<0){
+				throw new RfBusinessException("数量不能小于0");
+			}
+		}
+		Long countPlanId=countPlanMap.get("countPlanId") == null ? null : Long
+				.valueOf(countPlanMap.get("countPlanId").toString());
+		Long recordId = countPlanMap.get("recordId") == null ? null : Long
+				.valueOf(countPlanMap.get("recordId").toString());
+		WmsCountRecord record=commonDao.load(WmsCountRecord.class, recordId);
+		List <Double> numbers=new ArrayList<Double>();
+		numbers.add(qty);
+		try {
+			wmsCountPlanManager.record(record, numbers);
+		} catch (Exception e) {
+			throw new RfBusinessException(e.getMessage());
+		}
+		//判断当前库位是否还有未登记的货品
+		String countRecordHql="from WmsCountRecord record where record.countPlan.id=:countPlan "
+	    		+ " and record.location=:location "
+	    		+ " and record.updateInfo.updateTime=record.updateInfo.createdTime "
+	    		+ " order by record.item.id asc";
+		List<WmsCountRecord> records=commonDao.findByQuery(countRecordHql,
+				new String[]{"countPlan","location"}, 
+				new Object[]{countPlanId,record.getLocation()});
+		if(records.size()>0){
+			result.put(RfConstant.FORWARD_VALUE, "successToThree");//跳到输入货品页面
+			//重设永久值recordId
+		    Map<String, Object> perResult = new HashMap<String, Object>();
+		    perResult.putAll(countPlanMap);
+		    perResult.put("recordId", records.get(0).getId());
+		    perResult.put("countPlanItemInput", null);
+		    perResult.put("countPlanNumberInput", null);
+		    result.put(RfConstant.PERSISTENT_VALUE, perResult);
+			result.put(RfConstant.CLEAR_VALUE, "true");
+		}else{
+			result.put(RfConstant.FORWARD_VALUE, "successToFive");//跳到增补盘点页面
+		}
+		return result;
+	}
+
+	/**
+	 * 
+	 * @Title: showInsertLocationCode
+	 * 
+	 * @Description: 盘点增补输入货品页面显示库位
+	 *
+	 * @return Map    
+	 *
+	 * @throws 
+	 *
+	 * @author wencheng.liu
+	 *
+	 * @date 2016年9月5日 下午3:30:42
+	 */
+	@Override
+	public Map showInsertLocationCode(Map countPlanMap) throws RfBusinessException {
+		Map<String, Object> result = new HashMap<String, Object>();
+		String locCode = countPlanMap.get("countPlanLocationInput") == null ? null
+				: countPlanMap.get("countPlanLocationInput").toString();
+		result.put("location", locCode);
+		return result;
+	}
+
+	/**
+	 * 
+	 * @Title: countInsertItemInputCommit
+	 * 
+	 * @Description: 校验货品是否存在
+	 *
+	 * @return Map    
+	 *
+	 * @throws 
+	 *
+	 * @author wencheng.liu
+	 *
+	 * @date 2016年9月5日 下午3:33:56
+	 */
+	@Override
+	public Map countInsertItemInputCommit(Map countPlanMap) throws RfBusinessException {
+		Map<String, Object> result = new HashMap<String, Object>();
+		String itemCode = countPlanMap.get("countInsertItemInput") == null ? null
+				: countPlanMap.get("countInsertItemInput").toString();
+		if(StringUtils.isEmpty(itemCode)){
+			throw new RfBusinessException("物料编码不能为空");
+		}
+		Long countPlanId=countPlanMap.get("countPlanId") == null ? null : Long
+				.valueOf(countPlanMap.get("countPlanId").toString());
+		WmsCountPlan countPlan=commonDao.load(WmsCountPlan.class, countPlanId);
+		WmsCompany company=commonDao.load(WmsCompany.class, countPlan.getCompany().getId());
+		String hql="from WmsItem item where item.masterGroup=:masterGroup "
+				+ " and item.code =:itemCode  "
+				+ " and item.status=:status";
+		List<WmsItem>items=commonDao.findByQuery(hql, 
+				new String[]{"masterGroup","itemCode","status"}, 
+				new Object[]{company.getMasterGroup(),itemCode,BaseStatus.ENABLED});
+		if(items.size()<=0){
+			throw new RfBusinessException("物料不存在");
+		}
+		result.put(RfConstant.FORWARD_VALUE, "success");
+		//重设永久值itemId
+	    Map<String, Object> perResult = new HashMap<String, Object>();
+	    perResult.putAll(countPlanMap);
+	    perResult.put("itemId", items.get(0).getId());
+	    result.put(RfConstant.PERSISTENT_VALUE, perResult);
+		result.put(RfConstant.CLEAR_VALUE, "true");
+		return result;
+	}
+
+	/**
+	 * 
+	 * @Title: showCountInsertNumber
+	 * 
+	 * @Description:输入盘点增补数量页面显示
+	 *
+	 * @return Map    
+	 *
+	 * @throws 
+	 *
+	 * @author wencheng.liu
+	 *
+	 * @date 2016年9月5日 下午4:39:41
+	 */
+	@Override
+	public Map showCountInsertNumber(Map countPlanMap) throws RfBusinessException {
+		Map<String, Object> result = new HashMap<String, Object>();
+		String locCode = countPlanMap.get("countPlanLocationInput") == null ? null
+				: countPlanMap.get("countPlanLocationInput").toString();
+		Long itemId=countPlanMap.get("itemId") == null ? null : Long
+				.valueOf(countPlanMap.get("itemId").toString());
+		WmsItem item=commonDao.load(WmsItem.class, itemId);
+		result.put("location", locCode);
+		result.put("itemCode", item.getCode());
+		result.put("itemName", item.getName());
+		result.put("qty", 0d);
+		return result;
+	}
+
+	/**
+	 * 
+	 * @Title: countInsertNumberCommit
+	 * 
+	 * @Description: 盘点增补数量输入
+	 *
+	 * @return Map    
+	 *
+	 * @throws 
+	 *
+	 * @author wencheng.liu
+	 *
+	 * @date 2016年9月5日 下午4:43:56
+	 */
+	@Override
+	public Map countInsertNumberCommit(Map countPlanMap) throws RfBusinessException{
+		Map<String, Object> result = new HashMap<String, Object>();
+		String itemStateIdStr = countPlanMap.get("countItemState") == null ? null
+				: countPlanMap.get("countItemState").toString();
+		String number = countPlanMap.get("countInsertNumberInput") == null ? null
+				: countPlanMap.get("countInsertNumberInput").toString();
+		Long itemStateId = 0L;
+		String itemState = "-";
+		Double qty=0d;
+		try{
+			itemStateId=Long.parseLong(itemStateIdStr);
+			WmsInventoryState inventoryState = load(WmsInventoryState.class, itemStateId);
+			itemState = inventoryState.getName();
+		}catch(Exception e){
+			itemStateId = 0L;
+			itemState = "-";
+		}
+
+		if (StringUtils.isEmpty(number)) {
+			throw new RfBusinessException("数量不能为空");
+		}else{
+			//判断数字是否正确
+			try{
+				qty=Double.parseDouble(number);
+			}catch(Exception e){
+				throw new RfBusinessException("数量输入格式不正确");
+			}
+			if(qty<=0){
+				throw new RfBusinessException("数量不能小于0");
+			}
+		}
+		Long countPlanId=countPlanMap.get("countPlanId") == null ? null : Long
+				.valueOf(countPlanMap.get("countPlanId").toString());
+		Long locationId = countPlanMap.get("locationId") == null ? null : Long
+				.valueOf(countPlanMap.get("locationId").toString());
+		Long itemId=countPlanMap.get("itemId") == null ? null : Long
+				.valueOf(countPlanMap.get("itemId").toString());
+		WmsLocation location=commonDao.load(WmsLocation.class, locationId);
+		try {
+			wmsCountPlanManager.record(countPlanId,locationId,itemId,qty,itemState);
+		} catch (Exception e) {
+			throw new RfBusinessException(e.getMessage());
+		}
+		result.put(RfConstant.FORWARD_VALUE, "success");//跳到增补盘点页面
+		//重设永久值
+		Map<String, Object> perResult = new HashMap<String, Object>();
+		perResult.put("locationId", locationId);
+		perResult.put("countPlanLocationInput", location.getCode());
+		perResult.put("countPlanId", countPlanId);
+		result.put(RfConstant.PERSISTENT_VALUE, perResult);
+		result.put(RfConstant.CLEAR_VALUE, "true");
+		return result;
+	}
+
+	/**
+	 * 
+	 * @Title: changeLocation
+	 * 
+	 * @Description:切换库位
+	 *
+	 * @return Map    
+	 *
+	 * @throws 
+	 *
+	 * @author wencheng.liu
+	 *
+	 * @date 2016年9月5日 下午4:59:37
+	 */
+	@Override
+	public Map changeLocation(Map countPlanMap) throws RfBusinessException {
+		Map<String, Object> result = new HashMap<String, Object>();
+		//判断该盘点计划中是否还存在待分配的数据，有则跳到第二页，否则跳到第一页
+		Long countPlanId=countPlanMap.get("countPlanId") == null ? null : Long
+				.valueOf(countPlanMap.get("countPlanId").toString());
+		
+		String hql="from WmsCountDetail detail where detail.countPlan.id=:countPlan "
+		    		+ " and detail.status=:status order by detail.location.checkingSequence desc";
+		List<WmsCountDetail> details = commonDao.findByQuery(hql, new String[] {
+				"countPlan", "status" }, new Object[] { countPlanId,
+				WmsCountDetailStatus.READY_ALLOCATE });
+		//重设永久值
+		 Map<String, Object> perResult = new HashMap<String, Object>();
+		if(details.size()<=0){
+			//返回第一页，值全部情况
+			result.put(RfConstant.FORWARD_VALUE, "successToOne");
+		}else{
+			perResult.put("countPlanId", countPlanId);
+			result.put(RfConstant.FORWARD_VALUE, "successToTwo");
+		}
+		result.put(RfConstant.PERSISTENT_VALUE, perResult);
+		result.put(RfConstant.CLEAR_VALUE, "true");
+		return result;
+	}
+	
+}

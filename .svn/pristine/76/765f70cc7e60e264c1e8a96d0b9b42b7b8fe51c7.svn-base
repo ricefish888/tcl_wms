@@ -1,0 +1,281 @@
+package com.vtradex.wms.server.model.entity.inventory;
+
+import java.util.Date;
+
+import com.vtradex.thorn.server.model.Entity;
+import com.vtradex.wms.server.model.entity.base.WmsSapFactory;
+import com.vtradex.wms.server.model.entity.item.WmsItem;
+import com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse;
+/**
+ * 库存台账记录
+ * 收发回传SAP的统一用这一个表，到时需要什么字段再添加
+ * @author Administrator
+ *
+ */
+public class TclWmsInventoryLedger extends Entity{
+
+	private static final long serialVersionUID = 8772416826385952054L;
+	//仓库
+	private WmsWarehouse warehouse;
+	/**
+	 * 库存台账类型 
+	 * {@link TclWmsInventoryLedgerBillType}}
+	 */
+	private String billType;
+	//采购入库单号
+	private String poCode;
+	//凭证日期
+	private Date curDate;
+	//过账日期
+	private Date receiveDate;
+	//采购入库单行项目号
+	private String poLineNo;
+	/**
+	 * 移动类型 
+	 * {@link TclWmsMoveType}}
+	 */
+	private String moveType;
+	//物料
+	private WmsItem item;
+	//工厂
+	private WmsSapFactory sapFactory;
+	//库位
+	private String locationCode;
+	//供应商
+	private String supplierCode;
+	/**
+	 * 库存类型    标准，为空；寄售，则为K；
+	 */
+	private String invType;
+	//数量
+	private Double quantity;
+	//库存状态    空为非限制库存；X为待检库存；
+	private String invStatus;
+	//交货单号
+	private String doCode;
+	//交货单行项目号
+	private String doLineNo;
+	//描述
+	private String remark;
+	//单号编码--凭证号
+	private String code;
+	//凭证行项目 0001开始递增
+	private String lineNo;
+	//WMS单号
+	private String wmsCode;
+	//SAP回传的单号
+	private String sapCode;
+	
+//	//拣货单号--发货回传用
+//	private String pickCode;
+	
+	//质检库位--不良品存放
+	private String qcLocCode;
+	
+	//生产订单号
+	private String productionCode;
+	
+	//基本单位
+	private String baseUnit;
+	
+	//预留单号
+	private String reservedCode;
+	
+	//成本中心
+	private String costCenter;
+	
+	//预留项目
+	private String resProject;
+	
+	//收货工厂
+	private String recFatoryCode;
+	
+	//收货库存地点--传仓库编码
+	private String recWarehouse;
+	
+	private Boolean genXmlFlag = Boolean.FALSE;
+	
+	public String getWmsCode() {
+		return wmsCode;
+	}
+	public void setWmsCode(String wmsCode) {
+		this.wmsCode = wmsCode;
+	}
+	public Boolean getGenXmlFlag() {
+		return genXmlFlag;
+	}
+	public void setGenXmlFlag(Boolean genXmlFlag) {
+		this.genXmlFlag = genXmlFlag;
+	}
+	public String getRecWarehouse() {
+		return recWarehouse;
+	}
+	public void setRecWarehouse(String recWarehouse) {
+		this.recWarehouse = recWarehouse;
+	}
+	public String getRecFatoryCode() {
+		return recFatoryCode;
+	}
+	public void setRecFatoryCode(String recFatoryCode) {
+		this.recFatoryCode = recFatoryCode;
+	}
+	public String getResProject() {
+		return resProject;
+	}
+	public void setResProject(String resProject) {
+		this.resProject = resProject;
+	}
+	public String getCostCenter() {
+		return costCenter;
+	}
+	public void setCostCenter(String costCenter) {
+		this.costCenter = costCenter;
+	}
+	public String getReservedCode() {
+		return reservedCode;
+	}
+	public void setReservedCode(String reservedCode) {
+		this.reservedCode = reservedCode;
+	}
+	public String getBaseUnit() {
+		return baseUnit;
+	}
+	public void setBaseUnit(String baseUnit) {
+		this.baseUnit = baseUnit;
+	}
+	public String getProductionCode() {
+		return productionCode;
+	}
+	public void setProductionCode(String productionCode) {
+		this.productionCode = productionCode;
+	}
+	public String getQcLocCode() {
+		return qcLocCode;
+	}
+	public void setQcLocCode(String qcLocCode) {
+		this.qcLocCode = qcLocCode;
+	}
+	public String getLineNo() {
+		return lineNo;
+	}
+	public void setLineNo(String lineNo) {
+		this.lineNo = lineNo;
+	}
+	 
+	public String getBillType() {
+		return billType;
+	}
+	public void setBillType(String billType) {
+		this.billType = billType;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	 
+	public String getSapCode() {
+		return sapCode;
+	}
+	public void setSapCode(String sapCode) {
+		this.sapCode = sapCode;
+	}
+	public WmsWarehouse getWarehouse() {
+		return warehouse;
+	}
+	public void setWarehouse(WmsWarehouse warehouse) {
+		this.warehouse = warehouse;
+	}
+	public String getPoCode() {
+		return poCode;
+	}
+	public void setPoCode(String poCode) {
+		this.poCode = poCode;
+	}
+	public Date getCurDate() {
+		return curDate;
+	}
+	public void setCurDate(Date curDate) {
+		this.curDate = curDate;
+	}
+	public Date getReceiveDate() {
+		return receiveDate;
+	}
+	public void setReceiveDate(Date receiveDate) {
+		this.receiveDate = receiveDate;
+	}
+	public String getMoveType() {
+		return moveType;
+	}
+	public void setMoveType(String moveType) {
+		this.moveType = moveType;
+	}
+	public WmsItem getItem() {
+		return item;
+	}
+	public void setItem(WmsItem item) {
+		this.item = item;
+	}
+	public WmsSapFactory getSapFactory() {
+		return sapFactory;
+	}
+	public void setSapFactory(WmsSapFactory sapFactory) {
+		this.sapFactory = sapFactory;
+	}
+	public String getLocationCode() {
+		return locationCode;
+	}
+	public void setLocationCode(String locationCode) {
+		this.locationCode = locationCode;
+	}
+	public String getSupplierCode() {
+		return supplierCode;
+	}
+	public void setSupplierCode(String supplierCode) {
+		this.supplierCode = supplierCode;
+	}
+	public String getInvType() {
+		return invType;
+	}
+	public void setInvType(String invType) {
+		this.invType = invType;
+	}
+	public Double getQuantity() {
+		return quantity;
+	}
+	public void setQuantity(Double quantity) {
+		this.quantity = quantity;
+	}
+	public String getInvStatus() {
+		return invStatus;
+	}
+	public void setInvStatus(String invStatus) {
+		this.invStatus = invStatus;
+	}
+	public String getDoCode() {
+		return doCode;
+	}
+	public void setDoCode(String doCode) {
+		this.doCode = doCode;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public String getPoLineNo() {
+		return poLineNo;
+	}
+	public void setPoLineNo(String poLineNo) {
+		this.poLineNo = poLineNo;
+	}
+	public String getDoLineNo() {
+		return doLineNo;
+	}
+	public void setDoLineNo(String doLineNo) {
+		this.doLineNo = doLineNo;
+	}
+	
+}

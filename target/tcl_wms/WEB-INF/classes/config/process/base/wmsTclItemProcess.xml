@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="wmsTclItemProcess" control="status">
+
+	<task id="import" title="导入">
+	</task>
+
+	<task id="importFeilds" title="物料属性导入">
+	</task>
+
+	<task id="importUp" title="上架分配导入">
+	</task>
+
+	<task id="editScan" title="编码录入修改">
+	</task>
+</process>

@@ -1,0 +1,2 @@
+serviceClass: com.vtradex.thorn.client.rpc.CommitService
+path: 70B3412A5FC7121EBE42CB9BA90B7415.gwt.rpc

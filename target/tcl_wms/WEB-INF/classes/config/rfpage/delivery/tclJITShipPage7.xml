@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 查询列表页面模板 -->
+<RFListPage id="tclJITShipPage7" title="tclJITShipPage7">
+<RFSearchUI id="docCodeSearch" text="docCodeSearch" width="50" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="wid" title="wid" width="50" enumType="" hidden="true" />
+		<RFTh id="wcode" title="wcode" width="100" enumType="" hidden="false" />
+		<RFTh id="remark" title="remark" width="50" enumType="" hidden="false" />
+		<RFTh id="planQty" title="planQty" width="80" enumType="" hidden="false" />
+		<RFTh id="allocateQty" title="allocateQty" width="80" enumType="" hidden="false" />
+		<RFTh id="pickedQty" title="pickedQty" width="80" enumType="" hidden="false" />
+		<RFTh id="type" title="type" width="100" enumType="" hidden="false" />
+		<DataSource type="HQL">
+			<statement>
+				<![CDATA[
+				 SELECT workDoc.id as wid,
+					workDoc.code as wcode,
+					workDoc.userField4 as remark,
+					workDoc.qty as planQty,
+					workDoc.allocateQty as allocateQty,
+					workDoc.pickedQty as pickedQty,
+					case workDoc.userField3 when 'JIT_UPLINE_SETTLE' then 'JIT上线结算'
+					                        when 'JIT_DOWNLINE_SETTLE' then 'JIT下线结算' end as type 
+					 FROM WmsWorkDoc workDoc
+					 WHERE 1=1
+					 AND workDoc.userField3='JIT_UPLINE_SETTLE'
+					 AND workDoc.qty>0
+					 AND workDoc.keeper.id =#{SESSION_USERS}
+					 AND workDoc.status in('READY_ALLOCATE','ENABLED')
+					 AND workDoc.warehouse.baseOrganization.id = #{SESSION_BASE_ORGAN}
+					 /~docCodeSearch: AND workDoc.code like '%{docCodeSearch}%' ~/
+					 ORDER BY workDoc.id DESC
+				]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

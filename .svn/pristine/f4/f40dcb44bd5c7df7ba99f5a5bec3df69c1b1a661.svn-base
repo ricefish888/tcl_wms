@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 查询列表页面模板 -->
+<RFListPage id="tclCreateWorkDocPage" title="tclCreateWorkDocPage">
+	<RFSearchUI id="asnCodeSearch" text="asnCodeSearch" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="asnId" title="asnId" width="50" enumType="" hidden="true" />
+		<RFTh id="asnCode" title="asnCode" width="250" enumType="" hidden="false" />
+		<DataSource type="HQL">
+			<statement>
+			<![CDATA[
+				 SELECT 
+				 asn.id AS asnId,
+				 asn.code AS asnCode
+				 
+				 FROM WmsASN asn 
+				 WHERE 1=1 
+				 		AND asn.status in ('RECEIVED','RECEIVING')
+				 		AND asn.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN} 
+				 		AND asn.receiveQty-asn.putawayQty > 0
+				 		AND asn.code in(SELECT inv.relatedBillCode FROM WmsInventory inv WHERE inv.relatedBillCode = asn.code AND inv.location.id=asn.receiveLocation.id AND inv.operationStatus='NORMAL' 
+										AND inv.task IS NULL AND inv.qty > 0)
+						/~asnCodeSearch: AND asn.code like '%{asnCodeSearch}%' ~/
+				ORDER BY asn.updateInfo.createdTime asc
+			]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

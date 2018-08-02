@@ -1,0 +1,184 @@
+package com.vtradex.wms.server.model.entity.inventory;
+
+import java.util.Date;
+
+import com.vtradex.thorn.server.model.Entity;
+import com.vtradex.thorn.server.util.BeanUtils;
+import com.vtradex.wms.server.model.component.LotInfo;
+import com.vtradex.wms.server.model.entity.base.WmsFactoryXmlb;
+import com.vtradex.wms.server.model.entity.item.WmsItem;
+import com.vtradex.wms.server.model.entity.warehouse.WmsLocation;
+import com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse;
+
+/** 
+* @ClassName: 库存日结对象
+*/
+public class WmsStorageDaily extends Entity{
+
+	private static final long serialVersionUID = -8936539222400622513L;
+	
+	private WmsWarehouse warehouse;//仓库
+	
+	private String companyCode="0530";//公司代码
+	
+	private String factoryCode;//工厂	
+	
+	private String lgort;//库存地点
+	
+	private WmsItem item;//物料
+	
+	//批次属性
+	private LotInfo lotInfo;
+	//批次属性hashcode
+	private String lotInfoHashCode;
+	
+	private Date computeDate;//结转日期(库存日期)
+	
+	/**
+	 *{@link WmsFactoryXmlb}
+	 * */
+	private String pstyp;//库存类型 F为标准；K为寄售；
+	
+	private Double unlimCount = 0d;//非限制数量
+
+	private Double checkInventory = 0d;//质检库存
+
+	private Double startCount = 0d;//WMS期初数量 
+	
+	private Double inCount = 0d;//WMS入库数量
+	
+	private Double outCount = 0d;//WMS出库数量
+	
+	private Double endCount = 0d;//WMS期末数量 非限制数量+在途数量
+	
+	private WmsLocation location;//WMS库位
+
+	public String getCompanyCode() {
+		return companyCode;
+	}
+
+	public void setCompanyCode(String companyCode) {
+		this.companyCode = companyCode;
+	}
+
+	public String getFactoryCode() {
+		return factoryCode;
+	}
+
+	public void setFactoryCode(String factoryCode) {
+		this.factoryCode = factoryCode;
+	}
+
+	public String getLgort() {
+		return lgort;
+	}
+
+	public void setLgort(String lgort) {
+		this.lgort = lgort;
+	}
+	
+	public WmsWarehouse getWarehouse() {
+		return warehouse;
+	}
+
+	public void setWarehouse(WmsWarehouse warehouse) {
+		this.warehouse = warehouse;
+	}
+
+	public WmsItem getItem() {
+		return item;
+	}
+
+	public void setItem(WmsItem item) {
+		this.item = item;
+	}
+
+	public Date getComputeDate() {
+		return computeDate;
+	}
+
+	public void setComputeDate(Date computeDate) {
+		this.computeDate = computeDate;
+	}
+
+	public String getPstyp() {
+		return pstyp;
+	}
+
+	public void setPstyp(String pstyp) {
+		this.pstyp = pstyp;
+	}
+
+	public Double getUnlimCount() {
+		return unlimCount;
+	}
+
+	public void setUnlimCount(Double unlimCount) {
+		this.unlimCount = unlimCount;
+	}
+
+	public Double getCheckInventory() {
+		return checkInventory;
+	}
+
+	public void setCheckInventory(Double checkInventory) {
+		this.checkInventory = checkInventory;
+	}
+	 
+
+	public Double getStartCount() {
+		return startCount;
+	}
+
+	public void setStartCount(Double startCount) {
+		this.startCount = startCount;
+	}
+
+	public Double getInCount() {
+		return inCount;
+	}
+
+	public void setInCount(Double inCount) {
+		this.inCount = inCount;
+	}
+
+	public Double getOutCount() {
+		return outCount;
+	}
+
+	public void setOutCount(Double outCount) {
+		this.outCount = outCount;
+	}
+
+	public Double getEndCount() {
+		return endCount;
+	}
+	public void setEndCount(Double endCount) {
+		this.endCount = endCount;
+	}
+
+	public WmsLocation getLocation() {
+		return location;
+	}
+
+	public void setLocation(WmsLocation location) {
+		this.location = location;
+	}
+
+	public LotInfo getLotInfo() {
+		return lotInfo;
+	}
+
+	public void setLotInfo(LotInfo lotInfo) {
+		this.lotInfo = lotInfo;
+		this.lotInfoHashCode=BeanUtils.getFormat(this.lotInfo.stringValue());
+	}
+
+	public String getLotInfoHashCode() {
+		return lotInfoHashCode;
+	}
+
+	public void setLotInfoHashCode(String lotInfoHashCode) {
+		this.lotInfoHashCode = lotInfoHashCode;
+	}
+}

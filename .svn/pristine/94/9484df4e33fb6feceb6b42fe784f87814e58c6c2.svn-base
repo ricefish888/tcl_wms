@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="wmsTclItemProcess" control="status">
+
+	<task id="import" title="导入">
+	</task>
+	<task id="importFeilds" title="导入">
+	</task>
+
+</process>

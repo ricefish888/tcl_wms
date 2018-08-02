@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC
+        "-//SPRING//DTD BEAN//EN"
+        "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<bean id="tclRfAsnManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.rfserver.service.receiving.pojo.DefaultTclRfAsnManager" parent="baseManager" >	
+				<constructor-arg index="0">
+					<ref bean="wmsTclASNManager"></ref>
+				</constructor-arg>	
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="tclRfDeliveryManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.rfserver.service.delivery.pojo.DefaultTclRfDeliveryManager" parent="baseManager" >	
+				<constructor-arg index="0">
+					<ref bean="wmsBolManager"></ref>
+				</constructor-arg>	
+				<constructor-arg index="1">
+					<ref bean="wmsTclBolManager"></ref>
+				</constructor-arg>	
+				<constructor-arg index="2">
+					<ref bean="wmsTclWorkDocManager"></ref>
+				</constructor-arg>	
+				<constructor-arg index="3">
+					<ref bean="userManager"></ref>
+				</constructor-arg>	
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="tclRfOrderManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.rfserver.service.order.pojo.DefaultTclRfOrderManager" parent="baseManager" >	
+				<constructor-arg index="0">
+						<ref bean="wmsBussinessCodeManager"></ref>
+				</constructor-arg>		
+				<constructor-arg index="1">
+						<ref bean="workflowManager"></ref>
+				</constructor-arg>		
+				<constructor-arg index="2">
+						<ref bean="wmsTclASNManager"></ref>
+				</constructor-arg>		
+			</bean> 
+		</property>
+	</bean>
+	
+	<bean id="tclRfBolManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.rfserver.service.bol.pojo.DefaultTclRfBolManager" parent="baseManager" >
+				<constructor-arg index="0">
+						<ref bean="wmsBolManager"></ref>
+				</constructor-arg>		
+			</bean> 
+		</property>
+	</bean>
+	
+	<bean id="tclRfNPMoveBySkuManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.rfserver.service.move.pojo.DefaultTclRfNPMoveBySkuManager" parent="baseManager" >
+				<constructor-arg index="0">
+					<ref bean="wmsInventoryManageManager"></ref>
+				</constructor-arg>		
+				<constructor-arg index="1">
+					<ref bean="wmsWorkDocManager"></ref>
+				</constructor-arg>		
+			</bean> 
+		</property>
+	</bean>
+	
+	<bean id="tclRfPickticketManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.rfserver.service.pickticket.pojo.DefaultTclRfPickticketManager" parent="baseManager" >	
+				<constructor-arg index="0">
+					<ref bean="wmsWorkDocManager"></ref>
+				</constructor-arg>		
+			</bean> 
+		</property>
+	</bean>
+	
+	<bean id="tclRfinventoryQueryManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.rfserver.service.inventory.pojo.DefaultTclRfInventoryQueryManager" parent="baseManager" >
+			</bean> 
+		</property>
+	</bean>
+</beans>

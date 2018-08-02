@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsSapWarehousePage" title="maintainWmsSapWarehousePage" mainEntrance="true" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.base.WmsSapWarehouse">
+        <workflow/>
+        <datasource><![CDATA[SELECT sap.id,
+sapFactory.code,
+sapFactory.name,     
+sap.code,
+sap.name,
+sap.status
+ FROM WmsSapWarehouse sap
+LEFT JOIN sap.sapFactory sapFactory
+ WHERE 1=1  
+ ORDER BY sap.code]]></datasource>
+        <columns>
+            <column id="sap.id" title="sap.id" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="sapFactory.code" title="sapFactory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="sapFactory.name" title="sapFactory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="sap.code" title="sap.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="sap.name" title="sap.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="sap.status" title="sap.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsSapWarehouseStatus"/>
+        </columns>
+    </maintainPage>
+</pages>

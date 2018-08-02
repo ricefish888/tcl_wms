@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 按SKU上架|输入页面模板 -->
+<RFFormPage id="skuPutawayAllRFInputPage" title="skuPutawayAllRFInputPage">
+	<RFDisplay id="workDocDisplay" load="tclRfAsnManager.showWorkDocInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			作业单号: {docCode}
+			{docItemInfos}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>
+			作业单号: {docCode}
+			{docItemInfos}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<buttons>
+			<RFButton id="putawayAllCommit" title="putawayAllCommit" action="tclRfAsnManager.putawayAllCommit" validate="tclRfAsnManager.bePutawayAllCommit" onFoucs="false"/>
+		</buttons> 
+	</RFForm>
+</RFFormPage>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsSupplierASNDetailPage" title="maintainWmsSupplierASNDetailPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.receiving.WmsASNDetail" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT 
+asnDetail.id,
+asn.warehouse.name,
+asn.company.name,
+supplier.code,
+supplier.name,
+asn.code,
+asn.customerBill,
+deliveryOrder.code,
+deliveryOrder.deliveryDate,
+asnDetail.item.code,
+asnDetail.item.name,
+asn.billType.name,
+asn.userField7,
+asn.userField5,
+asn.qty,
+asn.receiveQty,
+asn.putawayQty,
+asn.quantityQty,
+asnDetail.lineNo,
+warehouse.name,
+factory.name,
+asnDetail.packageUnit.unit,
+asnDetail.expectedPackQty,
+asnDetail.expectedQty,
+asnDetail.expectedUnpackQty,
+asnDetail.shortQty,
+asnDetail.receivedQty,
+asnDetail.movedQty,
+asnDetail.lotInfo.storageDate,
+asnDetail.lotInfo.productDate,
+asnDetail.lotInfo.expireDate,
+asnDetail.lotInfo.lot,
+asnDetail.lotInfo.soiCode,
+asnDetail.lotInfo.asnCustomerBill,
+asnDetail.lotInfo.supplierCode,
+asnDetail.asn.userField5,
+asnDetail.lotInfo.serialNo,
+pd.po.code,
+asnDetail.label,
+asnDetail.lotInfo.extendPropC12,
+asnDetail.userField1,
+asnDetail.userField2,
+asnDetail.userField3,
+asnDetail.inventoryStatus,
+asnDetail.lotInfo.extendPropC17,
+po.code,
+asn.orderDate,
+asn.relatedBill1,
+asn.relatedBill2,
+asn.relatedBill3,
+asn.estimateDate,
+asn.actualDate,
+asn.startReceivedDate,
+asn.endReceivedDate,
+asn.receiveDock.name,
+asn.receiveLocation.code,
+asn.receiveLocation.type,
+asn.fromCode,
+asn.fromName,
+asn.fromContact.telephone,
+asn.fromContact.mobile,
+asn.fromContact.address,
+asn.updateInfo.creator,
+asn.updateInfo.createdTime,
+asn.updateInfo.lastOperator,
+asn.updateInfo.updateTime,
+keeper.name,
+asn.userField1,
+asn.userField2,
+asn.userField3,
+asn.userField4,
+asn.userField6,
+asn.userField8, 
+asn.status
+FROM WmsASNDetail asnDetail
+LEFT JOIN asnDetail.asn asn
+LEFT JOIN asnDetail.poDetail pd
+LEFT JOIN pd.po 
+LEFT JOIN asnDetail.transportOrderDetail.deliveryOrderDetail.factory factory
+LEFT JOIN asnDetail.transportOrderDetail.deliveryOrderDetail.deliveryOrder deliveryOrder
+LEFT JOIN asnDetail.transportOrderDetail.deliveryOrderDetail.deliveryOrder.warehouse warehouse
+LEFT JOIN asn.warehouse  
+LEFT JOIN asn.company company
+LEFT JOIN asn.billType billType
+LEFT JOIN asn.receiveDock receiveDock
+LEFT jOIN asn.receiveLocation receiveLocation
+LEFT JOIN asn.po po
+LEFT JOIN asn.supplier supplier
+LEFT JOIN asn.keeper keeper
+WHERE 1=1
+AND supplier.code=#{SESSION_LOGIN_NAME}
+AND billType.code='ZCRKD'
+ORDER BY asn.id DESC
+ ]]></datasource>
+        <columns>
+            <column id="asnDetail.id" title="asnDetail.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="asn.warehouse.name" title="asn.warehouse.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.company.name" title="asn.company.name" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>         
+            <column id="supplier.code" title="supplier.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>          
+            <column id="supplier.name" title="supplier.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.code" title="asn.code" visible="true" width="200" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.customerBill" title="asn.customerBill" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="deliveryOrder.code" title="deliveryOrder.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="deliveryOrder.deliveryDate" title="deliveryOrder.deliveryDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>    
+            <column id="asnDetail.item.code" title="asnDetail.item.code"  visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asnDetail.item.name" title="asnDetail.item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.billType.name" title="asn.billType.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.userField7" title="asn.userField7" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.userField5" title="asn.userField5" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsFactoryXmlb"/>
+            <column id="asn.qty" title="asn.qty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="6"/>
+            <column id="asn.receiveQty" title="asn.receiveQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="6"/>
+            <column id="asn.putawayQty" title="asn.putawayQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="6"/>
+            <column id="asn.quantityQty" title="asn.quantityQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="6"/>                
+            <column id="asnDetail.lineNo" title="asnDetail.lineNo" width="50" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+            <column id="warehouse.name" title="warehouse.name"  visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="factory.name" title="factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asnDetail.packageUnit.unit" title="asnDetail.packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asnDetail.expectedPackQty" title="asnDetail.expectedPackQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="asnDetail.expectedQty" title="asnDetail.expectedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="asnDetail.expectedUnpackQty" title="asnDetail.expectedUnpackQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="asnDetail.shortQty" title="asnDetail.shortQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="asnDetail.receivedQty" title="asnDetail.receivedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="asnDetail.movedQty" title="asnDetail.movedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="asnDetail.lotInfo.storageDate" title="asnDetail.lotInfo.storageDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date"/>
+            <column id="asnDetail.lotInfo.productDate" title="asnDetail.lotInfo.productDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date"/>
+            <column id="asnDetail.lotInfo.expireDate" title="asnDetail.lotInfo.expireDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date"/>
+            <column id="asnDetail.lotInfo.lot" title="asnDetail.lotInfo.lot" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asnDetail.lotInfo.soiCode" title="asnDetail.lotInfo.soiCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asnDetail.lotInfo.asnCustomerBill" title="asnDetail.lotInfo.asnCustomerBill" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asnDetail.lotInfo.supplierCode" title="asnDetail.lotInfo.supplierCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asnDetail.asn.userField5" title="asnDetail.asn.userField5" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsFactoryXmlb"/>
+            <column id="asnDetail.lotInfo.serialNo" title="asnDetail.lotInfo.serialNo" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="pd.po.code" title="pd.po.code" width="80" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asnDetail.label" title="asnDetail.label" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="asnDetail.lotInfo.extendPropC12" title="asnDetail.lotInfo.extendPropC12" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asnDetail.userField1" title="asnDetail.userField1" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asnDetail.userField2" title="asnDetail.userField2" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asnDetail.userField3" title="asnDetail.userField3" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asnDetail.inventoryStatus" title="asnDetail.inventoryStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asnDetail.lotInfo.extendPropC17" title="asnDetail.lotInfo.extendPropC17" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="po.code" title="po.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>            
+            <column id="asn.orderDate" title="asn.orderDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" format="dateFormat"  formatParam="y-m-d h:m:s"/>
+            <column id="asn.relatedBill1" title="asn.relatedBill1" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.relatedBill2" title="asn.relatedBill2" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.relatedBill3" title="asn.relatedBill3" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>   
+            <column id="asn.estimateDate" title="asn.estimateDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" format="dateFormat" formatParam="y-m-d h:m:s"/>
+            <column id="asn.actualDate" title="asn.actualDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" format="dateFormat"  formatParam="y-m-d h:m:s"/>
+            <column id="asn.startReceivedDate" title="asn.startReceivedDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="asn.endReceivedDate" title="asn.endReceivedDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/> 
+            <column id="asn.receiveDock.name" title="asn.receiveDock.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.receiveLocation.code" title="asn.receiveLocation.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.receiveLocation.type" title="asn.receiveLocation.type" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsLocationType"/>
+            <column id="asn.fromCode" title="asn.fromCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.fromName" title="asn.fromName" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.fromContact.telephone" title="asn.fromContact.telephone" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.fromContact.mobile" title="asn.fromContact.mobile" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.fromContact.address" title="asn.fromContact.address" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.updateInfo.creator" title="asn.updateInfo.creator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.updateInfo.createdTime" title="asn.updateInfo.createdTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="asn.updateInfo.lastOperator" title="asn.updateInfo.lastOperator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.updateInfo.updateTime" title="asn.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="keeper.name" title="keeper.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.userField1" title="asn.userField1" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.userField2" title="asn.userField2" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.userField3" title="asn.userField3" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.userField4" title="asn.userField4" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.userField6" title="asn.userField6" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="asn.userField8" title="asn.userField8" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsItemJITAtt"/>
+            <column id="asn.status" title="asn.status" width="150" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsASNStatus"/> 
+        </columns>
+    </maintainPage>
+</pages>

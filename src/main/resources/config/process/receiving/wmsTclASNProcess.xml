@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="wmsTclASNProcess" control="status">
+
+	<task id="label" title="刷新标签数量">
+	</task>
+	
+	<task id="printWmsASN" title="打印收货单">
+	</task>
+	
+	<task id="printWmsASNDetail" title="打印标签">
+	</task>
+	
+	
+	<task id="printSupplierWmsASN" title="直接打印标签">
+	</task>
+	
+	<task id="printSCTLD" title="打印生产退料单">
+	</task>
+	
+	<task id="printQTRKD" title="打印其他入库单">
+	</task>
+	
+	<task id="modifyKeeper" title="修改保管员">
+	</task>
+	
+	<task id="printSupplierWmsASNDetail" title="条码补打">
+	</task>
+	
+	<task id="closeDeliver" title="交货关闭">
+	</task>
+	
+	<task id="directPrintLabel" title="预览打印标签">
+	</task>
+	
+	<task id="printAsnLabel" title="标签打印">
+	</task>
+	
+</process>

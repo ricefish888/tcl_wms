@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.inventory.TclWmsInventoryLedger" table="TCL_WMSINVENTORY_LEDGER">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">TSEQ_TCL_WMSINVENTORY_LEDGER</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        <many-to-one name="warehouse" class="com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse">
+			<column name="WAREHOUSE_ID"/>
+		</many-to-one>
+        <many-to-one name="item" class="com.vtradex.wms.server.model.entity.item.WmsItem">
+			<column name="ITEM_ID"/>
+		</many-to-one>
+		<many-to-one name="sapFactory" class="com.vtradex.wms.server.model.entity.base.WmsSapFactory">
+			<column name="WMSSAPFACTORY_ID"  />
+		</many-to-one>	
+		<property name="poCode" column="PO_CODE" type="string" length="50"/>
+		<property name="curDate" type="date" column="CUR_DATE"/>
+		<property name="receiveDate" type="date" column="RECEIVE_DATE"/>
+		<property name="poLineNo" column="PO_LINENO" type="string" length="10"/>
+		<property name="moveType" column="MOVE_TYPE" type="string" length="10"/>
+		<property name="locationCode" column="LOCATION_CODE" type="string" length="50"/>
+		<property name="supplierCode" column="SUPPLIER_CODE" type="string" length="50"/>
+		<property name="invType" column="INV_TYPE" type="string" length="10"/>
+		<property name="quantity" type="double" column="QUANTITY"/>
+		<property name="invStatus" type="string" column="INV_STATUS"/>
+		<property name="doCode" type="string" column="DO_CODE"/>
+		<property name="doLineNo" type="string" column="DO_LINENO" length="10"/>
+		<property name="remark" type="string" column="REMARK" length="255"/>
+		<property name="billType" type="string" column="BILL_TYPE" length="50"/>
+		<property name="code" type="string" column="CODE" length="50"/>
+		<property name="wmsCode" type="string" column="WMSCODE" length="50"/>
+		<property name="sapCode" type="string" column="SAPCODE" length="50"/>
+		<property name="lineNo" type="string" column="LINENO" length="50"/>
+		<property name="qcLocCode" type="string" column="QCLOC_CODE" length="50"/>
+		<property name="productionCode" type="string" column="PRODUCTION_CODE" length="50"/>
+		<property name="baseUnit" column="BASE_UNIT" type="string" length="10"/>
+		<property name="reservedCode" type="string" column="RESERVED_CODE" length="50"/>
+		<property name="costCenter" type="string" column="COST_CENTER" length="50"/>
+		<property name="resProject" type="string" column="RES_PROJECT" length="50"/>
+		<property name="recFatoryCode" type="string" column="REC_FATORY_CODE" length="50"/>
+		<property name="recWarehouse" type="string" column="REC_WAREHOUSE" length="50"/>
+		<property name="genXmlFlag" type="yes_no" column="GEN_XMLFLAG" length="1"/>
+		<property name="wmsInCode" type="string" column="WMS_INCODE" length="50"/>
+		<property name="wmsInCodeLineNo" type="string" column="WMS_INCODE_LINENO" length="10"/>
+		<property name="cancelQuantity" type="double" column="CANCEL_QUANTITY"/>
+		
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+	</class>
+</hibernate-mapping>

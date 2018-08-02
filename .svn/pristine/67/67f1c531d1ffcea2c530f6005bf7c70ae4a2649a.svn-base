@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editWmsTransportOrderDetailPage" title="editWmsTransportOrderDetailPage" entityClass="com.vtradex.wms.server.model.entity.order.WmsTransportOrderDetail" >
+        <workflow/>
+        <initListeners/>
+        <inputUIs>
+        		<hidden id="wtod.id"  reserve="false"/>
+        		<numberText id="wtod.lineNo" title="wtod.lineNo" row="1" col="1" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true"/>       
+                <remote id="wId" title="orderDetail.theDeliveryQuantityBu" row="1" col="2"  span="1"  readOnly="false" required="true" reserve="false" forceOverride="false" focusUI="true" inVisible="false" editModel="uneditable" multiple="false" manualEditable="true" displayColumn="11" percentSignPosition="both" 
+                displayedTableHead="序号,仓库,工厂,交货单编码,sap交货单号,货品代码,货品名称,交货日期,本次交货数量,配货数量,数量,包装单位,产品序号,包装序号"  windowWidth="900">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT
+ddod.id,
+orderDetail.deliveryOrder.warehouse.name,
+orderDetail.factory.name,
+orderDetail.deliveryOrder.code,
+orderDetail.deliveryOrder.sapCode,
+orderDetail.item.code,
+orderDetail.item.name,
+ddod.deliverDate,
+ddod.deliverQty,
+ddod.loadQty,
+(ddod.deliverQty - ddod.loadQty ) as amount,
+orderDetail.packageUnit.unit,
+orderDetail.item.id,
+orderDetail.packageUnit.id
+FROM DailyDeliverOrderDetail ddod 
+LEFT JOIN  ddod.orderDetail orderDetail
+LEFT JOIN orderDetail.item
+LEFT JOIN orderDetail.packageUnit
+LEFT JOIN orderDetail.deliveryOrder
+LEFT JOIN orderDetail.factory
+LEFT JOIN orderDetail.deliveryOrder.warehouse
+WHERE 1=1
+AND (ddod.deliverQty - ddod.loadQty )>0
+AND orderDetail.deliveryOrder.status in ('ACTIVE','PARTIALRECEIPT')
+AND orderDetail.deliveryOrder.supplier.id = ${wmsTransportOrder.supplier.id}
+AND ddod.deliverDate <= (sysdate+1) 
+AND (orderDetail.kcdd like :param  OR to_char(ddod.deliverQty)  like :param
+     OR to_char(ddod.loadQty)  like :param)
+ORDER BY ddod.id]]></hql>         
+                <eventListeners>
+                    <eventListener id="wtod.item.id" index="13" refreshUI="false"/> 
+                    <eventListener id="wtod.quantity" index="11" refreshUI="false"/>  
+                </eventListeners>   
+            </remote>
+            <remote id="wtod.item.id" title="wtod.item.id" row="2" col="1"   span="1" readOnly="true" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="uneditable" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,代码,名称" >
+                <visibleExpression/>
+                <hql><![CDATA[SELECT
+item.id,
+item.code,
+item.name
+FROM WmsItem item
+WHERE item.status = 'ENABLED' 
+AND (item.code LIKE :param OR item.name LIKE :param)
+ORDER BY item.id]]></hql>
+                <eventListeners>
+                    <eventListener id="wtod.packageUnit.id" index="3" refreshUI="false"/> 
+                </eventListeners>  
+            </remote>
+           
+            <list id="wtod.packageUnit.id" title="wtod.packageUnit.id" row="2" col="2" span="1" width="120" readOnly="true" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT
+packageUnit.id,
+packageUnit.unit
+FROM WmsPackageUnit packageUnit
+WHERE 1=1
+AND packageUnit.item.id = ${wtod.item.id}
+ORDER BY packageUnit.id desc]]></hql>
+            </list>
+            
+             <numberText id="wtod.quantity" title="wtod.quantity" row="3" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true"/>
+            
+          
+            <textArea id="wtod.remark" title="wtod.remark" row="4" col="2" span="2"  width="340" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true"/>
+        </inputUIs>
+    </editPage>
+</pages>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 作业单查询列表页面模板 -->
+<RFListPage id="tclCreateWmsBolPage2" title="tclCreateWmsBolPage2">
+	<RFSearchUI id="workDocCodeSearch" text="workDocCodeSearch" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="docId" title="docId" width="50" enumType="" hidden="true" />
+		<RFTh id="docCode" title="docCode" width="250" enumType="" hidden="false" />
+		<DataSource type="HQL">
+			<statement>
+			<![CDATA[
+				 SELECT 
+				 doc.id AS docId,
+				 doc.code AS docCode
+				 
+				 FROM WmsWorkDoc doc 
+				 WHERE 1=1 
+				 		AND doc.status ='FINISH'
+				 		AND doc.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN} 
+				 		
+				 		AND doc.relatedBillCode IN (SELECT detail.pickTicketDetail.pickTicket.code FROM WmsBolDetail detail WHERE detail.bol.id IS NULL)
+						/~workDocCodeSearch: AND doc.code like '%{workDocCodeSearch}%' ~/
+				ORDER BY doc.id ASC
+			]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

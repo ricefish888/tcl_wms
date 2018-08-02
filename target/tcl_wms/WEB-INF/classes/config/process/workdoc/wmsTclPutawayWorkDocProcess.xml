@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="wmsTclPutawayWorkDocProcess" control="-">
+
+	<task id="modify" title="修改保管员">
+	</task>
+
+	<task id="printYLCKD" title="打印预留出库单">
+	</task>
+
+	<task id="printTGYSCKD" title="打印退供应商出库单">
+	</task>
+
+	<task id="printWork" title="打印作业单">
+	</task>
+
+</process>

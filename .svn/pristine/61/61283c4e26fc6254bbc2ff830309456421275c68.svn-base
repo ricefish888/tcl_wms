@@ -1,0 +1,73 @@
+package com.vtradex.wms.server.service.base.po;
+
+import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import com.vtradex.thorn.server.exception.BusinessException;
+import com.vtradex.thorn.server.service.pojo.DefaultBaseManager;
+import com.vtradex.wms.server.model.entity.base.WmsCostCenter;
+import com.vtradex.wms.server.service.base.WmsCostCenterManager;
+import com.vtradex.wms.webservice.utils.ExcelHelper;
+
+/**
+ * 成本中心
+ */
+public class DefaultWmsCostCenterManager extends DefaultBaseManager implements WmsCostCenterManager {
+	
+	//导入
+	public void importWmsCostCenterFile(File file){
+		
+		List<WmsCostCenter> costCenters=readWmsCostCenterFileExcel(file);
+		for(WmsCostCenter costCenter : costCenters){
+			String hql = "FROM WmsCostCenter w WHERE w.code =:code AND w.name =:name";
+			WmsCostCenter wmsCostCenter = (WmsCostCenter) commonDao.findByQueryUniqueResult(hql,new String[]{"code","name"},
+			                            		   new Object[]{costCenter.getCode(),costCenter.getName()});
+			if(wmsCostCenter == null){//不存在,新建
+				commonDao.store(costCenter);
+			}else{//存在，修改
+				wmsCostCenter.setXxpirationDate(costCenter.getXxpirationDate());
+				commonDao.store(wmsCostCenter);
+			}
+		}
+	}
+	
+	
+	
+	 private List<WmsCostCenter> readWmsCostCenterFileExcel(File file){
+		 List<WmsCostCenter> list = new ArrayList<WmsCostCenter>();
+	    	List<Map<String,Object>> infos = ExcelHelper.parseExcel2List(file);
+	    	for(Map<String,Object> info : infos){
+	    		String code = (String) info.get("编码");
+	    		if(code == null || "".equals(code)){
+	    			throw new BusinessException("编码不能为空，请维护编码");
+	    		}
+	    		String name = (String) info.get("名称");
+	    		if(name == null || "".equals(name)){
+	    			throw new BusinessException("名称不能为空，请维护名称");
+	    		}
+	    		String xxpirationDate = (String) info.get("有效期");
+	    		if(xxpirationDate == null || "".equals(xxpirationDate)){
+	    			throw new BusinessException("有效期不能为空，请维护有效期");
+	    		}
+	    		
+	    		WmsCostCenter costCenter = new WmsCostCenter();
+	    		costCenter.setCode(code);
+	    		costCenter.setName(name);
+	    		Date date = null;
+	    		SimpleDateFormat yy = new SimpleDateFormat("yyyyMMdd");
+	    		try {
+	    			date = yy.parse(xxpirationDate);
+				} catch (ParseException e) {
+					throw new BusinessException("输入的有效期数据："+"【"+xxpirationDate+"】"+"不正确,请重新输入数据");
+				}
+	    		costCenter.setXxpirationDate(date);	
+	    		list.add(costCenter);
+	    	}
+		return list;		 
+	 }
+}

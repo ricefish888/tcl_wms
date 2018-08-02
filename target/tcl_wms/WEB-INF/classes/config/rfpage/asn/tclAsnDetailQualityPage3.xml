@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--质检输入页面模板 -->
+<RFFormPage id="tclAsnDetailQualityPage3" title="tclAsnDetailQualityPage3">
+	<RFDisplay id="poInfoDisplay" load="tclRfAsnManager.showQualityInfos">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			收货单号：{asnCode}
+			供应商编码：{supplierCode}
+			供应商名称：{supplierName}
+			工厂编码：{factoryCode}
+			物料编码：{itemCode}
+			物料名称：{itemName}
+			收货数量：{qcQty}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>
+			收货单号：{asnCode}
+			供应商编码：{supplierCode}
+			供应商名称：{supplierName}
+			工厂编码：{factoryCode}
+			物料编码：{itemCode}
+			物料名称：{itemName}
+			收货数量：{qcQty}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="qcQuantity" title="qcQuantity" tip="" onFoucs="true">
+			</RFText> 
+			<RFSelect id="invStatusInput" title="invStatusInput"
+				enumType="s.name" onFoucs="true" >
+				<hql>
+					<![CDATA[ 
+						select s.id,s.name from WmsInventoryState s WHERE 1=1 AND s.name!='待检' ORDER BY s.id ASC
+					]]>
+				</hql>
+			</RFSelect>
+		</inputs>
+		<buttons>
+			<RFButton id="confirmScanBt" title="confirmScanBt" action="tclRfAsnManager.asnDetailQuality" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="viewInterfaceLogPage" title="viewInterfaceLogPage" entityClass="com.vtradex.thorn.server.model.interfaceLog.InterfaceLog" width="600" height="400" onClose="refreshParent">
+        <workflow/>
+        <initListeners/>
+        <inputUIs>
+            <hidden id="lf.id" title="lf.id" reserve="false"/>
+            <textArea id="lf.requestContent" title="lf.requestContent" row="1" col="1" span="2" width="450" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" rows="20" cols="30">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </textArea>
+            <textArea id="lf.responseContent" title="lf.responseContent" row="2" col="1" span="20" width="450" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" rows="10" cols="45">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </textArea>
+        </inputUIs>
+    </editPage>
+</pages>

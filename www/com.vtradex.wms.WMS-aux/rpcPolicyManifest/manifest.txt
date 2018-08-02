@@ -1,0 +1,4 @@
+# Module com.vtradex.wms.WMS
+# RPC service class, partial path of RPC policy file
+com.vtradex.thorn.client.rpc.RemoteQueryService, 04E8B9756506F3713C5487F430E8CE0E.gwt.rpc
+com.vtradex.thorn.client.rpc.CommitService, 70B3412A5FC7121EBE42CB9BA90B7415.gwt.rpc

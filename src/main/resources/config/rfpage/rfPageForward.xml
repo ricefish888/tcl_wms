@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- RF页面跳转系统全局配置文件 -->
+
+<rf>
+	<!-- ASN收货 -->
+	<forward id="tclAsnReceiveRFPage1.asnCodeScanBt.success" nextPage="tclAsnReceiveRFPage2" />
+	<forward id="tclAsnReceiveRFPage2.closeDeliverOrderBt.success" nextPage="tclAsnReceiveRFPage1" />
+	<forward id="tclAsnReceiveRFPage2.asnItemScanBt.success" nextPage="tclAsnReceiveRFPage4" />
+	<forward id="tclAsnReceiveRFPage4" nextPage="tclAsnReceiveRFPage3" />
+	<forward id="tclAsnReceiveRFPage3.asnReceiverComBt.success_all_received" nextPage="tclAsnReceiveRFPage1" />
+	<forward id="tclAsnReceiveRFPage3.asnReceiverComBt.success_part_received" nextPage="tclAsnReceiveRFPage2" />
+	<forward id="tclAsnReceiveRFPage3.asnSwitchBt.success_part_received" nextPage="tclAsnReceiveRFPage2" />
+	<forward id="tclAsnReceiveRFPage3.asnSwitchBt.success_all_received" nextPage="tclAsnReceiveRFPage1" />
+	
+	<!-- ASN明细收货 -->
+	<forward id="tclAsnDetailReceiveRFPage1.asnCodeScanBt.success" nextPage="tclAsnDetailReceiveRFPage2" />
+	<forward id="tclAsnDetailReceiveRFPage2.receive.success" nextPage="tclAsnDetailReceiveRFPage3" />
+	<forward id="tclAsnDetailReceiveRFPage3.asnReceiverComBt.success_all_received" nextPage="tclAsnDetailReceiveRFPage1" />
+	<forward id="tclAsnDetailReceiveRFPage3.asnReceiverComBt.success_part_received" nextPage="tclAsnDetailReceiveRFPage2" />
+	
+	<!-- 整单上架 -->
+	<forward id="skuPutawayAllRFListPage" nextPage="skuPutawayAllRFInputPage" />
+	<forward id="skuPutawayAllRFInputPage.putawayAllCommit.success" nextPage="skuPutawayAllRFListPage" />
+	
+	<!-- VMI交接 -->
+	<!-- 新建 -->
+	<forward id="tclDeliveryRFPage1" nextPage="tclDeliveryRFPage2" />
+	<forward id="tclDeliveryRFPage2" nextPage="tclDeliveryRFPage3" />
+	<!-- 添加明细 -->
+	<forward id="tclDeliveryRFPage6" nextPage="tclDeliveryRFPage3" />
+	<forward id="tclDeliveryRFPage3.noBarCodeShowDetailBt.success" nextPage="tclDeliveryRFPage4" />
+	<forward id="tclDeliveryRFPage3.showDetailBt.success" nextPage="tclDeliveryRFPage9" />
+	<forward id="tclDeliveryRFPage3.activeDetailBt.success" nextPage="tclDeliveryRFPage6" />
+	<!-- 删除明细 -->
+	<forward id="tclDeliveryRFPage3.delDetailBt.success" nextPage="tclDeliveryRFPage7" />
+	<forward id="tclDeliveryRFPage7" nextPage="tclDeliveryRFPage8" />
+	<forward id="tclDeliveryRFPage8.delConfirmBt.success" nextPage="tclDeliveryRFPage3" />
+	<forward id="tclDeliveryRFPage4" nextPage="tclDeliveryRFPage5" />
+	<forward id="tclDeliveryRFPage5.addDetailBt.success" nextPage="tclDeliveryRFPage5" />
+	<forward id="tclDeliveryRFPage5.showDetailBt.success" nextPage="tclDeliveryRFPage4" />
+	
+	<forward id="tclDeliveryRFPage9" nextPage="tclDeliveryRFPage10" />
+	<forward id="tclDeliveryRFPage10.confirmBt.success" nextPage="tclDeliveryRFPage11" />
+	<forward id="tclDeliveryRFPage11.addDetailBt.success" nextPage="tclDeliveryRFPage10" />
+	<forward id="tclDeliveryRFPage11.addDetailBt.all_success" nextPage="tclDeliveryRFPage9" />
+	<forward id="tclDeliveryRFPage11.showDetailBt.success" nextPage="tclDeliveryRFPage9" />
+	
+	<!-- 条码补打登记 -->
+	<forward id="tclBarCodePage.barCodeBt.success" nextPage="tclBarCodePage" />
+	
+	
+	
+	<!-- 生产订单货物校验 -->
+	<forward id="tclOrderItemCheckRFPage1.orderCodeScanBt.success_orderCode" nextPage="tclOrderItemCheckRFPage2" />
+	<forward id="tclOrderItemCheckRFPage1.orderCodeScanBt.success_orderProductLine" nextPage="tclOrderItemCheckRFPage3" />
+ 	<forward id="tclOrderItemCheckRFPage2.itemScanBt.success" nextPage="tclOrderItemCheckRFPage1" />
+	<forward id="tclOrderItemCheckRFPage3.beginDateScanBt.success" nextPage="tclOrderItemCheckRFPage4" />
+	<forward id="tclOrderItemCheckRFPage4.itemScanBt.success" nextPage="tclOrderItemCheckRFPage1" />
+	
+	<!-- 交接管理 -->
+	<forward id="bolHandoverRFPage1" nextPage="bolHandoverRFPage2" />
+	<forward id="bolHandoverRFPage2.bolShipCommitBt.success" nextPage="bolHandoverRFPage1" />
+ 	<forward id="bolHandoverRFPage2.cancelShipBt.success" nextPage="bolHandoverRFPage1" />
+ 	
+ 	
+ 	<!-- 配送单出库管理 -->
+ 	<forward id="tclDeliveryAllOutRFPage" nextPage="tclDeliveryAllOutRFPage6" />
+ 	<forward id="tclDeliveryAllOutRFPage6.workDocCommitBt.success_t_1_area" nextPage="tclDeliveryAllOutRFPage2" /><!-- 直接出库 -->
+ 	<forward id="tclDeliveryAllOutRFPage6.workDocCommitBt.success_line_edge" nextPage="tclDeliveryPartOutRFPage4" /><!-- 线边交接 -->
+ 	<!-- 删除配送单 -->
+ 	<forward id="tclDeliveryAllOutRFPage6.deleteWorkDocCommitBt.success" nextPage="tclDeliveryAllOutRFPage" />
+ 	
+ 	<!-- <forward id="tclDeliveryAllOutRFPage1.deliveryCodeScanBt.success" nextPage="tclDeliveryAllOutRFPage2" /> -->
+ 	<forward id="tclDeliveryAllOutRFPage2.deliveryOutCommitBt.success" nextPage="tclDeliveryAllOutRFPage" />
+ 	<forward id="tclDeliveryAllOutRFPage2.cancelOutBt.success" nextPage="tclDeliveryAllOutRFPage" />
+ 	<!-- 配送单明细出库管理 -->
+ 	<!-- <forward id="tclDeliveryPartOutRFPage3.detailCodeScanBt.success" nextPage="tclDeliveryPartOutRFPage4" />-->
+ 	<forward id="tclDeliveryPartOutRFPage4.itemCodeScanBt.success" nextPage="tclDeliveryPartOutRFPage5" />
+ 	<forward id="tclDeliveryPartOutRFPage5.detailOutCommitBt.part_success" nextPage="tclDeliveryPartOutRFPage4" />
+ 	<forward id="tclDeliveryPartOutRFPage5.detailOutCommitBt.all_success" nextPage="tclDeliveryAllOutRFPage" />
+ 	<forward id="tclDeliveryPartOutRFPage5.cancelOutBt.success" nextPage="tclDeliveryPartOutRFPage4" /> 
+ 	
+ 	<!-- 生产订单退料入库 -->
+ 	<forward id="tclItemBackInPage1.itemBackScanBt.success" nextPage="tclItemBackInPage2" />
+ 	<forward id="tclItemBackInPage1.genAsnScanBt.success" nextPage="tclItemBackInPage1" />
+ 	<forward id="tclItemBackInPage2" nextPage="tclItemBackInPage3" />
+ 	<forward id="tclItemBackInPage3" nextPage="tclItemBackInPage1" />
+ 	
+ 	<!-- 物料属性查询 -->
+ 	<forward id="tclWmsItemInfoRFPage1.itemQueryScan.success" nextPage="tclWmsItemInfoRFPage2" />
+ 	<forward id="tclWmsItemInfoRFPage2.returnBackScan.success" nextPage="tclWmsItemInfoRFPage1"/>
+ 	
+ 	<!-- 库存查询 -->
+ 	<forward id="tclInventoryQureyRFPage1.inventoryQueryScan.success" nextPage="tclInventoryQureyRFPage2" />
+ 	<forward id="tclInventoryQureyRFPage2" nextPage="tclInventoryQureyRFPage3"/>
+ 	<forward id="tclInventoryQureyRFPage3.inventoryQuerySwitchPreviousPage.success" nextPage="tclInventoryQureyRFPage2" />
+	<forward id="tclInventoryQureyRFPage3.inventoryQuerySwitchReturn.success" nextPage="tclInventoryQureyRFPage1" />
+	
+	<!-- 库存汇总查询 -->
+	<forward id="tclSumInventoryQureyRFPage1.inventoryQueryScan.success" nextPage="tclSumInventoryQureyRFPage2" />
+	<forward id="tclSumInventoryQureyRFPage2.inventoryQuerySwitchReturn.success" nextPage="tclSumInventoryQureyRFPage1" />
+	
+	<!-- 按货品无计划移位 -->
+ 	<forward id="tclMoveNPBySkuLocationPage.tclMoveNPBySkuLocationScan.success" nextPage="tclMoveNPBySkuLocationPage1" />
+ 	<forward id="tclMoveNPBySkuLocationPage1.moveNoPlanBySkuItemScan.success" nextPage="tclMoveNPBySkuLocationPage2" />
+ 	<forward id="tclMoveNPBySkuLocationPage2" nextPage="tclMoveNPBySkuLocationPage3"/>
+ 	<forward id="tclMoveNPBySkuLocationPage3.moveNoPlanBySkuComfirmScan.success" nextPage="tclMoveNPBySkuLocationPage"/>
+ 	
+ 	<!-- 按货品计划移位 -->
+ 	<forward id="tclMovePlanBySkuLocationPage" nextPage="tclMovePlanBySkuLocationPage1"/>
+ 	<forward id="tclMovePlanBySkuLocationPage1.movePlanBySkuLocationScan.successOfOne" nextPage="tclMovePlanBySkuLocationPage2"/>
+ 	<forward id="tclMovePlanBySkuLocationPage1.movePlanBySkuLocationScan.successOfTwo" nextPage="tclMovePlanBySkuLocationPage3"/>
+ 	<forward id="tclMovePlanBySkuLocationPage3" nextPage="tclMovePlanBySkuLocationPage2"/>
+ 	<forward id="tclMovePlanBySkuLocationPage2.movePlanBySkuItemScan.success" nextPage="tclMovePlanBySkuLocationPage4"/>
+ 	<forward id="tclMovePlanBySkuLocationPage4.movePlanBySkuTargetLocationScan.successToOne" nextPage="tclMovePlanBySkuLocationPage"/>
+ 	<forward id="tclMovePlanBySkuLocationPage4.movePlanBySkuTargetLocationScan.successToTwo" nextPage="tclMovePlanBySkuLocationPage1"/>
+ 	<forward id="tclMovePlanBySkuLocationPage4.movePlanBySkuTargetLocationScan.successToFour" nextPage="tclMovePlanBySkuLocationPage2"/>
+ 	<forward id="tclMovePlanBySkuLocationPage4.movePlanBySkuTargetLocationScan.successToThree" nextPage="tclMovePlanBySkuLocationPage3"/>
+ 	
+ 	<!--盘点-->
+	<forward id="tclCountPlanRFListPage" nextPage="tclCountPlanRFListPage1" />
+	<forward id="tclCountPlanRFListPage1.countPlanLocationScan.successToThree" nextPage="tclCountPlanRFListPage2" />
+	<forward id="tclCountPlanRFListPage1.countPlanLocationScan.successToFive" nextPage="tclCountPlanRFListPage3" />
+	<forward id="tclCountPlanRFListPage2.countPlanItemScan.success" nextPage="tclCountPlanRFListPage4" />
+	<forward id="tclCountPlanRFListPage2.countPlanItemForNullScan.successToThree" nextPage="tclCountPlanRFListPage2" />
+	<forward id="tclCountPlanRFListPage2.countPlanItemForNullScan.successToFive" nextPage="tclCountPlanRFListPage3" />
+	<forward id="tclCountPlanRFListPage4.countPlanNumberScan.successToThree" nextPage="tclCountPlanRFListPage2" />
+	<forward id="tclCountPlanRFListPage4.countPlanNumberScan.successToFive" nextPage="tclCountPlanRFListPage3" />
+	<forward id="tclCountPlanRFListPage3.countInsertItemScan.success" nextPage="tclCountPlanRFListPage5" />
+	<forward id="tclCountPlanRFListPage3.changeLocationScan.successToOne" nextPage="tclCountPlanRFListPage" />
+	<forward id="tclCountPlanRFListPage3.changeLocationScan.successToTwo" nextPage="tclCountPlanRFListPage1" />
+	<forward id="tclCountPlanRFListPage5.countInsertNumberScan.success" nextPage="tclCountPlanRFListPage3" />
+	
+	<!-- 标准拣货 -->
+	<forward id="pickRFListPage.pick.successThree" nextPage="pickRFLocationPage"/>
+	
+	<!-- 按任务拣货 -->
+	<forward id="pickTaskRFListPage" nextPage="pickTaskRFPage"/>
+	<forward id="pickTaskRFPage.returnBackScan.success" nextPage="pickTaskRFListPage"/>
+	<forward id="pickTaskRFPage.pickItemScan.success" nextPage="pickTaskNumRFPage"/>
+	<forward id="pickTaskNumRFPage.pickNumberScan.success" nextPage="pickTaskRFListPage"/>
+	
+	<!-- 整单拣货 -->
+	<forward id="pickAllRFListPage" nextPage="pickAllRFPage"/>
+	<forward id="pickAllRFPage.pickAllScan.success" nextPage="pickAllRFListPage"/>
+	
+	<!-- 质检 -->
+	<forward id="tclAsnQualityPage" nextPage="tclAsnQualityPage1"/>
+	<forward id="tclAsnQualityPage1.asnQualityAllScan.success" nextPage="tclAsnQualityPage"/>
+	
+	<!-- 明细质检 -->
+	<forward id="tclAsnDetailQualityPage1.asnCodeScanBt.success" nextPage="tclAsnDetailQualityPage2"/>
+	<forward id="tclAsnDetailQualityPage2" nextPage="tclAsnDetailQualityPage3"/>
+	<forward id="tclAsnDetailQualityPage3.confirmScanBt.success" nextPage="tclAsnDetailQualityPage2"/>
+	
+	<!-- 创建上架单 -->
+	<forward id="tclCreateWorkDocPage" nextPage="tclCreateWorkDocPage1"/>
+	<forward id="tclCreateWorkDocPage1.createWorkDocScan.success" nextPage="tclCreateWorkDocPage"/>
+	
+	<!-- 创建出库单 -->
+	<forward id="tclCreateWmsBolPage.confirmScan.success" nextPage="tclCreateWmsBolPage1"/>
+	<forward id="tclCreateWmsBolPage1.addWorkDocCommitBt.success" nextPage="tclCreateWmsBolPage2"/>
+	<forward id="tclCreateWmsBolPage1.comfirmShipBol.success" nextPage="tclCreateWmsBolPage4"/>
+	<forward id="tclCreateWmsBolPage2" nextPage="tclCreateWmsBolPage3"/>
+	<forward id="tclCreateWmsBolPage3.addWorkDocConfirmScan.success" nextPage="tclCreateWmsBolPage1"/>
+	<!-- 出库管理 -->
+	<forward id="tclCreateWmsBolPage4" nextPage="tclCreateWmsBolPage1"/>
+	
+	<!-- 创建配送单 -->
+	<forward id="tclFirstQuickShippingPage.confirmScan.success" nextPage="tclFirstQuickShippingPage1"/>
+	<forward id="tclFirstQuickShippingPage1.addWorkDocCommitBt.success" nextPage="tclCreateQuickShippingPage"/>
+	<!-- 配送单添加明细/生效 -->
+	<forward id="tclFirstQuickShippingListPage" nextPage="tclFirstQuickShippingPage1"/>
+	<!-- 删除配送单 -->
+	<forward id="tclFirstQuickShippingPage1.deleteWorkDocCommitBt.success" nextPage="tclFirstQuickShippingListPage"/>
+	
+	<!-- 通过作业单创建配送单 -->
+	<forward id="tclCreateQuickShippingPage" nextPage="tclCreateQuickShippingPage1"/>
+	<forward id="tclCreateQuickShippingPage1.createQuickShippingScan.success" nextPage="tclFirstQuickShippingPage1"/>
+	<!-- 通过交接单创建配送单 -->
+	<forward id="tclCreateQuickShippingPage2" nextPage="tclCreateQuickShippingPage3"/>
+	<forward id="tclCreateQuickShippingPage3.createQuickShippingScan.success" nextPage="tclVMIGenQuickShippingPage2"/>
+	<!-- 配送单发运 -->
+	<forward id="tclFirstQuickShippingPage1.comfirmShipBol.success" nextPage="tclDeliveryAllOutRFPage"/>
+	<forward id="tclVMIGenQuickShippingPage2.comfirmShipBol.success" nextPage="tclDeliveryAllOutRFPage"/>
+	
+	<!-- VMI创建配送单 -->
+	<forward id="tclVMIGenQuickShippingPage1.confirmScan.success" nextPage="tclVMIGenQuickShippingPage2"/>
+	<!-- VMI配送单添加明细 -->
+	<forward id="tclVMIQuickShippingListPage" nextPage="tclVMIGenQuickShippingPage2"/>
+	<forward id="tclVMIGenQuickShippingPage2.deleteWorkDocCommitBt.success" nextPage="tclVMIQuickShippingListPage"/>
+	
+	<forward id="tclVMIGenQuickShippingPage2.addVMIBolCommitBt.success" nextPage="tclCreateQuickShippingPage2"/>
+	<forward id="tclVMIDeliveryAllOutRFPage" nextPage="tclDeliveryAllOutRFPage6" />
+	<!-- 添加线边作业单 -->
+	<forward id="tclVMIGenQuickShippingPage2.addVMIWorkDocCommitBt.success" nextPage="tclXBCShippingPage1"/>
+	<forward id="tclXBCShippingPage1" nextPage="tclXBCShippingPage2"/>
+	<forward id="tclXBCShippingPage2.createQuickShippingScan.success" nextPage="tclVMIGenQuickShippingPage2"/>
+	
+	<!-- 取消收货 -->
+	<forward id="tclCancelReceiveRFPage.cancelReceiveScan.success" nextPage="tclCancelReceiveRFPage1"/>
+	<forward id="tclCancelReceiveRFPage1" nextPage="tclCancelReceiveRFPage2"/>
+	<forward id="tclCancelReceiveRFPage2.cancelReceiveConfirmScan.success" nextPage="tclCancelReceiveRFPage"/>
+	
+	<!-- JIT上线结算出库 -->
+	<forward id="tclJITShipPage1.confirmScan.success" nextPage="tclJITShipPage2"/>
+	<!-- 添加明细 -->
+	<forward id="tclJITShipPage2.addDetailBt.success" nextPage="tclJITShipPage3"/>
+	<forward id="tclJITShipPage3" nextPage="tclJITShipPage4"/>
+	<forward id="tclJITShipPage4.addDetailBt.success" nextPage="tclJITShipPage2"/>
+	<!-- 删除明细 -->
+	<forward id="tclJITShipPage2.deleteDetailBt.success" nextPage="tclJITShipPage5"/>
+	<forward id="tclJITShipPage5" nextPage="tclJITShipPage6"/>
+	<forward id="tclJITShipPage6.delDetailBt.success" nextPage="tclJITShipPage2"/>
+	<!-- 出库 -->
+	<forward id="tclJITShipPage2.shipBt.success" nextPage="tclJITShipPage7"/>
+	
+	<!-- JIT上线结算出库 -->
+	<forward id="tclJITShipPage7" nextPage="tclJITShipPage8"/>
+	<forward id="tclJITShipPage8.shipConfirmBt.success" nextPage="tclJITShipPage7"/>
+</rf>

@@ -1,0 +1,123 @@
+package com.vtradex.wms.server.service.production;
+
+import java.io.File;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Date;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import com.vtradex.thorn.server.exception.BusinessException;
+import com.vtradex.thorn.server.service.BaseManager;
+import com.vtradex.wms.server.model.entity.production.WmsDeliveryOrder;
+import com.vtradex.wms.server.model.entity.production.WmsDeliveryOrderDetail;
+
+/**
+ *交货单
+ *xiang.li 
+ *2017-7-6 14:50:20
+ */
+public interface WmsDeliveryOrderManager extends BaseManager {
+	
+    @Transactional
+    void addPoDetail(Long doId, Long podId, WmsDeliveryOrderDetail dod);
+    
+    /**
+     * 确认
+     */
+    @Transactional
+    void confirm(List<WmsDeliveryOrder> dos);
+    
+    /**
+     * 接收
+     */
+    @Transactional
+    void received(List<WmsDeliveryOrder> dos);
+	
+	/**
+	 * 
+	 * 新建 修改 保存交货单 (测试用)
+	 *
+	 * @author Yogurt_lei
+	 *
+	 * @date 2017年7月7日 下午1:55:42
+	 */
+	@Transactional
+	void storeWmsDeliveryOrder(WmsDeliveryOrder wmsDeliveryOrder);
+
+	/**
+	 *
+	 * 删除明细
+	 * 
+	 * @author Yogurt_lei
+	 *
+	 * @date 2017年7月7日 下午4:25:37
+	 */
+	@Transactional
+	void removeDetails(List<WmsDeliveryOrderDetail> details);
+	
+	/**
+	 * 
+	 * 获取最大行号
+	 *
+	 * @author Yogurt_lei
+	 *
+	 * @date 2017年7月7日 下午4:10:57
+	 */
+	String getMaxLineNo(Map<String, Object> param);
+	
+	@Transactional
+	void calculationWmsDeliveryOrder(Date startDate);
+	
+	/**生成交货单*/
+	@Transactional
+	void test();
+	/**
+	 * 激活交货单
+	 */
+	@Transactional
+	void activeDeliveryOrder(WmsDeliveryOrder wmsDeliveryOrder);
+	
+	/**齐套性验证*/
+	@Transactional
+	void importOrderHandleTime(File file);
+	
+
+	/**
+	 * 生产订单导入
+	 * @param file
+	 * @throws BusinessException
+	 */
+	void importProductFile(File file);
+	
+
+	/**
+	 * PO批量导入
+	 * @param file
+	 */
+	void importPurchaseOrderFile(File file);
+	
+	
+	/**
+	 * 交货单批量导入
+	 * @param file
+	 */
+	void importWmsDeliveryOrderFile(File file);
+	
+	/**
+	 * 交货单失效  如果是销售交货单 失效需要删除对应的拣货单
+	 * @param deliveryOrder
+	 * @author fs
+	 */
+	@Transactional
+	void unActiveDeliveryOrder(WmsDeliveryOrder deliveryOrder);
+	
+	/**
+	 * 预留单、交货单、工单失效->删除拣货单明细以及关联的数据
+	 * @param pdtId 拣货单明细ID
+	 * @author fs
+	 */
+	@Transactional
+	void deleteRelatePickData(List<Long> pdtId,List<Long> pickIds,String type);
+}

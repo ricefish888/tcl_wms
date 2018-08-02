@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainDownloadFilePage" title="maintainDownloadFilePage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.base.WmsImportTemplateDownload" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT wtd.id,
+wtd.type,
+wtd.code,
+wtd.name,
+wtd.fileName,
+wtd.downloadUrl 
+from WmsImportTemplateDownload wtd where 1=1]]></datasource>
+        <columns>
+            <column id="wtd.id" title="wtd.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="wtd.type" title="wtd.type" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="wtd.code" title="wtd.code" width="200" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="wtd.name" title="wtd.name" width="200"  visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="wtd.fileName" title="wtd.fileName" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            <column id="wtd.downloadUrl" title="wtd.downloadUrl" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+        </columns>
+    </maintainPage>
+</pages>

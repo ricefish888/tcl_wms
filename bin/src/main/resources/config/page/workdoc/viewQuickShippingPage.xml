@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <modifyDetailPage id="viewQuickShippingPage" title="viewQuickShippingPage" entityClass="com.vtradex.wms.server.model.entity.workdoc.WmsWorkDoc" onClose="refreshParent" width="900" height="330">
+        <initListeners/>
+        <modify>
+            <inputUIs>
+                <hidden id="workDoc.id" title="workDoc.id" reserve="false"/>
+                <text id="workDoc.code" title="workDoc.code" row="1" col="1" readOnly="true" required="false" reserve="false" forceOverride="false" focusUI="false" inVisible="false" editModel="uneditable" length="20" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="workDoc.relatedBillCode" title="workDoc.relatedBillCode" row="1" col="2" readOnly="false" required="false" reserve="false" forceOverride="false" focusUI="false" inVisible="false" length="20" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="workDoc.userField1" title="workDoc.userField1" row="1" col="3" readOnly="false" required="false" reserve="false" forceOverride="false" focusUI="false" inVisible="false" length="20" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+            </inputUIs>
+        </modify>
+        <detail entityClass="com.vtradex.wms.server.model.entity.workdoc.WmsTask">
+            <datasource><![CDATA[SELECT task.id,fromLocation.code,task.status,item.code,item.name,packageUnit.unit,task.planPackQty,task.planQty,task.pickedQty,task.transferStatus,task.itemKey.lotInfo.lot,task.itemKey.lotInfo.storageDate,task.itemKey.lotInfo.productDate,task.itemKey.lotInfo.expireDate,task.itemKey.lotInfo.qaDate,task.itemKey.lotInfo.supplierCode  FROM WmsTask task 
+            LEFT JOIN task.fromLocation fromLocation
+            LEFT JOIN task.toLocation toLocation
+            LEFT JOIN task.item item
+            LEFT JOIN task.packageUnit packageUnit
+ WHERE 1=1
+ /~workDoc.id: AND task.workDoc.id = {workDoc.id}~/]]></datasource>
+            <columns>
+                <column id="task.id" title="task.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="fromLocation.code" title="fromLocation.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="task.status" title="task.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsTaskStatus"/>
+                <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="packageUnit.unit" title="packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="task.planPackQty" title="task.planPackQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="task.planQty" title="task.planQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="task.pickedQty" title="task.pickedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="task.transferStatus" title="task.transferStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="task.itemKey.lotInfo.lot" title="task.itemKey.lotInfo.lot" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="task.itemKey.lotInfo.storageDate" title="task.itemKey.lotInfo.storageDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d"/>
+                <column id="task.itemKey.lotInfo.productDate" title="task.itemKey.lotInfo.productDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d"/>
+                <column id="task.itemKey.lotInfo.expireDate" title="task.itemKey.lotInfo.expireDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d"/>
+                <column id="task.itemKey.lotInfo.qaDate" title="task.itemKey.lotInfo.qaDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d"/>
+                <column id="task.itemKey.lotInfo.supplierCode" title="task.itemKey.lotInfo.supplierCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+            </columns>
+        </detail>
+    </modifyDetailPage>
+</pages>

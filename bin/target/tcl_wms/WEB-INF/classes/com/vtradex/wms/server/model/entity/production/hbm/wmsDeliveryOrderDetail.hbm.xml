@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.production.WmsDeliveryOrderDetail" table="WMS_DELIVERYORDER_DETAIL">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_DELIVERYORDER_DETAIL</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        
+        <version name="version" column="VERSION" type="long"></version>
+        
+		<many-to-one name="deliveryOrder" class="com.vtradex.wms.server.model.entity.production.WmsDeliveryOrder">
+			<column name="DELIVERYORDER_ID"/>
+		</many-to-one>	
+		<property name="lineNo" type="integer" column="LINE_NO" />
+			
+		<many-to-one name="item" class="com.vtradex.wms.server.model.entity.item.WmsItem">
+			<column name="ITEM_ID" not-null="true"/>
+		</many-to-one>
+		
+		<many-to-one name="factory" class="com.vtradex.wms.server.model.entity.base.WmsSapFactory">
+			<column name="FACTORY_ID" not-null="true"/>
+		</many-to-one>
+		
+		<property name="kcdd" type="string" column="KCDD" length="50" />
+		<property name="planQuantityBu" type="double" column="PLAN_QUANTITYBU" />
+		<property name="delivedQuantityBu" type="double" column="DELIVED_QUANTITYBU" />
+		<property name="theDeliveryQuantityBu" type="double" column="THE_DELIVERY_QUANTITYBU" />
+		
+		<property name="poNo" type="string" column="PO_NO" length="50" />
+		<property name="poDetailNo" type="string" column="PO_DETAIL_NO" length="50" />
+		
+		<many-to-one name="packageUnit" class="com.vtradex.wms.server.model.entity.item.WmsPackageUnit">
+			<column name="PACKAGEUNIT_ID" not-null="true"/>
+		</many-to-one>
+		
+		<property name="extend1" type="string" column="EXTEND1" length="255"/>
+		<property name="remark" type="string" column="REMARK" length="255"/>
+		
+		<many-to-one name="purchaseOrderDetail" class="com.vtradex.wms.server.model.entity.order.PurchaseOrderDetail">
+			<column name="PURCHASE_ORDER_DETAIL_ID"/>
+		</many-to-one>
+
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+	</class>
+</hibernate-mapping>

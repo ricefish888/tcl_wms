@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--交货输入页面模板 -->
+<RFListPage id="tclDeliveryRFPage4" title="tclDeliveryRFPage4">
+	<RFSearchUI id="workInputCode" text="workInputCode" width="200" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="wmsBolDetail.id" title="wmsBolDetail.id" width="100" enumType="" hidden="true" />
+		<RFTh id="pickTicket.code" title="pickTicket.code" width="450" enumType="" hidden="false" />
+		<RFTh id="item.code" title="item.code" width="300" enumType="" hidden="false" />
+		<RFTh id="wmsBolDetail.pickedQty" title="wmsBolDetail.pickedQty" width="300" enumType="" hidden="false" />
+			<DataSource type="HQL">
+				<statement>
+				<![CDATA[
+ SELECT
+ wmsBolDetail.id, 
+ pickTicket.code,
+ item.code,
+ wmsBolDetail.pickedQty
+ FROM WmsBolDetail wmsBolDetail 
+ LEFT JOIN wmsBolDetail.pickTicketDetail pickTicketDetail
+ LEFT JOIN pickTicketDetail.item item
+ LEFT JOIN pickTicketDetail.pickTicket pickTicket
+ LEFT JOIN pickTicket.warehouse warehouse
+ WHERE 1=1
+ AND  wmsBolDetail.isPacking = 'N'
+ AND  wmsBolDetail.bol.id is null 
+ AND pickTicket.billType.code='SCLLD'
+ AND 
+ (
+ 	  (${warehouseId}='2' and pickTicket.userField1 in ('2000','2100') )
+ 		or
+ 	  (${warehouseId}='3' and pickTicket.userField1 in ('1000','1100') )
+ )
+ AND  warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN} 	
+ ORDER BY  wmsBolDetail.id
+ /~workInputCode: and pickTicket.code like '%{workInputCode}%' ~/
+				]]>
+				</statement>
+			</DataSource>
+		</RFTable>
+</RFListPage>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainJITShippingPage">
+    <main>
+        <process id="wmsTclWorkDocProcess">
+            <tablePopup id="new" title="new" process="wmsTclWorkDocProcess.new" enableType="none" containId="false" pageId="newJITShippingPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="modify" title="modify" process="wmsTclWorkDocProcess.modify" enableType="single" containId="true" pageId="newJITShippingPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="view" title="view" process="wmsTclWorkDocProcess.view" enableType="single" containId="true" pageId="viewJITShippingPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="enable" title="enable" process="wmsTclWorkDocProcess.enable" enableType="multi" multiMapping="false" download="false" closeTransactional="false" confirmMessage="是否确认生效此条记录？">
+                <enableExpression><![CDATA[${workDoc.qty}>0]]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsTclWorkDocManager" methodName="activeQuickShippingWorkDoc" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="ship" title="ship" process="wmsTclWorkDocProcess.ship" enableType="multi" multiMapping="false" download="false" closeTransactional="false">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsTclWorkDocManager" methodName="shipJitOrder" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

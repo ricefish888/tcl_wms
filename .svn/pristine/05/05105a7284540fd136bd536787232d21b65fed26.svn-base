@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 盘点输入货品 -->
+<RFFormPage id="tclCountPlanRFListPage3" title="tclCountPlanRFListPage3">
+	<RFDisplay id="countInsertItemDisplay" load="tclRfCountPlanManager.showInsertLocationCode">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+		              库位:{location}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>	
+		             库位:{location}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="countInsertItemInput" title="countInsertItemInput" tip=""
+				 onFoucs="true">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="countInsertItemScan" title="countInsertItemScan" action="tclRfCountPlanManager.countInsertItemInputCommit" validate="" onFoucs="false"/>
+			<RFButton id="changeLocationScan" title="changeLocationScan" action="tclRfCountPlanManager.changeLocation" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

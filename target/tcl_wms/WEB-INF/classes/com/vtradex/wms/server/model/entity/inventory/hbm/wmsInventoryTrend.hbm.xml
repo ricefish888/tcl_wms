@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.inventory.WmsInventoryTrend" table="WMS_INVENTORY_TREND">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">SEQ_WMS_INVENTORY_TREND</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        
+        <property name="needDate" type="date" column="NEED_DATE"/>
+        
+        <many-to-one name="factory" class="com.vtradex.wms.server.model.entity.base.WmsSapFactory">
+			<column name="FACTORY_ID"/>
+		</many-to-one>
+        <many-to-one name="item" class="com.vtradex.wms.server.model.entity.item.WmsItem">
+			<column name="ITEM_ID"/>
+		</many-to-one>
+
+		<property name="invBZQty" column="INV_BZ_QTY" type="double" />
+		<property name="invJSQty" column="INV_JS_QTY" type="double" />
+		
+		
+		<property name="t1ProQty" column="T1_PRO_QTY" type="double" />
+		<property name="t1ResQty" column="T1_RES_QTY" type="double" />
+		
+		<property name="t2ProQty" column="T2_PRO_QTY" type="double" />
+		<property name="t2ResQty" column="T2_RES_QTY" type="double" />
+		
+		<property name="t3ProQty" column="T3_PRO_QTY" type="double" />
+		<property name="t3ResQty" column="T3_RES_QTY" type="double" />
+		
+		<property name="t4ProQty" column="T4_PRO_QTY" type="double" />
+		<property name="t4ResQty" column="T4_RES_QTY" type="double" />
+		
+		<property name="t5ProQty" column="T5_PRO_QTY" type="double" />
+		<property name="t5ResQty" column="T5_RES_QTY" type="double" />
+		
+		<property name="t6ProQty" column="T6_PRO_QTY" type="double" />
+		<property name="t6ResQty" column="T6_RES_QTY" type="double" />
+
+		<property name="t7ProQty" column="T7_PRO_QTY" type="double" />
+		<property name="t7ResQty" column="T7_RES_QTY" type="double" />
+		
+		<property name="t8ProQty" column="T8_PRO_QTY" type="double" />
+		<property name="t8ResQty" column="T8_RES_QTY" type="double" />
+		
+		<property name="t9ProQty" column="T9_PRO_QTY" type="double" />
+		<property name="t9ResQty" column="T9_RES_QTY" type="double" />
+		
+		<property name="t10ProQty" column="T10_PRO_QTY" type="double" />
+		<property name="t10ResQty" column="T10_RES_QTY" type="double" />
+		
+		<property name="t11ProQty" column="T11_PRO_QTY" type="double" />
+		<property name="t11ResQty" column="T11_RES_QTY" type="double" />
+		
+		<property name="t12ProQty" column="T12_PRO_QTY" type="double" />
+		<property name="t12ResQty" column="T12_RES_QTY" type="double" />
+		
+		<property name="t13ProQty" column="T13_PRO_QTY" type="double" />
+		<property name="t13ResQty" column="T13_RES_QTY" type="double" />
+		
+		<property name="t14ProQty" column="T14_PRO_QTY" type="double" />
+		<property name="t14ResQty" column="T14_RES_QTY" type="double" />
+		
+		<property name="t15ProQty" column="T15_PRO_QTY" type="double" />
+		<property name="t15ResQty" column="T15_RES_QTY" type="double" />
+		
+		
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <modifyDetailPage id="editWmsTransportOrderPage" title="editWmsTransportOrderPage" entityClass="com.vtradex.wms.server.model.entity.order.WmsTransportOrder" onClose="refreshParent" width="800" height="650">
+        <modify>
+            <inputUIs>
+                <hidden id="wmsTransportOrder.id" title="wmsTransportOrder.id" reserve="false"/>
+        		<text id="wmsTransportOrder.code" title="wmsTransportOrder.code" row="1" col="1" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>                
+              
+              <date id="wmsTransportOrder.orderDate" title="wmsTransportOrder.orderDate" row="1" col="2" span="1" width="140" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="true" inVisible="false" showTime="false" manualEditable="true" defaultCurrentDate="true"/>
+           
+              
+                <remote id="wmsTransportOrder.supplier.id" title="wmsTransportOrder.supplier.id" row="1" col="3" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="供应商ID,供应商编码,供应商名称">
+                <hql><![CDATA[ select w.id,
+ w.code,
+ w.name
+ from WmsSupplier w 
+ where 1=1 
+ AND w.status='ENABLED'
+ AND (w.code like:param OR w.name like:param)  
+ ]]></hql>
+            </remote>
+            
+             </inputUIs>
+        </modify>
+        
+        <detail entityClass="com.vtradex.wms.server.model.entity.order.WmsTransportOrderDetail">
+            <datasource><![CDATA[select
+ wtod.id,
+ wtod.lineNo,
+ deliveryOrder.code,
+ factory.code,
+ item.code,
+ item.name,
+ wtod.quantity,
+ deliveryOrderDetail.planQuantityBu,
+ deliveryOrderDetail.delivedQuantityBu,
+ deliveryOrderDetail.theDeliveryQuantityBu,
+ packageUnit.unit,
+ wtod.remark
+ FROM WmsTransportOrderDetail wtod
+ LEFT JOIN wtod.transportOrder transportOrder
+ LEFT JOIN wtod.item item
+ LEFT JOIN wtod.deliveryOrderDetail deliveryOrderDetail
+ LEFT JOIN deliveryOrderDetail.factory factory
+ LEFT JOIN wtod.deliveryOrderDetail.deliveryOrder deliveryOrder
+ LEFT JOIN wtod.packageUnit packageUnit
+ WHERE 1=1 AND  wtod.transportOrder.id = {wmsTransportOrder.id}
+ order by wtod.id desc]]></datasource>
+            <columns>
+            <column id="wtod.id" title="wtod.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="wtod.lineNo" title="wtod.lineNo" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+            <column id="deliveryOrder.code" title="deliveryOrder.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="factory.code" title="factory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>      
+            <column id="wtod.quantity" title="wtod.quantity" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="deliveryOrderDetail.planQuantityBu" title="deliveryOrderDetail.planQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="deliveryOrderDetail.delivedQuantityBu" title="deliveryOrderDetail.delivedQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>    
+            <column id="deliveryOrderDetail.theDeliveryQuantityBu" title="deliveryOrderDetail.theDeliveryQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>    
+            <column id="packageUnit.unit" title="packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wtod.remark" title="wtod.remark" visible="true" sortable="true" horizonAlign="center" verticalAlign="string" />
+        </columns>
+        </detail>
+    </modifyDetailPage>
+</pages>

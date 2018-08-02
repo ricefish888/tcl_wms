@@ -1,0 +1,18 @@
+package com.vtradex.wms.server.model.entity.base;
+/***
+ * 出库批次追踪类型
+ * @author administrator
+ *
+ */
+public interface WmsShippingLotTruckBillType {
+	
+	/**生产领料单*/
+	String SCLLD="SCLLD";
+	
+	/**预留出库单*/
+	String YLCKD="YLCKD";
+	
+	/**销售交货出库单*/
+	String XSJHD="XSJHD";
+
+}

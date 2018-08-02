@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsCostCenterPage" title="maintainWmsCostCenterPage" mainEntrance="true" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.base.WmsCostCenter">
+        <workflow/>
+        <datasource><![CDATA[SELECT 
+costCenter.id,
+costCenter.code,
+costCenter.name,
+costCenter.xxpirationDate
+ FROM WmsCostCenter costCenter
+ WHERE 1=1  
+ ORDER BY costCenter.code]]></datasource>
+        <columns>
+            <column id="costCenter.id" title="costCenter.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="costCenter.code" title="costCenter.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="costCenter.name" title="costCenter.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="costCenter.xxpirationDate" title="costCenter.xxpirationDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+        </columns>
+    </maintainPage>
+</pages>

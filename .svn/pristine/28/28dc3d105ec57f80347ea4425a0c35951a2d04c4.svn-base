@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.receiving.WmsJITDownLineRecord" table="WMS_JIT_DOWNLINE_RECORD">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_WMS_JIT_DOWNLINE_RECORD</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        <version name="version" column="VERSION" type="long"/>
+        
+		<many-to-one name="detail" class="com.vtradex.wms.server.model.entity.receiving.WmsASNDetail">
+			<column name="DETAIL_ID" not-null="true"/>
+		</many-to-one>
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+		<property name="backQuantity" type="double" column="BACK_QUANTITY"/>
+		<property name="asnCode" type="string" column="ASN_CODE"/>
+	</class>
+</hibernate-mapping>

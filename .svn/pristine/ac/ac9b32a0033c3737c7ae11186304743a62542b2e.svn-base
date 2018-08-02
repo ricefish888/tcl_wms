@@ -1,0 +1,96 @@
+package com.vtradex.wms.rfserver.service.receiving;
+
+import java.util.Map;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import com.vtradex.rf.common.exception.RfBusinessException;
+import com.vtradex.thorn.server.service.BaseManager;
+import com.vtradex.wms.server.model.entity.receiving.WmsASNDetail;
+
+/**
+ * ASN操作入口处理类
+ * @Description:
+ * @Author:        <a href="yequan.song@vtradex.net">宋叶全</a>
+ * @CreateDate:    2016年1月22日
+ * @version:       v1.0
+ */
+public interface TclRfAsnManager extends BaseManager{
+	/**
+	 * 扫描asn单号提交
+	 * @param asnMap
+	 * @return
+	 * @throws RfBusinessException
+	 */
+	public Map asnCodeInputCommit(Map asnMap) throws RfBusinessException ;
+	
+	/**
+	 * 显示asn信息
+	 * @param asnMap
+	 * @return
+	 * @throws RfBusinessException
+	 */
+	public Map asnInfo(Map asnMap) throws RfBusinessException ;
+	
+	/**
+	 * 扫描货品条码信息
+	 * @param asnMap
+	 * @return
+	 * @throws RfBusinessException
+	 */
+	public Map asnItemCommit(Map asnMap) throws RfBusinessException ;
+	
+	
+	/**
+	 * RF 收货
+	 * @Description:
+	 * @Author:        <a href="yequan.song@vtradex.net">宋叶全</a>
+	 * @CreateDate:    2016年1月26日
+	 * @param asnMap
+	 * @return:
+	 * @arithMetic:
+	 * @exception:
+	 */
+	public Map asnReceiveSingle(Map asnMap) throws RfBusinessException;
+	
+	
+	/**
+	 * 货品切换
+	 * @Description:
+	 * @Author:        <a href="yequan.song@vtradex.net">宋叶全</a>
+	 * @CreateDate:    2016年1月26日
+	 * @param asnMap
+	 * @return:
+	 * @arithMetic:
+	 * @exception:
+	 */
+	public Map asnItemSwitch(Map asnMap) throws RfBusinessException;
+	
+	
+	public Map skuTaskItemCommit(Map skuTaskItemMap) throws RfBusinessException;
+	
+	/**
+	 * 显示ASN信息
+	 * @param asnMap
+	 * @return
+	 * @throws RfBusinessException
+	 */
+	public Map showAsnInfo(Map asnMap) throws RfBusinessException;
+	
+	/**
+	 * 整单质检
+	 * @param asnMap
+	 * @return
+	 * @throws RfBusinessException
+	 */
+	@Transactional
+	public Map asnQualityAll(Map asnMap) throws RfBusinessException;
+	
+	/**
+	 * 创建上架单
+	 * @param asnMap
+	 * @return
+	 * @throws RfBusinessException
+	 */
+	public Map createAsnWorkDoc(Map asnMap) throws RfBusinessException;
+}

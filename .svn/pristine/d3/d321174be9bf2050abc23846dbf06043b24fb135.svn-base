@@ -1,0 +1,17 @@
+maintainWmsProductionOrderMeetInfoPage=\u5de5\u5355\u9f50\u5957\u6027\u7ba1\u7406
+meetInfo.id=\u5e8f\u53f7
+meetInfo.checkDate=\u68c0\u67e5\u65e5\u671f
+meetInfo.beMeet=\u662f\u5426\u9f50\u5957
+meetInfo.orderCode=\u5355\u53f7
+meetInfo.type=\u7c7b\u578b
+meetInfo.beginDate=\u5f00\u59cb\u65e5\u671f
+meetInfo.endDate=\u7ed3\u675f\u65e5\u671f
+meetInfo.detailId=\u5de5\u5355\u660e\u7ec6\u5e8f\u53f7
+meetInfo.factory.code=\u5de5\u5382\u7f16\u7801
+meetInfo.factory.name=\u5de5\u5382\u540d\u79f0
+meetInfo.item.code=\u7269\u6599\u4ee3\u7801
+meetInfo.item.name=\u7269\u6599\u540d\u79f0
+meetInfo.planQty=\u8ba1\u5212\u6570
+meetInfo.packageUnit.unit=\u5305\u88c5\u5355\u4f4d
+meetInfo.isNewFlag=\u662f\u5426\u6700\u65b0\u751f\u6210\u7684\u6570\u636e
+meetInfo.warehouse.name=\u4ed3\u5e93

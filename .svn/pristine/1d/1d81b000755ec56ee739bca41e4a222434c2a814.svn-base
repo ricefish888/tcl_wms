@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainAddWmsBolDetailPage" title="maintainAddWmsBolDetailPage" autoQuery="false" entityClass="com.vtradex.wms.server.model.entity.bol.WmsBolDetail" width="1000" height="450" onClose="refreshParent">
+        <workflow/>
+        <datasource><![CDATA[SELECT
+ wmsBolDetail.id, 
+ pickTicket.code,
+ item.code,
+ item.name,
+ wmsBolDetail.pickedQty
+ FROM WmsBolDetail wmsBolDetail 
+ LEFT JOIN wmsBolDetail.pickTicketDetail pickTicketDetail
+ LEFT JOIN pickTicketDetail.item item
+ LEFT JOIN pickTicketDetail.pickTicket pickTicket
+ LEFT JOIN pickTicket.warehouse warehouse
+ WHERE 1=1
+ AND  wmsBolDetail.isPacking = 'N'
+ AND  wmsBolDetail.bol.id is null 
+ AND pickTicket.userField3='DBCKD'
+ AND  warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN} 	
+ORDER BY  wmsBolDetail.id]]></datasource>
+        <columns>
+            <column id="wmsBolDetail.id" title="wmsBolDetail.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+            <column id="pickTicket.code" title="pickTicket.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+            <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+            <column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+            <column id="wmsBolDetail.pickedQty" title="wmsBolDetail.pickedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" inputUI="true"/>
+        </columns>
+    </maintainPage>
+</pages>

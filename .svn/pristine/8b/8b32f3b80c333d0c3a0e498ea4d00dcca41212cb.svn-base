@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsDeliveryOrderDetailPage" title="maintainWmsDeliveryOrderDetailPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.production.WmsDeliveryOrderDetail" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT 
+wdod.id,
+deliveryOrder.id,
+deliveryOrder.code,
+deliveryOrder.sapCode,
+item.code,
+item.name,
+warehouse.name,
+supplier.name,
+factory.name,
+wdod.lineNo,
+wdod.poNo,
+wdod.poDetailNo,
+wdod.planQuantityBu,
+wdod.delivedQuantityBu,
+wdod.theDeliveryQuantityBu,
+wdod.kcdd,
+wdod.remark,
+deliveryOrder.billTypeName,
+purchaseOrder.code,
+packageUnit.unit,
+factory.code,
+warehouse.code,
+supplier.code,
+customer.code,
+customer.name,
+deliveryOrder.status,
+deliveryOrder.deliveryDate,
+deliveryOrder.type,
+deliveryOrder.createdType,
+deliveryOrder.project,
+deliveryOrder.updateInfo.creator,
+deliveryOrder.updateInfo.createdTime,
+deliveryOrder.updateInfo.lastOperator,
+deliveryOrder.updateInfo.updateTime,
+deliveryOrder.confirmor,
+deliveryOrder.confirmTime,
+deliveryOrder.receiver,
+deliveryOrder.receiveTime,
+deliveryOrder.confirmStatus 
+FROM WmsDeliveryOrderDetail wdod
+LEFT JOIN wdod.deliveryOrder deliveryOrder
+LEFT JOIN wdod.purchaseOrderDetail.purchaseOrder purchaseOrder
+LEFT JOIN wdod.item item
+LEFT JOIN wdod.factory factory
+LEFT JOIN wdod.packageUnit packageUnit
+LEFT JOIN deliveryOrder.warehouse warehouse
+LEFT JOIN deliveryOrder.supplier supplier
+LEFT JOIN deliveryOrder.customer customer
+WHERE 1=1
+ORDER BY deliveryOrder.id DESC ]]></datasource>
+        <columns>
+            <column id="wdod.id" title="wdod.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="deliveryOrder.id" title="deliveryOrder.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="deliveryOrder.code" title="deliveryOrder.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="deliveryOrder.sapCode" title="deliveryOrder.sapCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="warehouse.name" title="warehouse.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplier.name" title="supplier.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="factory.name" title="factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            
+            <column id="wdod.lineNo" title="wdod.lineNo" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+            <column id="wdod.poNo" title="wdod.poNo" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wdod.poDetailNo" title="wdod.poDetailNo" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wdod.planQuantityBu" title="wdod.planQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="wdod.delivedQuantityBu" title="wdod.delivedQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="wdod.theDeliveryQuantityBu" title="wdod.theDeliveryQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="wdod.kcdd" title="wdod.kcdd" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            
+            <column id="wdod.remark" title="wdod.remark" visible="true" sortable="true" horizonAlign="center" verticalAlign="string"/>            
+            <column id="deliveryOrder.billTypeName" title="billType.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsDeliveryOrderBillType"/>            
+            <column id="purchaseOrder.code" title="purchaseOrder.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="packageUnit.unit" title="packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="factory.code" title="factory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>           
+            <column id="warehouse.code" title="warehouse.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>          
+            <column id="supplier.code" title="supplier.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="customer.code" title="customer.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="customer.name" title="customer.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="deliveryOrder.status" title="deliveryOrder.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsDeliveryOrderStatus"/>
+            <column id="deliveryOrder.deliveryDate" title="deliveryOrder.deliveryDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="deliveryOrder.type" title="deliveryOrder.type" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="deliveryOrder.createdType" title="deliveryOrder.createdType" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsDeliveryOrderCreatedType"/>
+            <column id="deliveryOrder.project" title="deliveryOrder.project" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+       		<column id="deliveryOrder.updateInfo.creator" title="deliveryOrder.updateInfo.creator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="deliveryOrder.updateInfo.createdTime" title="deliveryOrder.updateInfo.createdTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="deliveryOrder.updateInfo.lastOperator" title="deliveryOrder.updateInfo.lastOperator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="deliveryOrder.updateInfo.updateTime" title="deliveryOrder.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+       		<column id="deliveryOrder.confirmor" title="deliveryOrder.confirmor" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="deliveryOrder.confirmTime" title="deliveryOrder.confirmTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="deliveryOrder.receiver" title="deliveryOrder.receiver" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="deliveryOrder.receiveTime" title="deliveryOrder.receiveTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="deliveryOrder.confirmStatus" title="deliveryOrder.confirmStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="ConfirmStatus"/>
+        </columns>
+    </maintainPage>
+</pages>

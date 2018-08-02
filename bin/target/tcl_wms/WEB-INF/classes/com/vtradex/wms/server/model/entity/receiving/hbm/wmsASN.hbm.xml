@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.receiving.WmsASN" table="WMS_ASN">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_WMS_ASN</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        <version name="version" column="VERSION" type="long"/>
+        
+		<many-to-one name="warehouse" class="com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse">
+			<column name="WAREHOUSE_ID" not-null="true" unique-key="UK_WMS_ASN"/>
+		</many-to-one>
+		<many-to-one name="company" class="com.vtradex.wms.server.model.entity.item.WmsCompany">
+			<column name="COMPANY_ID" not-null="true" unique-key="UK_WMS_ASN"/>
+		</many-to-one>
+		<many-to-one name="billType" class="com.vtradex.wms.server.model.entity.item.WmsBillType">
+			<column name="BILL_TYPE_ID" not-null="true" unique-key="UK_WMS_ASN"/>
+		</many-to-one>
+		<many-to-one name="po" class="com.vtradex.wms.server.model.entity.receiving.WmsPo">
+			<column name="PO_ID"/>
+		</many-to-one>
+		
+		<property name="code" type="string" column="CODE" length="50" not-null="true" unique-key="UK_WMS_ASN"/>
+		<many-to-one name="receiveDock" class="com.vtradex.wms.server.model.entity.warehouse.WmsDock">
+			<column name="RECEIVE_DOCK"/>
+		</many-to-one>
+		<many-to-one name="receiveLocation" class="com.vtradex.wms.server.model.entity.warehouse.WmsLocation">
+			<column name="RECEIVE_LOCATION"/>
+		</many-to-one>
+		<property name="status" type="string" column="STATUS" length="50"/>
+		<property name="qty" type="double" column="QTY" not-null="true"/>
+		<property name="receiveQty" type="double" column="RECEIVE_QTY" not-null="true"/>
+		<property name="quantityQty" type="double" column="QUALITY_QTY" not-null="true"/>
+		<property name="putawayQty" type="double" column="PUTAWAY_QTY" not-null="true"/>
+		<property name="customerBill" type="string" column="CUSTOMER_BILL" length="50"/>
+		<property name="relatedBill1" type="string" column="RELATED_BILL1" length="50"/>
+		<property name="relatedBill2" type="string" column="RELATED_BILL2" length="50"/>
+		<property name="relatedBill3" type="string" column="RELATED_BILL3" length="50"/>
+ 
+		
+		<property name="orderDate" type="timestamp" column="ORDER_DATE"/>
+		<property name="estimateDate" type="timestamp" column="ESTIMATE_DATE"/>
+		<property name="actualDate" type="timestamp" column="ACTUAL_DATE"/>
+		<property name="startReceivedDate" type="timestamp" column="START_RECEIVED_DATE"/>
+		<property name="endReceivedDate" type="timestamp" column="END_RECEIVED_DATE"/>
+		<property name="fromCode" type="string" column="FROM_CODE" length="50"/>
+		<property name="fromName" type="string" column="FROM_NAME" length="50"/>
+		<component name="fromContact" class="com.vtradex.wms.server.model.component.Contact">
+            <property name="country" type="string">
+                <column name="C_COUNTRY" length="100"/>
+            </property>
+             <property name="province" type="string">
+                <column name="C_PROVINCE" length="100"/>
+            </property>
+            <property name="city" type="string">
+                <column name="C_CITY" length="50"/>
+            </property>
+            <property name="address" type="string">
+                <column name="C_ADDRESS" length="255"/>
+            </property>
+            <property name="postCode" type="string">
+                <column name="C_POSTCODE" length="10"/>
+            </property>
+            <property name="contactName" type="string">
+                <column name="C_CONTACT_NAME" length="50"/>
+            </property>
+            <property name="mobile" type="string">
+                <column name="C_MOBILE" length="100"/>
+            </property>
+            <property name="telephone" type="string">
+                <column name="C_TELEPHONE" length="50"/>
+            </property>
+            <property name="fax" type="string">
+                <column name="C_FAX" length="50"/>
+            </property>
+            <property name="email" type="string">
+                <column name="C_EMAIL" length="100"/>
+            </property>
+        </component>
+        
+        <property name="userField1" type="string" column="USER_FIELD_1" length="50"/>
+        <property name="userField2" type="string" column="USER_FIELD_2" length="50"/>
+        <property name="userField3" type="string" column="USER_FIELD_3" length="50"/>
+        <property name="userField4" type="string" column="USER_FIELD_4" length="50"/>
+        <property name="userField5" type="string" column="USER_FIELD_5" length="50"/>
+        <property name="userField6" type="string" column="USER_FIELD_6" length="50"/>
+        <property name="userField7" type="string" column="USER_FIELD_7" length="50"/>
+        <property name="userField8" type="string" column="USER_FIELD_8" length="50"/>
+        <property name="userField9" type="string" column="USER_FIELD_9" length="50"/>
+        <property name="userField10" type="string" column="USER_FIELD_10" length="50"/>
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+		
+		<set name="details" inverse="true" lazy="true" cascade="all-delete-orphan">
+			<key column="ASN_ID"/>
+			<one-to-many class="com.vtradex.wms.server.model.entity.receiving.WmsASNDetail"></one-to-many>
+		</set>		
+
+		<set name="records" inverse="true" lazy="true" cascade="all-delete-orphan">
+			<key column="ASN_ID"/>
+			<one-to-many class="com.vtradex.wms.server.model.entity.receiving.WmsReceivedRecord"></one-to-many>
+		</set>	
+		<many-to-one name="qcLocation" class="com.vtradex.wms.server.model.entity.warehouse.WmsLocation">
+			<column name="QC_LOCATION"/>
+		</many-to-one>
+		<many-to-one name="supplier" class="com.vtradex.wms.server.model.entity.base.WmsSupplier">
+			<column name="SUPPLIER_ID" unique-key="UK_WMS_MINPACKAGE_QTY"/>
+		</many-to-one>
+		<many-to-one name="keeper" class="com.vtradex.thorn.server.model.security.ThornUser">
+			<column name="KEEPER_ID" />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

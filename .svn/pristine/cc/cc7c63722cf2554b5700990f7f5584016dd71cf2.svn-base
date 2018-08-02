@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 查询列表页面模板 -->
+<RFListPage id="tclMoveNPBySkuLocationPage2" title="tclMoveNPBySkuLocationPage2">
+	<RFSearchUI id="inventoryNoPlanSearch" text="inventoryNoPlanSearch" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="inventoryId" title="inventoryId" width="0" enumType="" hidden="true" />
+		<RFTh id="locCode" title="locCode" width="200" enumType="" hidden="false" />
+		<RFTh id="itemCode" title="itemCode" width="400" enumType="" hidden="false" />
+		<RFTh id="inventoryStatus" title="inventoryStatus" width="200" enumType="" hidden="false" />
+		<RFTh id="productDate" title="productDate" width="350" enumType="" hidden="false" />
+		<DataSource type="HQL">
+			<statement>
+				<![CDATA[
+				 SELECT 
+				 inventory.id AS inventoryId,
+			     location.code AS locCode, 
+				 item.code AS itemCode, 
+				 inventory.status AS inventoryStatus, 
+				 itemKey.lotInfo.storageDate AS productDate
+					    FROM WmsInventory inventory 
+					    LEFT JOIN inventory.location location
+					    LEFT JOIN inventory.item item
+					    LEFT JOIN inventory.itemKey itemKey
+					    WHERE 1=1 
+						 AND inventory.itemKey.lotInfo.extendPropC17=${itemCode}
+						 AND location.code=${tclMoveNPBySkuLocationInput}
+						 AND inventory.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN} 
+						 AND inventory.operationStatus IN ('NORMAL')
+						 AND inventory.qty>0
+					    /~inventoryNoPlanSearch: AND location.code like '%{inventoryNoPlanSearch}%'~/
+				ORDER BY  inventory.id 
+				]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="addWmsReservedOrderDetailPage">
+    <main>
+        <process id="wmsReservedOrderDetailProcess">
+            <formCommit id="new" title="new" process="wmsReservedOrderDetailProcess.new" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="new">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="reservedOrder.id" className="long">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsReservedOrderManager" methodName="saveOrderDetail" parameter="reservedOrder.id,obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="false"/>
+                    <forward name="resetWindow" newEnabled="true" editEnabled="false"/>
+                </forwards>
+            </formCommit>
+            <formCommit id="edit" title="edit" process="wmsReservedOrderDetailProcess.edit" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="edit">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="reservedOrder.id" className="long">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsReservedOrderManager" methodName="saveOrderDetail" parameter="reservedOrder.id,obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="false" editEnabled="true"/>
+                    <forward name="closeWindow" newEnabled="false" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

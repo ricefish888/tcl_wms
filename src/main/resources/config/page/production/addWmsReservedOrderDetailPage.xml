@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="addWmsReservedOrderDetailPage" title="addWmsReservedOrderDetailPage" entityClass="com.vtradex.wms.server.model.entity.production.WmsReservedOrderDetail" >
+        <workflow/>
+        <inputUIs>
+            <hidden id="rod.id"  reserve="false"/>
+            <text id="rod.lineNo" title="rod.lineNo" row="1" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+           
+             <numberText id="rod.quantity" title="rod.quantity" row="1" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </numberText>
+          
+             <numberText id="rod.thQty" title="rod.thQty" row="2" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </numberText>
+       
+           <remote id="rod.item.id" title="rod.item.id" row="2" col="2" span="1" readOnly="false" required="true" reserve="false" forceOverride="false" focusUI="false" inVisible="false"  language="false" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,物料编码,物料描述">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT
+item.id,
+item.code,
+item.name
+FROM WmsItem item
+WHERE item.status = 'ENABLED' 
+AND (item.code LIKE :param OR item.name LIKE :param)
+ORDER BY item.id]]></hql>
+                <eventListeners>
+                    <eventListener id="rod.unit.id" index="3" refreshUI="false"/>
+                </eventListeners>
+            </remote>
+            <list id="rod.unit.id" title="rod.unit.id" row="3" col="1" span="1" width="120" readOnly="true" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT
+packageUnit.id,
+packageUnit.unit
+FROM WmsPackageUnit packageUnit
+WHERE 1=1
+AND packageUnit.item.id = ${rod.item.id}
+ORDER BY packageUnit.convertFigure desc]]></hql>
+                <eventListeners/>
+            </list>
+       
+            <remote id="rod.factory.id" title="rod.factory.id" row="3" col="2" span="1" readOnly="false" required="true" reserve="false" forceOverride="false" focusUI="false" inVisible="false"  language="false" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,代码,名称">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT
+factory.id,
+factory.code,
+factory.name
+FROM WmsSapFactory  factory
+WHERE factory.status = 'ENABLED' 
+AND (factory.code LIKE :param OR factory.name LIKE :param)
+AND  factory.id = ${reservedOrder.factory.id}
+ORDER BY factory.id]]></hql>
+            </remote>
+            
+             <text id="rod.shipLoc" title="rod.shipLoc" row="6" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            
+             <date id="rod.requestDate" title="rod.requestDate" row="4" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" showTime="false" manualEditable="true" defaultCurrentDate="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+             </date>
+      
+             <text id="rod.deleteFlag" title="rod.deleteFlag" row="5" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            
+             <text id="rod.zhfh" title="rod.zhfh" row="5" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            
+             <text id="rod.jdFlag" title="rod.jdFlag" row="4" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+        </inputUIs>
+    </editPage>
+</pages>

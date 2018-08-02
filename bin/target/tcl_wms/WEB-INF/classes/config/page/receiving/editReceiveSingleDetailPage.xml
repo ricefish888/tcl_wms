@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editReceiveSingleDetailPage" title="editReceiveSingleDetailPage" entityClass="com.vtradex.wms.server.model.entity.receiving.WmsASNDetail" width="230" height="300" onClose="refreshParent">
+        <workflow/>
+        <initListeners>
+            <initListener id="asnDetail.lotInfo" managerName="wmsItemManager" methodName="getLotRuleTackersByPageMap" editEnabled="true"/>
+            <initListener id="asnDetail.expectedPackQty" managerName="wmsASNManager" methodName="getUnReceivedQuantity" editEnabled="true"/>
+        </initListeners>
+        <inputUIs>
+            <hidden id="asnDetail.id" title="asnDetail.id" reserve="false"/>
+            <checkbox id="asnDetail.item.trackProduceDate" title="asnDetail.item.trackProduceDate" row="2" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </checkbox>
+            <text id="asnDetail.lineNo" title="asnDetail.lineNo" row="1" col="1" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <remote id="asnDetail.item.id" title="asnDetail.item.id" row="2" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="uneditable" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,名称,代码" intercepter="lotInfoInterceptor">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT
+item.id,
+item.code,
+item.name
+FROM WmsItem item
+WHERE item.status = 'ENABLED'
+AND item.masterGroup.id in (select company.masterGroup.id from WmsCompany company where company.id= ${asn.company.id})
+AND (item.code LIKE :param OR item.name LIKE :param)]]></hql>
+                <eventListeners>
+                    <eventListener id="asnDetail.packageUnit.id" index="1" refreshUI="false"/>
+                    <eventListener id="asnDetail.lotInfo" index="4" refreshUI="true"/>
+                </eventListeners>
+            </remote>
+            <list id="asnDetail.packageUnit.id" title="asnDetail.packageUnit.id" row="3" col="1" span="1" width="120" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT
+packageUnit.id,
+packageUnit.unit
+FROM WmsPackageUnit packageUnit
+WHERE 1=1
+AND packageUnit.item.id = ${asnDetail.item.id}
+ORDER BY packageUnit.convertFigure]]></hql>
+                <eventListeners/>
+            </list>
+            <numberText id="asnDetail.expectedPackQty" title="asnDetail.expectedPackQty" row="4" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" validator="positiveNumberRequired" returnType="Double" decimal="2">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </numberText>
+            <text id="asnDetail.pallet" title="asnDetail.pallet" row="5" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <text id="asnDetail.carton" title="asnDetail.carton" row="6" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </text>
+            <complex id="asnDetail.lotInfo" title="asnDetail.lotInfo" row="9" col="1" span="2" type="asnLotInfo"/>
+            <list id="status" title="status" row="10" col="1" span="2" width="120" readOnly="false" required="true" reserve="true" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT itemState.id,itemState.name
+				 FROM WmsInventoryState itemState
+				 WHERE
+				 itemState.masterGroup.id in (select company.masterGroup.id from WmsCompany company where company.id= ${asn.company.id})
+				 AND itemState.status='ENABLED'
+				 ORDER BY itemState.id DESC]]></hql>
+                <eventListeners/>
+            </list>
+            <remote id="workerId" title="workerId" row="12" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="false" focusUI="false" inVisible="false" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,编码,名称">
+                <visibleExpression/>
+                <hql><![CDATA[select
+ worker.id, 
+ worker.code,  
+ worker.name
+ from WmsWorker worker 
+ where worker.code like :param
+ and worker.status='ENABLED'
+ ]]></hql>
+                <eventListeners/>
+            </remote>
+        </inputUIs>
+    </editPage>
+</pages>

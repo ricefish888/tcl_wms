@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.production.WmsReservedOrderDetail" table="RESERVED_ORDER_DETAIL">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_RESERVED_ORDER_DETAIL</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        <discriminator column="DISCRIMINATOR" type="string"></discriminator>
+        <version name="version" column="VERSION" type="long"></version>
+        
+		<many-to-one name="reservedOrder" class="com.vtradex.wms.server.model.entity.production.WmsReservedOrder">
+			<column name="RESERVED_ORDER_ID" not-null="true"/>
+		</many-to-one>
+		<property name="lineNo" type="string" column="LINE_NO" length="50"/>
+		<property name="deleteFlag" column="DELETE_FALG" type="string" length="50"/>
+		<property name="zhfh" column="ZHFH" type="string" length="50"/>
+		
+		<many-to-one name="item" class="com.vtradex.wms.server.model.entity.item.WmsItem">
+			<column name="ITEM_ID" not-null="true" />
+		</many-to-one>
+		
+		<many-to-one name="unit" class="com.vtradex.wms.server.model.entity.item.WmsPackageUnit">
+			<column name="UNIT_ID"  not-null="true" />
+		</many-to-one>
+		
+		<many-to-one name="factory" class="com.vtradex.wms.server.model.entity.base.WmsSapFactory">
+			<column name="FACTORY_ID" not-null="true"/>
+		</many-to-one>
+		<property name="shipLoc" column="SHIP_LOC" type="string" length="50"/>
+		<property name="requestDate" type="timestamp" column="REQUEST_DATE"/>
+		<property name="quantity" type="double" column="QUANTITY"/>
+		<property name="thQty" type="double" column="THQTY"/>
+		<property name="jdFlag" column="JD_FLAG" type="string" length="50"/>
+		
+		
+		<property name="allocatedQuantityBu" type="double" column="ALLOCATED_QUANTITY_BU" />
+		<property name="pickedQuantityBu" type="double" column="PICKED_QUANTITY_BU" />
+		<property name="shippedQuantityBu" type="double" column="SHIPPED_QUANTITY_BU" />
+		<property name="lineNoRemark" column="LINENO_REMARK" type="string" length="50"/>
+		<property name="project" column="PROJECT" type="string" length="50"/>
+
+      	<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+	</class>
+</hibernate-mapping>

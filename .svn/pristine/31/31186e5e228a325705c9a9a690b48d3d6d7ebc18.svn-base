@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsTaskPage" title="maintainWmsTaskPage" mainEntrance="true" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.workdoc.WmsTask">
+        <workflow/>
+        <datasource><![CDATA[SELECT task.id,
+task.type,
+workDoc.code,
+task.status,
+task.taskGroup.code,
+task.relatedBillCode,
+fromLocation.code,
+toLocation.code,
+item.code,
+item.name,
+packageUnit.unit,
+task.planPackQty,
+task.planQty,
+task.pickedQty,
+task.putawayQty,
+task.startTime,
+task.endTime,
+task.station,
+task.transferStatus,
+task.sortedQty,
+task.sortDisplaygroupSeq,
+task.pallet,
+task.carton,
+worker.name,
+task.updateInfo.creator,
+task.updateInfo.createdTime,
+task.updateInfo.lastOperator,
+task.updateInfo.updateTime
+ FROM WmsTask task
+ LEFT JOIN task.workDoc workDoc
+ LEFT JOIN task.fromLocation fromLocation
+ LEFT JOIN task.toLocation toLocation
+ LEFT JOIN task.item item
+ LEFT JOIN task.packageUnit packageUnit
+ LEFT JOIN task.taskGroup taskGroup
+ LEFT JOIN task.worker worker
+ WHERE 1=1
+ AND workDoc.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}
+ ORDER BY task.id DESC
+ ]]></datasource>
+        <columns>
+            <column id="task.id" title="task.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="task.type" title="task.type" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsTaskType"/>
+            <column id="workDoc.code" title="workDoc.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="task.status" title="task.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsTaskStatus"/>
+            <column id="task.taskGroup.code" title="task.taskGroup.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="task.relatedBillCode" title="task.relatedBillCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="fromLocation.code" title="fromLocation.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+        	<column id="toLocation.code" title="toLocation.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="packageUnit.unit" title="packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="task.planPackQty" title="task.planPackQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="task.planQty" title="task.planQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="1"/>
+            <column id="task.pickedQty" title="task.pickedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="6"/>
+            <column id="task.putawayQty" title="task.putawayQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="3"/>
+            <column id="task.startTime" title="task.startTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m:s"/>
+            <column id="task.endTime" title="task.endTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat" formatParam="y-m-d h:m:s"/>
+        	<column id="task.station" title="task.station" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+        	<column id="task.transferStatus" title="task.transferStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsTransferStatus"/>
+        	<column id="task.sortedQty" title="task.sortedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double" format="numberFormat" formatParam="1"/>
+        	<column id="task.sortDisplaygroupSeq" title="task.sortDisplaygroupSeq" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+        	<column id="task.pallet" title="task.pallet" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+        	<column id="task.carton" title="task.carton" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+        	<column id="worker.name" title="worker.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="task.updateInfo.creator" title="task.updateInfo.creator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="task.updateInfo.createdTime" title="task.updateInfo.createdTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="task.updateInfo.lastOperator" title="task.updateInfo.lastOperator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="task.updateInfo.updateTime" title="task.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>  
+        </columns>
+    </maintainPage>
+</pages>

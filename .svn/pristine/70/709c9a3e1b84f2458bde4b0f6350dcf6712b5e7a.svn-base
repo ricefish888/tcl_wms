@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ASN收货表单页面模板 -->
+<RFFormPage id="tclAsnReceiveRFPage3" title="tclAsnReceiveRFPage3">
+	<RFDisplay id="asnDisplay" load="tclRfAsnManager.asnInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[ 
+			收货单号: {asnCode}
+			单据类型:{asnTypeName} 
+			项目类别:{userField5} 
+			供应商编码:{supplierCode} 
+			供应商名称:{supplierName} 
+			交货单号:{deliveryOrderCode}
+			交货日期:{deliveryDate}
+			货品代码:{itemCode}
+			货品名称:{itemName}
+			计划数量:{expectedQty}
+			可收数量:{unReceiveQty}
+			可收数量:{boxQty}箱{qty}个
+			 
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>
+			收货单号: {asnCode}
+			单据类型:{asnTypeName} 
+			项目类别:{userField5} 
+			供应商编码:{supplierCode} 
+			供应商名称:{supplierName} 
+			交货单号:{deliveryOrderCode}
+			交货日期:{deliveryDate}
+			货品代码:{itemCode}
+			货品名称:{itemName}
+			计划数量:{expectedQty}
+			可收数量:{unReceiveQty}
+			可收数量:{boxQty}箱{qty}个
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs> 
+			<RFText id="receiveQuantity" title="receiveQuantity" tip=""
+				 onFoucs="true">
+			</RFText> 
+		</inputs>
+		<buttons>
+			<RFButton id="asnReceiverComBt" title="asnReceiverComBt" action="tclRfAsnManager.asnReceiveSingle" validate="" onFoucs="false"/>
+			<RFButton id="asnSwitchBt" title="asnSwitchBt" action="tclRfAsnManager.asnItemSwitch" validate="" onFoucs="false"/>
+	    </buttons>
+	</RFForm>
+</RFFormPage>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="wmsTclWorkDocProcess" control="status">
+
+	<state id="READY_ALLOCATE" title="待分配"/>
+
+	<state id="ENABLED" title="生效"/>
+
+	<state id="FINISH" title="完成"/>
+
+	<state id="IN_OPERATION" title="作业中"/>
+
+	<task id="new" title="新建">
+		<to id="READY_ALLOCATE" type="state"/>
+	</task>
+
+	<task id="view" title="查看">
+	</task>
+
+	<task id="addDetail" title="添加明细">
+	</task>
+
+	<task id="deleteDetail" title="删除明细">
+	</task>
+
+	<task id="modify" title="修改">
+		<from id="READY_ALLOCATE" type="state"/>
+	</task>
+
+	<task id="enable" title="生效">
+		<from id="READY_ALLOCATE" type="state"/>
+		<to id="ENABLED" type="state"/>
+	</task>
+
+	<task id="ship" title="整单发运">
+		<from id="ENABLED" type="state"/>
+		<from id="IN_OPERATION" type="state"/>
+	</task>
+	
+	<task id="disabled" title="失效">
+		<from id="ENABLED" type="state"/>
+		<to id="READY_ALLOCATE" type="state"/>
+	</task>
+
+	<task id="detailShip" title="明细发运">
+	</task>
+
+	<task id="print" title="打印">
+	</task>
+
+	<task id="printJIT" title="打印JIT出库单">
+	</task>
+
+	<task id="delete" title="删除">
+		<from id="READY_ALLOCATE" type="state"/>
+	</task>
+	
+   <task id="deleteJIT" title="删除">
+		<from id="READY_ALLOCATE" type="state"/>
+	</task>
+	
+
+	
+</process>

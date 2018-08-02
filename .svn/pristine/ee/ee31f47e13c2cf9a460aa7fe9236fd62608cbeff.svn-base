@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainAddWmsTransportOrderDetailPage" title="maintainAddWmsTransportOrderDetailPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.production.DailyDeliverOrderDetail"  width="1100" height="450"  mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[select 
+ddod.id,
+orderDetail.deliveryOrder.warehouse.name,
+orderDetail.factory.name,
+orderDetail.deliveryOrder.code,
+orderDetail.item.code,
+orderDetail.item.name,
+ddod.deliverDate,
+ddod.deliverQty,
+ddod.loadQty,
+(ddod.deliverQty - ddod.loadQty) as  amount
+FROM DailyDeliverOrderDetail  ddod 
+LEFT JOIN  ddod.orderDetail orderDetail
+LEFT JOIN  orderDetail.item
+LEFT JOIN  orderDetail.packageUnit
+LEFT JOIN  orderDetail.deliveryOrder
+LEFT JOIN  orderDetail.factory
+LEFT JOIN  orderDetail.deliveryOrder.warehouse
+WHERE 1=1
+AND (ddod.deliverQty - ddod.loadQty) >0
+AND (
+	(
+	ddod.deliverDate <= (sysdate+2) and orderDetail.deliveryOrder.warehouse.code in ('BX','XYJ')
+	)
+
+	OR
+	(
+		orderDetail.deliveryOrder.warehouse.code='VMI'
+	)
+)
+AND orderDetail.deliveryOrder.status in ('ACTIVE','PARTIALRECEIPT')
+AND orderDetail.deliveryOrder.supplier.id = {wmsTransportOrder.supplier.id}
+ORDER BY orderDetail.id]]></datasource>
+        <columns>
+            <column id="ddod.id" title="ddod.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="orderDetail.deliveryOrder.warehouse.name" title="orderDetail.deliveryOrder.warehouse.name" visible="true" width="200" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="orderDetail.factory.name" title="orderDetail.factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="orderDetail.deliveryOrder.code" title="orderDetail.deliveryOrder.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="orderDetail.item.code" title="orderDetail.item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="orderDetail.item.name" title="orderDetail.item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="ddod.deliverDate" title="ddod.deliverDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="ddod.deliverQty" title="ddod.deliverQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="ddod.loadQty" title="ddod.loadQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="amount" title="amount" visible="true" sortable="false" horizonAlign="center" verticalAlign="middle" dataType="double" inputUI="true"/>
+        </columns>
+    </maintainPage>
+</pages>

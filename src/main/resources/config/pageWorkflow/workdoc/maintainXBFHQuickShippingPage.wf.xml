@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainXBFHQuickShippingPage">
+    <main>
+        <process id="wmsTclWorkDocProcess">
+             <tablePopup id="view" title="view" process="wmsTclWorkDocProcess.view" enableType="single" containId="true" pageId="viewQuickShippingPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="new" title="new" process="wmsTclWorkDocProcess.new" enableType="none" containId="false" pageId="newQuickShippingPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="modify" title="modify" process="wmsTclWorkDocProcess.modify" enableType="single" containId="true" pageId="modifyQuickShippingPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="enable" title="enable" process="wmsTclWorkDocProcess.enable" enableType="multi" download="false" confirmMessage="是否确认生效？">
+                <enableExpression><![CDATA[${workDoc.qty}>0]]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsTclWorkDocManager" methodName="activeQuickShippingWorkDoc" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="disabled" title="disabled" process="wmsTclWorkDocProcess.disabled" enableType="multi" download="false" confirmMessage="是否确认失效？">
+                <enableExpression><![CDATA[${workDoc.status}=='ENABLED']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsTclWorkDocManager" methodName="unActiveQuickShippingWorkDoc" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="delete" title="delete" process="wmsTclWorkDocProcess.delete" enableType="multi" download="false" confirmMessage="是否确认删除？">
+                <enableExpression></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsTclWorkDocManager" methodName="deleteWorkDoc" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="ship" title="ship" process="wmsTclWorkDocProcess.ship" enableType="multi" download="false" confirmMessage="是否确认发运？">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsTclWorkDocManager" methodName="shipQuickShippingWorkDoc" parameter="obj"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tablePopup id="detailShip" title="detailShip" process="wmsTclWorkDocProcess.detailShip" enableType="single" containId="true" pageId="detailShipQuickShippingPage">
+                <enableExpression><![CDATA[${workDoc.status}=='ENABLED' || ${workDoc.status}=='IN_OPERATION']]></enableExpression>
+            </tablePopup>
+            
+            <tablePopup id="print" title="print" process="wmsTclWorkDocProcess.print" enableType="single" containId="true" pageId="printPSDPage">
+            </tablePopup>
+        </process>
+    </main>
+    <detail/>
+</page>

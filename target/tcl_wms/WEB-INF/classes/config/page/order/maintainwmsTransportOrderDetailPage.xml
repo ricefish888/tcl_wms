@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainwmsTransportOrderDetailPage" title="maintainwmsTransportOrderDetailPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.order.WmsTransportOrderDetail" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT 
+ wtod.id,
+wmsTransportOrder.code,
+deliveryOrder.code,
+factory.code,
+wmsTransportOrder.orderDate,
+wmsTransportOrder.supplier.code,
+wtod.lineNo,
+item.code,
+item.name,
+wtod.oldQuantity,
+wtod.receiveQty,
+wtod.quantity,
+wtod.status,
+deliveryOrderDetail.planQuantityBu,
+deliveryOrderDetail.delivedQuantityBu,
+deliveryOrderDetail.theDeliveryQuantityBu,
+packageUnit.unit,
+wmsTransportOrder.status,
+wmsTransportOrder.supplier.name,
+wmsTransportOrder.updateInfo.creator,
+wmsTransportOrder.updateInfo.createdTime,
+wmsTransportOrder.updateInfo.lastOperator,
+wmsTransportOrder.updateInfo.updateTime,
+wtod.remark
+ FROM WmsTransportOrderDetail wtod
+ LEFT JOIN wtod.transportOrder wmsTransportOrder
+ LEFT JOIN wmsTransportOrder.supplier  
+ LEFT JOIN wtod.item item
+ LEFT JOIN wtod.deliveryOrderDetail deliveryOrderDetail
+ LEFT JOIN deliveryOrderDetail.factory factory
+ LEFT JOIN wtod.deliveryOrderDetail.deliveryOrder deliveryOrder
+ LEFT JOIN wtod.packageUnit packageUnit
+ WHERE 1=1 
+ ORDER BY wmsTransportOrder.id DESC
+ ]]></datasource>
+        <columns>
+            <column id="wtod.id" title="wtod.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="wmsTransportOrder.code" title="wmsTransportOrder.code" visible="true" width="140" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="deliveryOrder.code" title="deliveryOrder.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="factory.code" title="factory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wmsTransportOrder.orderDate" title="wmsTransportOrder.orderDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+            <column id="wmsTransportOrder.supplier.code" title="wmsTransportOrder.supplier.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>         
+            <column id="wtod.lineNo" title="wtod.lineNo" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+            <column id="item.code" title="item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="item.name" title="item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>      
+            <column id="wtod.oldQuantity" title="wtod.oldQuantity" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="wtod.receiveQty" title="wtod.receiveQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="wtod.quantity" title="wtod.quantity" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="wtod.status" title="wtod.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsTransportOrderDetailStatus"/>
+            <column id="deliveryOrderDetail.planQuantityBu" title="deliveryOrderDetail.planQuantityBu" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="deliveryOrderDetail.delivedQuantityBu" title="deliveryOrderDetail.delivedQuantityBu" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>    
+            <column id="deliveryOrderDetail.theDeliveryQuantityBu" title="deliveryOrderDetail.theDeliveryQuantityBu" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>    
+            <column id="packageUnit.unit" title="packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="wmsTransportOrder.status" title="wmsTransportOrder.status" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsTransportOrderStatus"/>
+            <column id="wmsTransportOrder.supplier.name" title="wmsTransportOrder.supplier.name" width="250" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/> 
+            <column id="purchaseOrder.updateInfo.creator" title="purchaseOrder.updateInfo.creator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.updateInfo.createdTime" title="purchaseOrder.updateInfo.createdTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="purchaseOrder.updateInfo.lastOperator" title="purchaseOrder.updateInfo.lastOperator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="purchaseOrder.updateInfo.updateTime" title="purchaseOrder.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="wtod.remark" title="wtod.remark" visible="true" sortable="true" horizonAlign="center" verticalAlign="string" />
+        </columns>
+    </maintainPage>
+</pages>

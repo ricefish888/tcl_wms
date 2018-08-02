@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsReservedOrderDetailPage">
+    <main>
+        <process id="wmsReservedOrderDetailProcess">
+            <tableCommit id="createPick" title="createPick" process="wmsReservedOrderDetailProcess.createPick" enableType="multi" multiMapping="true" download="false" closeTransactional="false" confirmMessage="confirm.maintainWmsReservedOrderDetailPage.createPick">
+                <enableExpression><![CDATA[${rod.isCreatePick}=='false']]></enableExpression>
+                <mappings>
+                    <mapping id="objs" className="list">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsReservedOrderManager" methodName="createPickByReserveOrderDetail" parameter="objs"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="cancelPick" title="cancelPick" process="wmsReservedOrderDetailProcess.cancelPick" enableType="multi" multiMapping="false" download="false" closeTransactional="false">
+                <enableExpression><![CDATA[${rod.isCreatePick}=='true']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsReservedOrderManager" methodName="cancelPick" parameter="obj"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

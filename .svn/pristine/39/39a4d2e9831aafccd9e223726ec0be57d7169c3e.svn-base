@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainwmsTransportOrderPage">
+    <main>
+        <process id="wmsTransportOrderProcess">
+        <tablePopup id="view" title="view" process="wmsTransportOrderProcess.view" enableType="single" containId="true" pageId="viewWmsTransportOrderPage">
+                <enableExpression/>
+            </tablePopup>
+        
+         <tablePopup id="new" title="new" process="wmsTransportOrderProcess.new"  enableType="none" containId="false" pageId="editWmsTransportOrderPage"/>
+         <tablePopup id="edit" title="edit" process="wmsTransportOrderProcess.edit"  enableType="single" containId="true" pageId="editWmsTransportOrderPage"/>
+         <tableCommit id="active" title="active" process="wmsTransportOrderProcess.active" enableType="multi" multiMapping="false"  download="false"  confirmMessage="是否确认生效此条记录？">
+	         <mappings/>
+	          <actions>
+	             <action managerName="wmsTransportOrderManager" methodName="activeOrder" parameter="obj"/>
+	         </actions>  
+	         <forwards>
+	             <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+	         </forwards>
+         </tableCommit>	
+         <tableCommit id="unactive" title="unactive" process="wmsTransportOrderProcess.unactive" enableType="single" download="false" confirmMessage="是否确认失效此条记录？">
+	         <mappings/>
+	          <actions>
+	             <action managerName="wmsTransportOrderManager" methodName="unActiveOrder" parameter="obj"/>
+	         </actions>  
+	         <forwards>
+	             <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+	         </forwards>
+         </tableCommit>	
+         <tableCommit id="delete" title="delete" process="wmsTransportOrderProcess.delete" enableType="multi" download="false" confirmMessage="是否确认删除此条记录？">
+	         <mappings/>
+	          <actions>
+	             <action managerName="wmsTransportOrderManager" methodName="deleteTransportOrder" parameter="obj"/>
+	         </actions>  
+	         <forwards>
+	             <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+	         </forwards>
+        </tableCommit>	
+        </process>
+    </main>
+    <detail/>
+</page>

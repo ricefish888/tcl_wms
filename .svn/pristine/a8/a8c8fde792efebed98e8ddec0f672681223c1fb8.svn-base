@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 按货品移位输入页面模板 -->
+<RFFormPage id="TclMoveNPBySkuLocationPage" title="TclMoveNPBySkuLocationPage">
+	<RFForm>
+		<inputs>
+			<RFText id="tclMoveNPBySkuLocationInput" title="tclMoveNPBySkuLocationInput" tip="tclMoveNPBySkuLocationInput" onFoucs="true">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="tclMoveNPBySkuLocationScan" title="tclMoveNPBySkuLocationScan" action="tclRfNPMoveBySkuManager.tclMoveBySkuLocationCommit" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

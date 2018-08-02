@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <reportPopupPage id="printWmsBarCodeRepPrintRecordPage" title="printWmsBarCodeRepPrintRecordPage" reportFile="printWmsBarCodeRepPrintRecordLabel.raq"  parameter="parentIds"  width="800" height="500">
+        <inputUIs/>
+    </reportPopupPage>
+</pages>

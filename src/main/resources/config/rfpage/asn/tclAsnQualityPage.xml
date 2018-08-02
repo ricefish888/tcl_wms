@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 查询列表页面模板 -->
+<RFListPage id="tclAsnQualityPage" title="tclAsnQualityPage">
+	<RFSearchUI id="asnCodeSearch" text="asnCodeSearch" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="asnId" title="asnId" width="50" enumType="" hidden="true" />
+		<RFTh id="asnCode" title="asnCode" width="100" enumType="" hidden="false" />
+		<RFTh id="factoryCode" title="factoryCode" width="100" enumType="" hidden="false" />
+		<RFTh id="supplierCode" title="supplierCode" width="100" enumType="" hidden="false" />
+		<RFTh id="supplierName" title="supplierName" width="250" enumType="" hidden="false" />
+		<DataSource type="HQL">
+			<statement>
+			<![CDATA[
+				 SELECT 
+				 asn.id AS asnId,
+				 asn.code AS asnCode,
+				 asn.userField7 AS factoryCode,
+				 asn.supplier.code AS supplierCode,
+				 asn.supplier.name AS supplierName
+				 FROM WmsASN asn 
+				 WHERE 1=1 
+				 		AND asn.status = 'RECEIVED'
+				 		AND asn.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN} 
+				 		AND asn.receiveQty-asn.quantityQty > 0
+				 		AND asn.keeper.id = #{SESSION_USERS}
+				 		AND asn.id in(SELECT r.asnDetail.asn.id FROM WmsReceivedRecord r WHERE r.inventoryStatus ='待检' 
+				 		AND r.asnDetail.asn.id = asn.id )
+						/~asnCodeSearch: AND asn.code like '%{asnCodeSearch}%' ~/
+				ORDER BY asn.updateInfo.createdTime asc
+			]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

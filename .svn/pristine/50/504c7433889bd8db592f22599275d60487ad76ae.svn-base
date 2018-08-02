@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainDownloadFilePage">
+    <main>
+        <process id="downloadFileProcess">
+            <tablePopup id="new" title="new" process="downloadFileProcess.new" enableType="none" containId="false" pageId="editDownloadFilePage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="edit" title="edit" process="downloadFileProcess.edit" enableType="single" containId="true" pageId="editDownloadFilePage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="delete" title="delete" process="downloadFileProcess.delete" enableType="multi" multiMapping="false" download="false" closeTransactional="false" confirmMessage="confirm.maintainPage.delete">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

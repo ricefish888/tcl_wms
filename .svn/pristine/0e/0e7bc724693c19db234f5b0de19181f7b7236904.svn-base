@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editTclWmsInventoryXTPage" title="editTclWmsInventoryXTPage" entityClass="com.vtradex.wms.server.model.entity.inventory.WmsInventory" width="400" height="350">
+        <workflow/>
+        <initListeners>
+        </initListeners>
+        <inputUIs>
+            <hidden id="inventory.id" title="inventory.id" reserve="false"/>
+            <hidden id="inventory.itemKey.id" title="inventory.itemKey.id" reserve="false"/>
+			
+			<text id="inventory.itemKey.lotInfo.extendPropC6" title="XT" row="1" col="1" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+            </text>
+            
+            <text id="newXT" title="newXT" row="1" col="2" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+            </text>
+            
+            
+            <numberText id="inventory.qty" title="inventory.qty" row="2" col="1" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+            	<visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </numberText>
+            <numberText id="qty" title="qty" row="2" col="2" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+            	<visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </numberText>
+             
+        </inputUIs>
+    </editPage>
+</pages>

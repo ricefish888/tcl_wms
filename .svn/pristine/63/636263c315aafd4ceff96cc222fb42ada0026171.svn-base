@@ -1,0 +1,247 @@
+package com.vtradex.wms.server.service.item.pojo;
+
+import java.util.Map;
+
+import com.mysql.jdbc.StringUtils;
+import com.vtradex.thorn.server.exception.BusinessException;
+import com.vtradex.thorn.server.model.EntityFactory;
+import com.vtradex.thorn.server.model.enumerate.Enumerate;
+import com.vtradex.thorn.server.service.WorkflowManager;
+import com.vtradex.wms.server.model.entity.base.WmsItemFactory;
+import com.vtradex.wms.server.model.entity.base.WmsSapFactory;
+import com.vtradex.wms.server.model.entity.item.UnitLevel;
+import com.vtradex.wms.server.model.entity.item.WmsItem;
+import com.vtradex.wms.server.model.entity.item.WmsItemHandOverAtt;
+import com.vtradex.wms.server.model.entity.item.WmsItemJITAtt;
+import com.vtradex.wms.server.model.entity.item.WmsItemUnPackingAtt;
+import com.vtradex.wms.server.model.entity.item.WmsLotRule;
+import com.vtradex.wms.server.model.entity.item.WmsPackageUnit;
+import com.vtradex.wms.server.service.item.WmsTclItemManager;
+import com.vtradex.wms.server.utils.StringHelper;
+
+public class DefaultWmsTclItemManager extends DefaultWmsItemManager implements WmsTclItemManager {
+
+	public DefaultWmsTclItemManager(WorkflowManager workflowManager) {
+		super(workflowManager);
+	}
+
+	public void storeWmsItem(WmsItem item, Long companyId) {
+		super.storeWmsItem(item, companyId);
+		
+		if(StringUtils.isNullOrEmpty(item.getUserFieldV1())){
+			throw new BusinessException("交接属性必填,不能为空");
+		}
+		
+		if(StringUtils.isNullOrEmpty(item.getUserFieldV2())){
+			throw new BusinessException("JIT属性必填,不能为空");
+		}
+		
+	}
+	
+	
+	/**
+	 * 导入物料
+	 */
+	public void initWmsItemByImport(Map<String,String> map){		
+		String itemCode = map.get("物料代码");
+		if(itemCode == null || "".equals(itemCode)){
+			throw new BusinessException("物料代码属性不能为空,请维护物料代码");
+		}
+		
+		String barCode = map.get("物料条码");
+		if(barCode == null || "".equals(barCode)){
+			throw new BusinessException("物料条码属性不能为空,请维护物料条码");
+		}
+		
+		String barCode2 = map.get("物料条码2");
+		
+		String name = map.get("物料名称");
+		if(name == null || "".equals(name)){
+			throw new BusinessException("物料名称属性不能为空,请维护物料名称");
+		}
+		
+		String baseUnit = map.get("基本包装单位");
+		if(baseUnit == null || "".equals(baseUnit)){
+			throw new BusinessException("基本包装单位属性不能为空,请维护基本包装单位");
+		}
+		
+		String description = map.get("货品描述");
+		
+		String status = map.get("状态");
+		
+		String lotRule = map.get("批次规则名称");
+		if(lotRule == null || "".equals(lotRule)){
+			throw new BusinessException("批次规则名称属性不能为空,请维护批次规则名称");
+		}
+	
+		
+		String validPeriod = map.get("保质期限");
+		if(validPeriod == null || "".equals(validPeriod)){
+			throw new BusinessException("保质期限属性不能为空,请维护保质期限");
+		}
+		
+		String contigroupsValidityPeriod = map.get("预警提前天数");
+		if(contigroupsValidityPeriod == null || "".equals(contigroupsValidityPeriod)){
+			throw new BusinessException("预警提前天数属性不能为空,请维护预警提前天数");
+		}
+		
+		String classabc = map.get("ABC分类");
+		String class4 = map.get("分类4");
+		String class1 = map.get("产品大类");
+		String class2 = map.get("产品中类");
+		String class3 = map.get("产品小类");
+		
+		String putawayGroup = map.get("上架分组");
+		String allocationGroup = map.get("拣选分组");
+		
+		
+		
+		String userFieldV1 = map.get("交接属性");
+		if(userFieldV1 == null || "".equals(userFieldV1)){
+			throw new BusinessException("交接属性不能为空,请维护交接属性");
+		}
+		String userFieldV2 = map.get("JIT属性");
+		if(userFieldV2 == null || "".equals(userFieldV2)){
+			throw new BusinessException("JIT属性不能为空,请维护JIT属性");
+		}
+		String userFieldV3 = map.get("拆包属性");
+		if(userFieldV3 == null || "".equals(userFieldV3)){
+			throw new BusinessException("拆包属性不能为空,请维护拆包属性");
+		}
+		String buPrecision = map.get("基本单位精度");
+		if(buPrecision == null || "".equals(buPrecision)){
+			throw new BusinessException("基本单位精度属性不能为空,请维护基本单位精度");
+		}
+		
+		String factoryCode =  map.get("工厂");
+		if(factoryCode == null || "".equals(factoryCode)){
+			throw new BusinessException("工厂属性不能为空,请维护工厂");
+		}
+		
+		WmsItem item = null;
+		WmsLotRule wmsLotRule = null;
+		Enumerate  eV1 = null;
+		Enumerate  eV2 = null;
+		Enumerate  eV3 = null;
+		item = (WmsItem) commonDao.findByQueryUniqueResult("FROM WmsItem w WHERE w.code =:code", "code", itemCode);
+		wmsLotRule = (WmsLotRule) commonDao.findByQueryUniqueResult("FROM WmsLotRule w WHERE w.name LIKE :name", "name", lotRule);
+		eV1 = (Enumerate) commonDao.findByQueryUniqueResult("FROM Enumerate e WHERE e.enumValue =:enumValue AND e.enumType = 'WmsItemHandOverAtt'","enumValue",userFieldV1); 
+		eV2 = (Enumerate) commonDao.findByQueryUniqueResult("FROM Enumerate e WHERE e.enumValue =:enumValue AND e.enumType = 'WmsItemJITAtt'","enumValue",userFieldV2); 
+		eV3 = (Enumerate) commonDao.findByQueryUniqueResult("FROM Enumerate e WHERE e.enumValue =:enumValue AND e.enumType = 'WmsItemUnPackingAtt'","enumValue",userFieldV3); 
+		if(eV1 == null){
+			throw new BusinessException("未维护物料交接属性!");
+		}
+		if(eV2 == null){
+			throw new BusinessException("未维护JITATT属性!");
+		}
+		if(eV3 == null){
+			throw new BusinessException("未维护拆包属性!");
+		}
+		
+		if(wmsLotRule == null){
+	    	throw new BusinessException("未维护默认批次规则!");
+	    }
+	    
+	    if(item == null){
+	    	item =  EntityFactory.getEntity(WmsItem.class);
+	    	item.setCode(itemCode);
+	    }
+	    
+	    item.setBarCode(barCode);
+	    item.setBarCode2(barCode2);
+	    item.setName(name);
+	    item.setBaseUnit(baseUnit);
+	    item.setDescription(description);
+	    item.setStatus(status);
+	    item.setLotRule(wmsLotRule);
+	    item.setCountLotRule(wmsLotRule);
+	    item.setWeight(0d);
+	    item.setVolume(0d);
+	    item.setValidPeriod(Integer.parseInt(validPeriod));
+	    item.setContigroupsValidityPeriod(Integer.parseInt(contigroupsValidityPeriod));    
+	    item.setClassabc(classabc);
+	    item.setClass1(class1);
+	    item.setClass2(class2);
+	    item.setClass3(class3);
+	    item.setClass4(class4);
+	    item.setPutawayGroup(putawayGroup);
+	    item.setAllocationGroup(allocationGroup);
+	    item.setUserFieldV1(userFieldV1);
+	    item.setUserFieldV2(userFieldV2);
+	    item.setUserFieldV3(userFieldV3);
+	    item.setBuPrecision(Integer.parseInt(buPrecision));
+	    if(item.isNew()){
+	    	item.setMasterGroup(wmsLotRule.getMasterGroup());
+	    	WmsPackageUnit packageUnit = EntityFactory.getEntity(WmsPackageUnit.class);
+	    	packageUnit.setConvertFigure(1D);
+    		packageUnit.setUnit(item.getBaseUnit());
+    		packageUnit.setUnitLevel(UnitLevel.A);
+    		packageUnit.setWeight(item.getWeight());
+    		packageUnit.setVolume(item.getVolume());
+    		packageUnit.setDescription(item.getDescription());
+    		item.addPackageUnit(packageUnit);  	
+	    }
+	    commonDao.store(item);
+	    
+	    WmsSapFactory factory = (WmsSapFactory) commonDao.findByQueryUniqueResult("FROM WmsSapFactory WHERE code=:code", 
+                "code", factoryCode);
+        if (null==factory) {
+            throw new BusinessException("未维护编码【"+factoryCode+"】的sap工厂信息!");
+        }
+        WmsItemFactory itemFactory = (WmsItemFactory) commonDao.findByQueryUniqueResult("FROM WmsItemFactory "
+                + "WHERE item.id=:itemId AND factory.id=:factoryId", 
+                new String[]{"itemId", "factoryId"}, new Object[]{item.getId(), factory.getId()});
+        
+        if (null==itemFactory) {
+            itemFactory = EntityFactory.getEntity(WmsItemFactory.class);
+            itemFactory.setItem(item);
+            itemFactory.setFactory(factory);
+            commonDao.store(itemFactory);
+        }
+	}
+
+	/**导入物料属性*/
+	@Override
+	public void initWmsItemAttrByImport(Map<String, String> map) {
+		String itemCode = map.get("物料代码");
+		WmsItem item = null;
+		if(StringHelper.isNullOrEmpty(itemCode)){
+			throw new BusinessException("物料条码为空!!");
+		}
+		item = (WmsItem)commonDao.findByQueryUniqueResult("FROM WmsItem item WHERE item.code=:ic", "ic", itemCode);
+		if(null==item){
+			throw new BusinessException("没有找到对应物料!!");
+		}
+		String v1 = map.get("交接属性");
+		if(!StringHelper.isNullOrEmpty(v1)){
+			if("T-1区交接".equals(v1)){
+				item.setUserFieldV1(WmsItemHandOverAtt.T_1_AREA);
+			}else if("线边交接".equals(v1)){
+				item.setUserFieldV1(WmsItemHandOverAtt.LINE_EDGE);
+			}else{
+				throw new BusinessException("交接属性没维护!!");
+			}
+		}
+		String v2 = map.get("JIT属性");
+		if(!StringHelper.isNullOrEmpty(v2)){
+			if("非JIT".equals(v2)){
+				item.setUserFieldV2(WmsItemJITAtt.NO_JIT);
+			}else if("JIT上线结算".equals(v2)){
+				item.setUserFieldV2(WmsItemJITAtt.JIT_UPLINE_SETTLE);
+			}else if("JIT下线结算".equals(v2)){
+				item.setUserFieldV2(WmsItemJITAtt.JIT_DOWNLINE_SETTLE);
+			}else{
+				throw new BusinessException("JIT属性没维护!!");
+			}
+		}
+		String v3 = map.get("拆包属性");
+		if(!StringHelper.isNullOrEmpty(v3)){
+			if("仓库不可拆包".equals(v3)){
+				item.setUserFieldV3(WmsItemUnPackingAtt.WAREHOUSE_UNPACKING);
+			}else{
+				item.setUserFieldV3("-");
+			}
+		}
+		commonDao.store(item);
+	}
+}

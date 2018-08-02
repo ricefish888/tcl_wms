@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsInventoryLogPage" title="maintainWmsInventoryLogPage"  mainEntrance="true" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.inventory.WmsInventoryLog">
+        <workflow/>
+        <datasource><![CDATA[SELECT inventoryLog.id,
+inventoryLog.location.code,
+inventoryLog.location.type,
+inventoryLog.company.name,
+inventoryLog.type,   
+inventoryLog.item.code,
+inventoryLog.item.name,
+inventoryLog.startQty,
+inventoryLog.changeQty,
+inventoryLog.endQty,
+inventoryLog.inventoryStatus,   
+inventoryLog.pallet,   
+inventoryLog.lotInfo.storageDate,
+inventoryLog.lotInfo.productDate,
+inventoryLog.lotInfo.expireDate,
+inventoryLog.lotInfo.qaDate,
+inventoryLog.lotInfo.lot,
+inventoryLog.lotInfo.soiCode,	
+inventoryLog.lotInfo.asnCustomerBill,
+inventoryLog.lotInfo.supplierCode,
+inventoryLog.lotInfo.serialNo, 
+inventoryLog.lotInfo.erpCode,   
+inventoryLog.lotInfo.extendPropC1,
+inventoryLog.lotInfo.extendPropC2,
+inventoryLog.lotInfo.extendPropC3,
+inventoryLog.lotInfo.extendPropC4,
+inventoryLog.lotInfo.extendPropC10,
+inventoryLog.itemKeyStr,
+inventoryLog.relatedBillTypeName,        
+inventoryLog.relatedBillCode,
+inventoryLog.descript,
+inventoryLog.updateInfo.createdTime,
+inventoryLog.updateInfo.creator
+ FROM WmsInventoryLog inventoryLog
+ LEFT JOIN inventoryLog.location
+ LEFT JOIN inventoryLog.company   
+ LEFT JOIN inventoryLog.item      	 
+ WHERE 1=1
+ AND inventoryLog.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}
+ ORDER BY inventoryLog.id DESC]]></datasource>
+        <columns>
+            <column id="inventoryLog.id" title="inventoryLog.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="inventoryLog.location.code" title="inventoryLog.location.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLog.location.type" title="inventoryLog.location.type" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsLocationType"/>
+            <column id="inventoryLog.company.name" title="inventoryLog.company.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLog.type" title="inventoryLog.type" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"  dataType="enum" format="enumFormat" formatParam="WmsInventoryLogType"/>
+            <column id="inventoryLog.item.code" title="inventoryLog.item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLog.item.name" title="inventoryLog.item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLog.startQty" title="inventoryLog.startQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="inventoryLog.changeQty" title="inventoryLog.changeQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="inventoryLog.endQty" title="inventoryLog.endQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+            <column id="inventoryLog.inventoryStatus" title="inventoryLog.inventoryStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLog.pallet" title="inventoryLog.pallet" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLog.lotInfo.storageDate" title="inventoryLog.lotInfo.storageDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date"/>
+            <column id="inventoryLog.lotInfo.productDate" title="inventoryLog.lotInfo.productDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date"/>
+            <column id="inventoryLog.lotInfo.expireDate" title="inventoryLog.lotInfo.expireDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date"/>
+            <column id="inventoryLog.lotInfo.qaDate" title="inventoryLog.lotInfo.qaDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date"/>
+            <column id="inventoryLog.lotInfo.lot" title="inventoryLog.lotInfo.lot" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventoryLog.lotInfo.soiCode" title="inventoryLog.lotInfo.soiCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventoryLog.lotInfo.asnCustomerBill" title="inventoryLog.lotInfo.asnCustomerBill" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventoryLog.lotInfo.supplierCode" title="inventoryLog.lotInfo.supplierCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventoryLog.lotInfo.serialNo" title="inventoryLog.lotInfo.serialNo" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventoryLog.lotInfo.erpCode" title="inventoryLog.lotInfo.erpCode" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+           	<column id="inventoryLog.lotInfo.extendPropC1" title="inventoryLog.lotInfo.extendPropC1" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventoryLog.lotInfo.extendPropC2" title="inventoryLog.lotInfo.extendPropC2" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventoryLog.lotInfo.extendPropC3" title="inventoryLog.lotInfo.extendPropC3" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+			<column id="inventoryLog.lotInfo.extendPropC4" title="inventoryLog.lotInfo.extendPropC4" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLog.lotInfo.extendPropC10" title="inventoryLog.lotInfo.extendPropC10" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>            
+            <column id="inventoryLog.itemKeyStr" title="inventoryLog.itemKeyStr" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLog.relatedBillTypeName" title="inventoryLog.relatedBillTypeName" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLog.relatedBillCode" title="inventoryLog.relatedBillCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLog.descript" title="inventoryLog.descript" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="inventoryLog.updateInfo.createdTime" title="inventoryLog.updateInfo.createdTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"  dataType="datetime" format="dateFormat" formatParam="y-m-d h:m:s"/>
+            <column id="inventoryLog.updateInfo.creator" title="inventoryLog.updateInfo.creator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+        </columns>
+    </maintainPage>
+</pages>

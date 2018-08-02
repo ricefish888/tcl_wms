@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsItemKeeperPage">
+    <main>
+        <process id="itemKeeperProcess">
+            <tablePopup id="new" title="new" process="itemKeeperProcess.new" enableType="none" containId="false" maintain="false" pageId="editWmsItemKeeperPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="edit" title="edit" process="itemKeeperProcess.edit" enableType="single" containId="true" pageId="editWmsItemKeeperPage">
+            </tablePopup>
+            <tableCommit id="disable" title="disable" process="itemKeeperProcess.disable" enableType="multi" download="false" confirmMessage="是否确认失效此条记录？">
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+            <tableCommit id="enable" title="enable" process="itemKeeperProcess.enable" enableType="multi" download="false" confirmMessage="是否确认生效此条记录？">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+            
+            <tablePopup id="import" title="import" process="itemKeeperProcess.import" enableType="none" containId="false" pageId="importWmsItemKeeperPage">
+                <enableExpression/>
+            </tablePopup> 
+            
+            
+        </process>
+    </main>
+    <detail/>
+</page>

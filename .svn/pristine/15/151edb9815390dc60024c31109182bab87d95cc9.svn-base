@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainBackUpManagePage">
+    <main>
+        <process id="wmsInventoryProcess">
+            <!-- <tableCommit id="backUp" title="backUp" process="wmsInventoryProcess.backUp" enableType="multi" confirmMessage="confirm.backUp">
+                <enableExpression><![CDATA[${inventory.location.type}=='SHIP' && ${inventory.operationStatus}=='READY_OUT' && ${inventory.relatedBillCode}!='-']]></enableExpression>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsPickticketManager" methodName="singleBackUp" parameter="obj,tableValues"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit> -->
+            <!-- 其它类型的拣货单退拣 -->
+            <tableCommit id="normalBackUp" title="normalBackUp" process="wmsInventoryProcess.normalBackUp" enableType="multi" confirmMessage="confirm.backUp">
+               <enableExpression><![CDATA[${inventory.location.type}=='SHIP' 
+                				&& ${inventory.operationStatus}=='READY_OUT' 
+                				&& ${inventory.relatedBillCode}!='-'  ]]></enableExpression>
+                <mappings>
+                    <!-- <mapping id="billType" className="string">
+                        <entries/>
+                    </mapping> -->
+                </mappings>
+                <actions>
+                    <action managerName="wmsPickticketManager" methodName="normalSingleBackUp" parameter="obj,tableValues"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+             <!-- VMI生产领料单退拣 -->
+            <tablePopup id="backUp" title="backUp" process="wmsInventoryProcess.backUp" enableType="single" containId="true" pageId="modifyBackUpInventoryPage">
+               <enableExpression><![CDATA[${inventory.location.type}=='SHIP' 
+               						&& ${inventory.operationStatus}=='READY_OUT' 
+               						&& ${inventory.relatedBillCode}!='-' 
+               						&& ${billType} =='SCLLD']]></enableExpression>
+            </tablePopup>
+            <!-- 预留出库单退拣 -->
+            <tablePopup id="ylBackUp" title="ylBackUp" process="wmsInventoryProcess.ylBackUp" enableType="single" containId="true" pageId="modifyYLBackUpInventoryPage">
+               <enableExpression><![CDATA[${inventory.location.type}=='SHIP' 
+               						&& ${inventory.operationStatus}=='READY_OUT' 
+               						&& ${inventory.relatedBillCode}!='-' 
+               						&& ${billType} =='YLCKD']]></enableExpression>
+            </tablePopup>
+            <!-- T1区退拣,自管仓生产领料类型拣货单退拣 -->
+            <tablePopup id="dbBackUp" title="dbBackUp" process="wmsInventoryProcess.dbBackUp" enableType="single" containId="true" pageId="modifyHandOverBackUpInventoryPage">
+               <enableExpression><![CDATA[(${inventory.location.type}=='HANDOVER' 
+               						&& ${inventory.operationStatus}=='NORMAL' 
+               						&& ${inventory.itemKey.lotInfo.extendPropC13}!='-')
+               						|| 
+               						(${inventory.location.type}=='SHIP' 
+               						&& 
+               						${inventory.warehouse.code}=='VMI') ]]></enableExpression>
+            </tablePopup>
+            <!-- 按产线退拣 -->
+            <tablePopup id="xtBackUp" title="xtBackUp" process="wmsInventoryProcess.xtBackUp" enableType="single" containId="true" pageId="modifyBackUpByProductLinePage">
+               <enableExpression><![CDATA[ ]]></enableExpression>
+            </tablePopup>
+        </process>
+    </main>
+    <detail/>
+</page>

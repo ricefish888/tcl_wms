@@ -1,0 +1,11 @@
+package com.vtradex.wms.server.model.enums;
+
+/**
+ * 库位编码
+ * @author fs
+ * @date 2017-8-13 20:33:57
+ */
+public interface WmsLocationCode {
+
+	public static String XB = "XB";/**线边库位*/
+}

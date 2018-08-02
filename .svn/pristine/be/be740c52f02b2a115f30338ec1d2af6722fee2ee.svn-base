@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsSupplierASNDetailPage">
+    <main>
+        <process id="wmsTclASNProcess">
+             <tableDirectPrint id="printSupplierWmsASN" title="printSupplierWmsASN" process="wmsTclASNProcess.printSupplierWmsASN" enableType="multi" multiMapping="true" download="false" closeTransactional="false" raq="printLabel.raq">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="objs" className="list">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsTclASNManager" methodName="printSupplierWmsASN" parameter="objs"/>
+                </actions>
+                <forwards/>
+            </tableDirectPrint>
+            
+        </process>
+    </main>
+    <detail/>
+</page>

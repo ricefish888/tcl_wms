@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="wmsPickingProductionOrderProcess" control="-">
+	
+	<task id="delete" title="删除工单">
+	</task>
+	
+</process>

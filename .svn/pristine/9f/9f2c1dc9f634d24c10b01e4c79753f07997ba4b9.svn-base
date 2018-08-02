@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="addWmsASNDetailPage" title="addWmsASNDetailPage" entityClass="com.vtradex.wms.server.model.entity.receiving.WmsASNDetail" width="250" height="280" onClose="refreshParent">
+        <workflow/>
+        <initListeners/>
+        <initListeners>
+            <initListener id="asnDetail.lineNo" managerName="wmsASNManager" methodName="getMaxLineNoByASNDetail" newEnabled="true" editEnabled="false"/>
+            <initListener id="asnDetail.lotInfo" managerName="wmsItemManager" methodName="getLotRuleTackersByPageMap" newEnabled="false" editEnabled="true"/>
+        </initListeners>
+        <inputUIs>
+            <hidden id="asnDetail.id" title="asnDetail.id" reserve="false"/>
+            <numberText id="asnDetail.lineNo" title="asnDetail.lineNo" row="1" col="1"  span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="true" inVisible="false" validator="positiveInteger" editModel="uneditable" returnType="Integer">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </numberText>
+            <remote id="asnDetail.item.id" title="asnDetail.item.id" row="2" col="1"  span="1" readOnly="false" required="true" reserve="false" forceOverride="false" focusUI="false" inVisible="false" editModel="uneditable" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,代码,名称" intercepter="lotInfoInterceptor">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT
+item.id,
+item.code,
+item.name
+FROM WmsItem item,WmsItemFactory wmsItemFactory
+WHERE item.status = 'ENABLED'
+AND item.masterGroup.id in (select company.masterGroup.id from WmsCompany company where company.id= ${asn.company.id})
+AND item.id = wmsItemFactory.item.id
+AND wmsItemFactory.factory.code = ${asn.userField7}
+AND (item.code LIKE :param OR item.name LIKE :param)
+ORDER BY item.id]]></hql>
+                <eventListeners>
+                    <eventListener id="asnDetail.packageUnit.id" index="3" refreshUI="false"/>
+                    <eventListener id="asnDetail.lotInfo" index="4" refreshUI="false"/>
+                </eventListeners>
+            </remote>
+            <list id="asnDetail.packageUnit.id" title="asnDetail.packageUnit.id" row="3" col="1" span="1" width="120" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT
+packageUnit.id,
+packageUnit.unit
+FROM WmsPackageUnit packageUnit
+WHERE 1=1
+AND packageUnit.item.id = ${asnDetail.item.id}
+ORDER BY packageUnit.convertFigure desc]]></hql>
+                <eventListeners/>
+            </list>
+            
+            
+             <list id="asnDetail.inventoryStatus" title="asnDetail.inventoryStatus" row="4" col="1" span="1" width="120" readOnly="false" required="true" reserve="true" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT itemState.name,itemState.name
+				 FROM WmsInventoryState itemState
+				 WHERE
+				 itemState.masterGroup.id in (select company.masterGroup.id from WmsCompany company where company.id= ${asn.company.id})
+				 AND itemState.status='ENABLED'
+				 ORDER BY itemState.id DESC]]></hql>
+                <eventListeners/>
+            </list>
+            
+            <numberText id="expectedPackQty" title="expectedPackQty" row="5" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" validator="positiveNumber" returnType="Double" decimal="2">
+                <visibleExpression/>
+                <hql/>
+                <eventListeners/>
+            </numberText>
+           <complex id="asnDetail.lotInfo" title="asnDetail.lotInfo" row="6" col="1" span="2" type="asnLotInfo"/>
+        </inputUIs>
+    </editPage>
+</pages>

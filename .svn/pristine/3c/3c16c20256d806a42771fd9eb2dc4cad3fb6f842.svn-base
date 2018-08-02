@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsSupplierPrintCountPage" title="maintainWmsSupplierPrintCountPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.base.WmsSupplierPrintCount" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT supplierPrintCount.id,
+supplierPrintCount.supplier,
+supplierPrintCount.supplierName,
+supplierPrintCount.clientIp,
+supplierPrintCount.printTimes,
+supplierPrintCount.printType,
+supplierPrintCount.asnCode,
+supplierPrintCount.lineCount,
+supplierPrintCount.updateInfo.creator,
+supplierPrintCount.updateInfo.createdTime,
+supplierPrintCount.updateInfo.lastOperator,
+supplierPrintCount.updateInfo.updateTime 
+ FROM WmsSupplierPrintCount supplierPrintCount 
+ WHERE 1=1  
+ ORDER BY supplierPrintCount.id]]></datasource>
+        <columns>
+            <column id="supplierPrintCount.id" title="supplierPrintCount.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long" language="false"/>
+            <column id="supplierPrintCount.supplier" title="supplierPrintCount.supplier" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" language="false"/>
+            <column id="supplierPrintCount.supplierName" title="supplierPrintCount.supplierName" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplierPrintCount.clientIp" title="supplierPrintCount.clientIp" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplierPrintCount.printTimes" title="supplierPrintCount.printTimes" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+            <column id="supplierPrintCount.printType" title="supplierPrintCount.printType" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsSupplierPrintCountType" />
+            <column id="supplierPrintCount.asnCode" title="supplierPrintCount.asnCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplierPrintCount.lineCount" title="supplierPrintCount.lineCount" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+            <column id="supplierPrintCount.updateInfo.creator" title="supplierPrintCount.updateInfo.creator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplierPrintCount.updateInfo.createdTime" title="supplierPrintCount.updateInfo.createdTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="supplierPrintCount.updateInfo.lastOperator" title="supplierPrintCount.updateInfo.lastOperator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="supplierPrintCount.updateInfo.updateTime" title="supplierPrintCount.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+        </columns>
+    </maintainPage>
+</pages>

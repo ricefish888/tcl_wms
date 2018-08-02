@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 作业单查询列表页面模板 -->
+<RFListPage id="tclCreateQuickShippingPage" title="tclCreateQuickShippingPage">
+	<RFSearchUI id="workDocCodeSearch" text="workDocCodeSearch" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="workDocId" title="workDocId" width="100" enumType="" hidden="true" />
+		<RFTh id="docCode" title="docCode" width="120" enumType="" hidden="false" />
+		<RFTh id="productLine" title="productLine" width="60" enumType="" hidden="false" />
+		<RFTh id="userField5" title="userField5" width="100" enumType="" hidden="false" />
+		<RFTh id="productOrderCode" title="productOrderCode" width="120" enumType="" hidden="false" />
+		<DataSource type="HQL">
+			<statement>
+			<![CDATA[
+				 SELECT 
+				 doc.id AS workDocId,
+				 doc.code AS docCode,
+				 doc.productLine as productLine,
+				 doc.userField5 as userField5,
+				 doc.productOrderCode as productOrderCode 
+				 FROM WmsWorkDoc doc 
+				 WHERE 1=1 
+				 		AND doc.status  IN('FINISH','IN_OPERATION')
+				 		AND doc.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN} 
+				 		AND (doc.userField4 is null or doc.userField4!='VMI')
+				 		AND doc.billTypeCode ='SCLLD'
+				 		AND doc.code IN (SELECT DISTINCT inv.itemKey.lotInfo.extendPropC20 FROM WmsInventory inv WHERE inv.qty >0 AND inv.location.type ='HANDOVER' 
+				 		                 AND inv.operationStatus= 'NORMAL' AND inv.location.countLock ='N' )
+				 		AND doc.keeper.id =#{SESSION_USERS} 
+						/~workDocCodeSearch: AND (doc.code = '{workDocCodeSearch}' 
+						OR doc.productOrderCode ='{workDocCodeSearch}'
+						OR doc.productLine='{workDocCodeSearch}'
+						OR doc.code IN (SELECT DISTINCT inv.itemKey.lotInfo.extendPropC20 FROM WmsInventory inv WHERE inv.qty >0 AND inv.location.type ='HANDOVER' 
+				 		                 AND inv.operationStatus= 'NORMAL' AND inv.location.countLock ='N' AND inv.item.code ='{workDocCodeSearch}' )) ~/
+				ORDER BY doc.id ASC
+			]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

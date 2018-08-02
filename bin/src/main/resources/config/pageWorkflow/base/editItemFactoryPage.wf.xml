@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editItemFactoryPage">
+    <main>
+        <process id="itemFactoryProcess">
+            <formCommit id="save" title="save" process="itemFactoryProcess.new" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="new">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsItemFactoryManager" methodName="storeItemFactory" parameter="obj"/>
+                </actions>            
+                <forwards>
+                     <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                    <forward name="resetWindow" newEnabled="true" editEnabled="false"/>
+                </forwards>
+            </formCommit>
+            <formCommit id="edit" title="edit" process="itemFactoryProcess.edit" enableType="none" download="false" visibleType="edit">
+                <enableExpression/>
+                <mappings/>
+                 <actions>
+                    <action managerName="wmsItemFactoryManager" methodName="storeItemFactory" parameter="obj"/>
+                </actions>    
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

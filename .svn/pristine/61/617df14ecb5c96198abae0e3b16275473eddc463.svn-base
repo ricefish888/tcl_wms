@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainPickTicketWorkDocPage">
+    <main>
+        <process id="wmsWorkDocProcess">
+            <tablePopup id="view" title="view" process="wmsWorkDocProcess.view" enableType="single" containId="true" pageId="viewPickTicketWorkDocPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="confirm" title="confirm" process="wmsWorkDocProcess.confirm" enableType="multi" containId="true" pageId="editWholeWorkConfirmPickTicketPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="singleConfirm" title="singleConfirm" process="wmsWorkDocProcess.singleConfirm" enableType="single" containId="true" pageId="modifyPickTicketWorkDocPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="pickConfirmByTaskGroup" title="pickConfirmByTaskGroup" process="wmsWorkDocProcess.pickConfirmByTaskGroup" enableType="single" containId="true" pageId="editPickConfirmByTaskGroupPage">
+                <enableExpression><![CDATA[${workDoc.type} == 'WAVE_PICKING']]></enableExpression>
+            </tablePopup>
+        </process>
+        
+        <process id="wmsTclPutawayWorkDocProcess">
+        <tablePopup id="modify" title="modifyKeeper" process="wmsTclPutawayWorkDocProcess.modify" enableType="single" containId="true" pageId="editPutawayWorkDocPage">
+                <enableExpression/>
+        </tablePopup>
+        
+        <tablePopup id="printYLCKD" title="printYLCKD" process="wmsTclPutawayWorkDocProcess.printYLCKD" enableType="multi" containId="true" pageId="printYLCKDPage">
+        <!-- <enableExpression><![CDATA[${userField3} == 'YLCKD' && ${workDoc.pickedQty}>0 ]]></enableExpression> -->
+        </tablePopup>
+        
+        <tablePopup id="printTGYSCKD" title="printTGYSCKD" process="wmsTclPutawayWorkDocProcess.printTGYSCKD" enableType="multi" containId="true" pageId="printTGYSCKDPage">
+        <!-- <enableExpression><![CDATA[${userField3} == 'YLCKD' && ${workDoc.pickedQty}>0 ]]></enableExpression> -->
+        </tablePopup>
+        
+        <tablePopup id="printWork" title="printWork" process="wmsTclPutawayWorkDocProcess.printWork" enableType="multi" containId="true" pageId="printWorkPage">
+        </tablePopup>
+        
+        </process>
+    </main>
+    <detail/>
+</page>

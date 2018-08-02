@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 查询列表页面模板 -->
+<RFListPage id="tclInventoryQureyRFPage2" title="tclInventoryQureyRFPage2">
+	<RFSearchUI id="inventoryQuerySearch" text="inventoryQuerySearch" onFoucs="true"/>
+	<RFTable>
+		<RFTh id="inventoryId" title="inventoryId" width="10" enumType="" hidden="true" />
+		<RFTh id="locCode" title="locCode" width="100" enumType="" hidden="false" />
+		<RFTh id="itemCode" title="itemCode" width="120" enumType="" hidden="false" />
+		<RFTh id="inventoryStatus" title="inventoryStatus" width="100" enumType="" hidden="false" />
+		<RFTh id="unit" title="unit" width="80" enumType="" hidden="false" />
+		<RFTh id="packQty" title="packQty" width="120" enumType="" hidden="false" />
+		<RFTh id="fcode" title="fcode" width="120" enumType="" hidden="false" />
+		<RFTh id="sname" title="sname" width="120" enumType="" hidden="false" />
+		<RFTh id="lno" title="lno" width="120" enumType="" hidden="false" />
+		<RFTh id="sdate" title="sdate" width="120" enumType="" hidden="false" />
+		<DataSource type="HQL">
+			<statement>
+				<![CDATA[
+				 SELECT
+                 inventory.id AS inventoryId,
+                 location.code AS locCode,
+                 item.code AS itemCode,
+                 inventory.status AS inventoryStatus,
+                 packageUnit.unit AS unit,
+                 inventory.packQty AS packQty,
+                 itemKey.lotInfo.extendPropC10 AS fcode,
+                 itemKey.lotInfo.extendPropC9 AS sname,
+                 itemKey.lotInfo.lot AS lno,
+                 itemKey.lotInfo.storageDate AS sdate
+                 FROM WmsInventory inventory
+                 LEFT JOIN inventory.location location
+                 LEFT JOIN inventory.item item
+                 LEFT JOIN inventory.itemKey itemKey
+                 LEFT JOIN inventory.packageUnit packageUnit
+                 WHERE 1=1
+                         AND item.code=${itemCode}
+                         AND inventory.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN}
+                         AND inventory.operationStatus IN ('NORMAL','READY_OUT')
+                         AND inventory.qty>0
+                         /~inventoryQueryLocationInput: AND location.code='{inventoryQueryLocationInput}'~/
+                        /~inventoryQuerySearch: AND location.code like '%{inventoryQuerySearch}%'~/
+                ORDER BY  inventory.id
+				]]>
+			</statement>
+		</DataSource>
+	</RFTable>
+</RFListPage>

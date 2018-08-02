@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <modifyDetailPage id="viewWmsReservedOrderPage" title="viewWmsReservedOrderPage" entityClass="com.vtradex.wms.server.model.entity.production.WmsReservedOrder" width="880" height="530">
+        <initListeners/>
+        <modify>
+            <inputUIs>
+                <hidden id="reservedOrder.id" title="reservedOrder.id"/>
+                <text id="reservedOrder.code" title="reservedOrder.code" row="1" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                 <text id="reservedOrder.sapCode" title="reservedOrder.sapCode" row="1" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                
+                <remote id="reservedOrder.factory.id" title="reservedOrder.factory.id" row="1" col="3" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false"  multiple="false" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,代码,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[ SELECT 
+ sapFactory.id,
+ sapFactory.code,
+ sapFactory.name
+ FROM WmsSapFactory sapFactory 
+ WHERE sapFactory.status = 'ENABLED'
+ AND (sapFactory.code  LIKE :param OR  sapFactory.name LIKE :param) ]]></hql>
+                    <eventListeners>
+                    </eventListeners>
+                </remote>
+                
+                <text id="reservedOrder.kcd" title="reservedOrder.kcd" row="1" col="4" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+               
+                <date id="reservedOrder.jzrq" title="reservedOrder.jzrq" row="2" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" showTime="false" manualEditable="true" defaultCurrentDate="false">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </date>
+               
+                <text id="reservedOrder.yhmc" title="reservedOrder.yhmc" row="2" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+
+                <list id="reservedOrder.ydlx" title="reservedOrder.ydlx" row="2" col="2" span="1"  readOnly="false" required="false" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false" enumType="WmsReservedOrderType">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT 
+	 enumerate.enumValue,
+	 enumerate.enumValue FROM Enumerate enumerate 
+	 where enumerate.enumType = 'WmsReservedOrderType']]></hql>
+                <eventListeners/>
+               </list>
+            
+                <text id="reservedOrder.cbzx" title="reservedOrder.cbzx" row="2" col="4" span="4" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                
+                <textArea id="reservedOrder.cbzxRemark" title="reservedOrder.cbzxRemark" row="3" col="1" span="2"  width="340" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true"/>
+        
+            </inputUIs>
+        </modify>
+        <detail entityClass="com.vtradex.wms.server.model.entity.production.WmsReservedOrderDetail" autoQuery="true">
+            <datasource><![CDATA[SELECT 
+            rod.id,
+            rod.lineNo,
+            rod.item.code,
+            rod.item.name,
+            rod.quantity,
+            rod.thQty,
+            rod.allocatedQuantityBu,
+            rod.pickedQuantityBu,
+            rod.shippedQuantityBu,
+            rod.shipLoc,
+            rod.requestDate,
+            rod.deleteFlag,
+            rod.zhfh,
+            rod.jdFlag,
+            rod.factory.code,
+            rod.factory.name,
+            rod.project,
+            rod.unit.unit
+            FROM WmsReservedOrderDetail rod
+            LEFT JOIN rod.item
+ LEFT JOIN rod.unit
+ LEFT JOIN rod.factory
+ LEFT JOIN rod.reservedOrder
+ WHERE 1=1
+  AND rod.reservedOrder.id = {reservedOrder.id}
+ ORDER BY rod.id ASC]]></datasource>
+            <columns>
+                <column id="rod.id" title="rod.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+                <column id="rod.lineNo" title="rod.lineNo" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="rod.item.code" title="rod.item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="rod.item.name" title="rod.item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="rod.quantity" title="rod.quantity" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="rod.thQty" title="rod.thQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="rod.allocatedQuantityBu" title="rod.allocatedQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="rod.pickedQuantityBu" title="rod.pickedQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>                
+                <column id="rod.shippedQuantityBu" title="rod.shippedQuantityBu" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="rod.shipLoc" title="rod.shipLoc" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="rod.requestDate" title="rod.requestDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>
+                <column id="rod.deleteFlag" title="rod.deleteFlag" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="rod.zhfh" title="rod.zhfh" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="rod.jdFlag" title="rod.jdFlag" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="rod.factory.code" title="rod.factory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="rod.factory.name" title="rod.factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="rod.project" title="rod.project" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="rod.unit.unit" title="rod.unit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+           </columns>
+        </detail>
+    </modifyDetailPage>
+</pages>

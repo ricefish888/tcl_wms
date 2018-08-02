@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsReservedOrderPage" title="maintainWmsReservedOrderPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.production.WmsReservedOrder" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT 
+reservedOrder.id,
+reservedOrder.code,
+reservedOrder.sapCode,
+factory.code,
+factory.name,
+reservedOrder.kcd,
+reservedOrder.receiveWorker,
+reservedOrder.status,
+reservedOrder.jzrq,
+reservedOrder.yhmc,
+reservedOrder.ydlx,
+reservedOrder.cbzx,
+reservedOrder.cbzxRemark
+ FROM WmsReservedOrder reservedOrder
+ LEFT JOIN reservedOrder.factory factory
+ WHERE 1=1  
+ ORDER BY reservedOrder.id]]></datasource>
+        <columns>
+            <column id="reservedOrder.id" title="reservedOrder.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="reservedOrder.code" title="reservedOrder.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="reservedOrder.sapCode" title="reservedOrder.sapCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="factory.code" title="factory.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="factory.name" title="factory.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="reservedOrder.kcd" title="reservedOrder.kcd" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="reservedOrder.receiveWorker" title="reservedOrder.receiveWorker" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="reservedOrder.status" title="reservedOrder.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="ProductionOrderStatus"/>
+            <column id="reservedOrder.jzrq" title="reservedOrder.jzrq" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime" format="dateFormat"/>      
+            <column id="reservedOrder.yhmc" title="reservedOrder.yhmc" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/> 
+            <column id="reservedOrder.ydlx" title="reservedOrder.ydlx" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+       		<column id="reservedOrder.cbzx" title="reservedOrder.cbzx" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="reservedOrder.cbzxRemark" title="reservedOrder.cbzxRemark" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+        </columns>
+    </maintainPage>
+</pages>

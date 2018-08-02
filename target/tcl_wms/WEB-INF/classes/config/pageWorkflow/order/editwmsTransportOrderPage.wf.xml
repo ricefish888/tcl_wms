@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editWmsTransportOrderPage">
+    <main>
+        <process id="wmsTransportOrderProcess">
+           <formCommit id="save" title="save" process="wmsTransportOrderProcess.new" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="new">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsTransportOrderManager" methodName="save" parameter="obj"/>
+                </actions>            
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>         
+            <formCommit id="edit" title="edit" process="wmsTransportOrderProcess.edit" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="edit">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsTransportOrderManager" methodName="save" parameter="obj"/>
+                </actions>            
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>          
+        </process>
+    </main>
+    <detail>
+    <process id="wmsTransportOrderDetailProcess">
+   <!--  <tablePopup id="new" title="new" process="wmsTransportOrderDetailProcess.new"  enableType="none" containId="false" pageId="editWmsTransportOrderDetailPage">
+    	<enableExpression><![CDATA[(${wmsTransportOrder.status}=='OPEN')]]></enableExpression>
+    </tablePopup>
+     -->
+       <tablePopup id="new" title="new" process="wmsTransportOrderDetailProcess.new"  enableType="none" containId="false" pageId="editWmsTransportOrderDetailnewPage">
+    	  <enableExpression><![CDATA[(${wmsTransportOrder.status}=='OPEN')]]></enableExpression>
+       </tablePopup>
+    
+      <tableCommit id="delete" title="delete" process="wmsTransportOrderDetailProcess.delete" enableType="multi" download="false" confirmMessage="是否确认删除此条记录？">
+                <mappings/>
+                 <actions>
+                    <action managerName="wmsTransportOrderManager" methodName="deleteDetail" parameter="obj"/>
+                </actions>  
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+      </tableCommit>
+      
+    <!--  <tablePopup id="addDetail" title="addDetail" process="wmsTransportOrderDetailProcess.addDetail" enableType="none" containId="false" pageId="maintainAddWmsTransportOrderDetailPage">
+                 <enableExpression><![CDATA[(${wmsTransportOrder.status}=='OPEN')]]></enableExpression>
+     </tablePopup> -->
+     
+     <tablePopup id="addDetail" title="addDetail" process="wmsTransportOrderDetailProcess.addDetail" enableType="none" containId="false" pageId="maintainAddWmsTransportOrderDetailnewPage">
+                 <enableExpression><![CDATA[(${wmsTransportOrder.status}=='OPEN')]]></enableExpression>
+     </tablePopup>
+      </process>
+    </detail>
+</page>

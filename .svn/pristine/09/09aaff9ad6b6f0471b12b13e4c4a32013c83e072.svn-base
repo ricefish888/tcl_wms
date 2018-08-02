@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 按货品移位输入页面模板 -->
+<RFFormPage id="tclInventoryQureyRFPage1" title="tclInventoryQureyRFPage1">
+	<RFForm>
+		<inputs>
+			<RFText id="inventoryQueryItemInput" title="inventoryQueryItemInput" tip="inventoryQueryItemInput" onFoucs="false">
+			</RFText>
+			<RFText id="inventoryQueryLocationInput" title="inventoryQueryLocationInput" tip="inventoryQueryLocationInput" onFoucs="false">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="inventoryQueryScan" title="inventoryQueryScan" action="tclRfinventoryQueryManager.inventoryQueryInputCommit" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

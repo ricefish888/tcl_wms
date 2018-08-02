@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.base.WmsProOrderBackRfRecord" table="WMS_BACKRF_RECORD">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_WMS_BACKRF_RECORD</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+		<many-to-one name="wmsShippingLotTruck" class="com.vtradex.wms.server.model.entity.base.WmsShippingLotTruck">
+			<column name="SHIPPINGLOTTRUCK_ID"/>
+		</many-to-one>
+		
+		
+		<property name="backQty" type="double" column="BACK_QTY"/>
+		<property name="userId" type="long" column="USER_ID" />
+		
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+	</class>
+</hibernate-mapping>

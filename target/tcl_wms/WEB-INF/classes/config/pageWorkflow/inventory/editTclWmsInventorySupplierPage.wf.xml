@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editTclWmsInventorySupplierPage">
+    <main>      
+        <process id="tclWmsInventoryProcess">
+            <formCommit id="modify" title="modify" process="tclWmsInventoryProcess.modify" enableType="none" download="false" confirmMessage="是否确认修改供应商？">
+                <enableExpression/>
+                <mappings>
+                    <mapping id="supplierId" className="long">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsTclInventoryManageManager" methodName="modifySupplier" parameter="obj,supplierId"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+</page>

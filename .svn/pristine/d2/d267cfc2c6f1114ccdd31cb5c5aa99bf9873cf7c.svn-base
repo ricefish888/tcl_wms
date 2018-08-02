@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="wmsWarningProcess" control="status">
+
+	<task id="view" title="查看">
+	</task>
+</process>

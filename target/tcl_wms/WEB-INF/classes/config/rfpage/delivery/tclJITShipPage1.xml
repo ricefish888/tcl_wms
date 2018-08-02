@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--创建JIT出库单输入页面模板 -->
+<RFFormPage id="tclJITShipPage1" title="tclJITShipPage1">
+	<RFForm>
+		<inputs>
+			<RFText id="remarkInput" title="remarkInput" tip="remarkInput" onFoucs="false">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="confirmScan" title="confirmScan" action="tclRfBolManager.createJITWorkDoc" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

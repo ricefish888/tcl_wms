@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 标准输入货品 -->
+<RFFormPage id="pickRFItemPage" title="pickRFItemPage">
+	<RFDisplay id="pickDisplay" load="tclRfPickticketManager.showLocCodeAndItemCode">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+		              拣货单号:{workCode}
+		              产线:{productLine}
+		              产线描述:{lineStr}
+			 订单日期:{orderDate}
+			{itemInfos}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>	
+		              拣货单号:{workCode}
+		              产线:{productLine}
+		              产线描述:{lineStr}
+			 订单日期:{orderDate}
+			{itemInfos}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="pickItemInput" title="pickItemInput" tip=""
+				 onFoucs="true">
+			</RFText>
+			<RFSelect id="genBarCodeInput" title="genBarCodeInput" defaultValue="false"
+				enumType="e.enumValue" onFoucs="false">
+				<hql>
+					<![CDATA[ 
+						SELECT e.enumValue,CASE e.enumValue WHEN 'true' THEN '是' ELSE '否' end FROM Enumerate e WHERE 1=1 AND e.enumType='booleanFormat'
+					]]>
+				</hql>
+			</RFSelect>
+		</inputs>
+		<buttons>
+			<RFButton id="pickItemScan" title="pickItemScan" action="tclRfPickticketManager.inputItemCommit" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

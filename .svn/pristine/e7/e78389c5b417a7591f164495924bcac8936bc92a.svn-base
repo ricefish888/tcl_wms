@@ -1,0 +1,73 @@
+package com.vtradex.wms.server.service.pickticket;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import com.vtradex.wms.server.model.entity.pickticket.WmsPickTicket;
+import com.vtradex.wms.server.model.entity.pickticket.WmsPickTicketDetail;
+
+public interface WmsTclPickticketManager {
+	
+	@Transactional
+	void pickTicketconvertWarehouse(WmsPickTicket wmsPickTicket);
+	
+	
+	
+	
+	/**
+	 * 
+	 * @Title: supplyWarehouseReplenish
+	 * 
+	 * @Description: 供货仓拉动补货
+	 * 
+	 * @return void    
+	 *
+	 * @throws 
+	 *
+	 * @author <a href="mailto:xu.feng@vtradex.com"/>冯旭/a>
+	 *
+	 * @date 2017年6月20日 10:08:56
+	 */
+	@Transactional
+	void supplyWarehouseReplenish(WmsPickTicket wmsPickTicket);
+	
+	  
+	/**
+	 * 保存拣货单
+	 * xiang.li 2017年8月7日11:16:51
+	 */
+	@Transactional
+	void storePickTicket(WmsPickTicket pickTicket);
+	
+	
+	
+	
+	/**
+	 * 添加拣货单明细
+	 * @Description:
+	 * @Author:       <a href="yang.liu@vtradex.net">刘杨</a>
+	 * @CreateDate:    2015年12月14日
+	 * @param pickTicketId
+	 * @param pickTicketDetail
+	 * @param status:
+	 * @arithMetic:
+	 * @exception:
+	 */
+	@Transactional
+	void addPickTicketDetail(Long pickTicketId,WmsPickTicketDetail pickTicketDetail);
+	
+	
+	/**
+	 * 移除拣货单明细
+	 * @Description:
+	 * @Author:        <a href="yang.liu@vtradex.net">刘杨</a>
+	 * @CreateDate:    2015年12月14日
+	 * @param pickTicketDetail:
+	 * @arithMetic:
+	 * @exception:
+	 */
+	@Transactional
+	void removePickTicketDetail(WmsPickTicketDetail pickTicketDetail);
+	
+	
+
+}

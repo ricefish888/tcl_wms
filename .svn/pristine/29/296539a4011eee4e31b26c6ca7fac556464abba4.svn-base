@@ -1,0 +1,10 @@
+package com.vtradex.wms.server.service.sap;
+
+import com.vtradex.thorn.server.service.BaseManager;
+import com.vtradex.wms.server.model.entity.item.WmsMinPackageQty;
+
+public interface WmsMinPackageManager extends BaseManager{
+
+	/**保存最小包装单位*/
+	void storeMinPackage(WmsMinPackageQty min);
+}

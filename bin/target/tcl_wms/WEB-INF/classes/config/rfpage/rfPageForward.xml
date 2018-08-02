@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- RF页面跳转系统全局配置文件 -->
+
+<rf>
+	<!-- ASN收货 -->
+	<forward id="tclAsnReceiveRFPage1.asnCodeScanBt.success" nextPage="tclAsnReceiveRFPage2" />
+	<forward id="tclAsnReceiveRFPage2.asnItemScanBt.success" nextPage="tclAsnReceiveRFPage3" />
+	<forward id="tclAsnReceiveRFPage3.asnReceiverComBt.success_all_received" nextPage="tclAsnReceiveRFPage1" />
+	<forward id="tclAsnReceiveRFPage3.asnReceiverComBt.success_part_received" nextPage="tclAsnReceiveRFPage2" />
+	<forward id="tclAsnReceiveRFPage3.asnSwitchBt.success_part_received" nextPage="tclAsnReceiveRFPage2" />
+	<forward id="tclAsnReceiveRFPage3.asnSwitchBt.success_all_received" nextPage="tclAsnReceiveRFPage1" />
+	
+	<!-- Delivery交货 -->
+	<!-- 新建 -->
+	<forward id="tclDeliveryRFPage1" nextPage="tclDeliveryRFPage2" />
+	<forward id="tclDeliveryRFPage2" nextPage="tclDeliveryRFPage3" />
+	<!-- 添加明细 -->
+	<forward id="tclDeliveryRFPage6" nextPage="tclDeliveryRFPage3" />
+	<forward id="tclDeliveryRFPage3" nextPage="tclDeliveryRFPage4" />
+	<forward id="tclDeliveryRFPage4" nextPage="tclDeliveryRFPage5" />
+	<forward id="tclDeliveryRFPage5.addDetailBt.success" nextPage="tclDeliveryRFPage5" />
+	<forward id="tclDeliveryRFPage5.showDetailBt.success" nextPage="tclDeliveryRFPage4" />
+	
+	<!-- 条码补打登记 -->
+	<forward id="tclBarCodePage.barCodeBt.success" nextPage="tclBarCodePage" />
+	
+	
+	
+	<!-- 生产订单货物校验 -->
+	<forward id="tclOrderItemCheckRFPage1.orderCodeScanBt.success_orderCode" nextPage="tclOrderItemCheckRFPage2" />
+	<forward id="tclOrderItemCheckRFPage1.orderCodeScanBt.success_orderProductLine" nextPage="tclOrderItemCheckRFPage3" />
+ 	<forward id="tclOrderItemCheckRFPage2.itemScanBt.success" nextPage="tclOrderItemCheckRFPage1" />
+	<forward id="tclOrderItemCheckRFPage3.beginDateScanBt.success" nextPage="tclOrderItemCheckRFPage4" />
+	<forward id="tclOrderItemCheckRFPage4.itemScanBt.success" nextPage="tclOrderItemCheckRFPage1" />
+	
+	<!-- 交接管理 -->
+	<forward id="bolHandoverRFPage1.bolCodeScanBt.success" nextPage="bolHandoverRFPage2" />
+	<forward id="bolHandoverRFPage2.bolShipCommitBt.success" nextPage="bolHandoverRFPage1" />
+ 	<forward id="bolHandoverRFPage2.cancelShipBt.success" nextPage="bolHandoverRFPage1" />
+	
+</rf>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainThornTaskPage" title="maintainThornTaskPage" autoQuery="true" entityClass="com.vtradex.thorn.server.model.message.Task" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT task.id,
+task.type,
+task.status,
+task.createTime,
+task.subscriber, 
+task.messageId,
+task.repeatCount
+ FROM Task task
+ WHERE 1=1
+ AND task.type<>'AN_SNAPSHOT'
+ order by task.id desc
+ ]]></datasource>
+        <columns>
+            <column id="task.id" title="erpUsers.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="task.type" title="task.type" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="InterfaceLogTaskType"/>
+            <column id="task.status" title="task.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="TaskStatus" width="80"/>
+            <column id="task.createTime" title="task.createTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="task.subscriber" title="task.subscriber" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" width="400"/>
+            <column id="task.messageId" title="task.messageId" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long" />
+            <column id="task.repeatCount" title="task.repeatCount" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long" />
+        </columns>
+    </maintainPage>
+</pages>

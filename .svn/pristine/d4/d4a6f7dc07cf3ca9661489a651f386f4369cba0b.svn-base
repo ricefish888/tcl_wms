@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.workdoc.WmsTask" table="WMS_TASK">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_WMS_TASK</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        <version name="version" column="VERSION" type="long"/>
+        
+		<many-to-one name="warehouse" class="com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse">
+			<column name="WAREHOUSE_ID" not-null="true"/>
+		</many-to-one>
+		<many-to-one name="company" class="com.vtradex.wms.server.model.entity.item.WmsCompany">
+			<column name="COMPANY_ID" />
+		</many-to-one>
+		<many-to-one name="workDoc" class="com.vtradex.wms.server.model.entity.workdoc.WmsWorkDoc">
+			<column name="WORK_DOC_ID" />
+		</many-to-one>
+		<many-to-one name="taskGroup" class="com.vtradex.wms.server.model.entity.workdoc.WmsTaskGroup">
+			<column name="TASK_GROUP_ID" />
+		</many-to-one>
+		<many-to-one name="workArea" class="com.vtradex.wms.server.model.entity.warehouse.WmsWorkArea">
+			<column name="WORK_AREA_ID" />
+		</many-to-one>
+		<many-to-one name="fromLocation" class="com.vtradex.wms.server.model.entity.warehouse.WmsLocation">
+			<column name="FROM_LOCATION_ID" />
+		</many-to-one>
+		<many-to-one name="oldToLocation" class="com.vtradex.wms.server.model.entity.warehouse.WmsLocation">
+			<column name="OLD_TO_LOCATION_ID" />
+		</many-to-one>
+		<many-to-one name="toLocation" class="com.vtradex.wms.server.model.entity.warehouse.WmsLocation">
+			<column name="TO_LOCATION_ID" />
+		</many-to-one>
+		<many-to-one name="item" class="com.vtradex.wms.server.model.entity.item.WmsItem">
+			<column name="ITEM_ID" />
+		</many-to-one>
+		<many-to-one name="itemKey" class="com.vtradex.wms.server.model.entity.item.WmsItemKey">
+			<column name="ITEM_KEY_ID" />
+		</many-to-one>
+		<many-to-one name="packageUnit" class="com.vtradex.wms.server.model.entity.item.WmsPackageUnit">
+			<column name="PACKAGE_UNIT_ID" />
+		</many-to-one>
+		<many-to-one name="worker" class="com.vtradex.wms.server.model.entity.base.WmsWorker">
+			<column name="WORKER_ID" />
+		</many-to-one>
+		
+		<property name="pallet" type="string" column="pallet" length="50" />
+		<property name="type" type="string" column="type" length="50" />
+		<property name="relatedBillCode" type="string" column="RELATED_BILL_CODE" length="100" />
+		<!-- <property name="relatedObjBillType" type="string" column="RELATED_BILL_TYPE" length="100" /> -->
+		<property name="relatedObjId" type="long" column="RELATED_OBJ_ID" />
+		<property name="status" type="string" column="STATUS" length="50"/>
+		<property name="inventoryStatus" type="string" column="INVENTORY_STATUS" length="50"/>
+		<property name="carton" type="string" column="carton" length="100"/>
+		
+		<property name="planPackQty" type="double" column="PLAN_PACK_QTY" />
+		<property name="planQty" type="double" column="PLAN_QTY" />
+		<property name="pickedQty" type="double" column="PICKED_QTY" />
+		<property name="putawayQty" type="double" column="PUTAWAY_QTY" />
+		<property name="sortedQty" type="double" column="SORTED_QTY" />
+		<property name="planWeight" type="double" column="PLAN_WEIGHT" />
+		<property name="planVolume" type="double" column="PLAN_VOLUME" />
+		<!-- <property name="operationType" type="string" column="OPERATION_TYPE" />
+		<property name="invRelatedBillType" type="string" column="INVRELATED_BILL_TYPE" />
+		<property name="invRelatedBillCode" type="string" column="INVRELATED_BILL_CODE" />
+		<property name="palletCode" type="string" column="PALLET_CODE" />
+		<property name="containerCode" type="string" column="CONTAINER_CODE" /> -->
+		<property name="sortDisplaygroupSeq" type="string" column="SORT_DISPLAYGROUP_SEQ" />
+		<property name="transferStatus" type="string" column="TRANSFER_STATUS" />
+		<property name="station" type="string" column="station" />
+		<property name="wcsStatus" type="string" column="WCS_STATUS" />
+		<!-- <property name="lockStatus" type="string" column="LOCK_STATUS" /> -->
+		
+		<property name="startTime" type="timestamp" column="START_TIME" />
+		<property name="endTime" type="timestamp" column="END_TIME"/>
+		<property name="productionDetailId" type="long" column="PRODUCTION_DETAIL_ID"/>
+		
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+	</class>
+</hibernate-mapping>

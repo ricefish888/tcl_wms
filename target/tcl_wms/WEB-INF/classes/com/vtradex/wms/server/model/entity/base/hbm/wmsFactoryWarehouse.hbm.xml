@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.base.WmsFactoryWarehouse" table="WMS_FACTORY_WAREHOUSE">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_WMS_FACTORY_WAREHOUSE</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+ 
+        <many-to-one name="factory" class="com.vtradex.wms.server.model.entity.base.WmsSapFactory">
+			<column name="FACTORY_ID" not-null="true" />
+		</many-to-one>
+		
+		<property name="type" type="string" column="TYPE" length="50" not-null="true" />
+		
+		<many-to-one name="warehouse" class="com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse">
+			<column name="WAREHOUSE_ID" not-null="true"/>
+		</many-to-one>
+		
+		
+	</class>
+</hibernate-mapping>

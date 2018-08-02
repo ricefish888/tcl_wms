@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainEmailRecordPage" title="maintainEmailRecordPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.email.EmailRecord" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT record.id,
+record.receiver,
+record.emailTo,
+record.emailCc,
+record.status,
+record.emailType,
+record.theme,
+record.content,
+record.attachName,
+record.attachPath,
+record.beginTime,
+record.lastSendTime,
+record.sendCount,
+record.errorInfo
+ from EmailRecord record
+where 1=1 order by record.id desc]]></datasource>
+        <columns>
+            <column id="record.id" title="record.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="record.receiver" title="record.receiver" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="record.emailTo" title="record.emailTo" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="record.emailCc" title="record.emailCc" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>           
+            <column id="record.status" title="record.status" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"  dataType="enum" format="enumFormat" formatParam="InterfaceLogStatus" />
+            <column id="record.emailType" title="record.emailType" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"  dataType="enum" format="enumFormat" formatParam="EmailRecordType" />
+            <column id="record.theme" title="record.theme" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="record.content" title="record.content" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="record.attachName" title="record.attachName" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>     
+            <column id="record.attachPath" title="record.attachPath" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="record.beginTime" title="record.beginTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="record.lastSendTime" title="record.lastSendTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="record.sendCount" title="record.sendCount" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+            <column id="record.errorInfo" title="record.errorInfo" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+        </columns>
+    </maintainPage>
+</pages>

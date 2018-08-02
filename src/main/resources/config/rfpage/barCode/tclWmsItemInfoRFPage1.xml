@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 按货品移位输入页面模板 -->
+<RFFormPage id="tclWmsItemInfoRFPage1" title="tclWmsItemInfoRFPage1">
+	<RFForm>
+		<inputs>
+			<RFText id="itemCodeInput" title="itemCodeInput" tip="itemCodeInput" onFoucs="false">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="itemQueryScan" title="itemQueryScan" action="tclRfDeliveryManager.queryItem" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

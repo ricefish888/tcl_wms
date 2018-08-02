@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <customPage id="importWmsInventoryPage" title="importWmsInventoryPage" className="com.vtradex.thorn.client.template.ImportPageTemplate" onClose="refreshParent" width="300" height="120">
+	    <buttons>
+    		<button id="import" title="search">
+    			<actions>
+    				<action managerName="wmsTclInventoryManageManager" methodName="initInventoryByImport" />
+    			</actions>
+    		</button>
+		</buttons>
+	</customPage>
+</pages>

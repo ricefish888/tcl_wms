@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editTclWmsInventoryChangeHousePage">
+    <main>      
+        <process id="wmsInventoryProcess">
+            <formCommit id="changehouse" title="changehouse" process="wmsInventoryProcess.changehouse" enableType="none" download="false" confirmMessage="是否确认调拨？">
+                <enableExpression/>
+                <mappings>
+                	<mapping id="qty" className="double">
+                        <entries/>
+                    </mapping>
+                    <mapping id="locationId" className="long">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsTclInventoryManageManager" methodName="changeHouse" parameter="obj,qty,locationId"/>
+                </actions>
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+</page>

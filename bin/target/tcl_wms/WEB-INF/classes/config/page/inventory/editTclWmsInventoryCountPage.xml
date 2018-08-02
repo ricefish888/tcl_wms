@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editTclWmsInventoryCountPage" title="editTclWmsInventoryCountPage" entityClass="com.vtradex.wms.server.model.entity.inventory.TclWmsInventoryCount" width="250" height="280" onClose="refreshParent">
+        <workflow/>
+        <initListeners/>
+        <inputUIs>
+            <hidden id="inventoryCount.id" title="inventoryCount.id" reserve="false"/>
+            <date id="inventoryCount.computeDate" title="inventoryCount.computeDate" row="1" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" showTime="true" manualEditable="true" defaultCurrentDate="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </date>
+        </inputUIs>
+    </editPage>
+</pages>

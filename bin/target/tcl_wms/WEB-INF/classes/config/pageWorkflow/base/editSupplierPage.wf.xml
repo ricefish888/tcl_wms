@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="editSupplierPage">
+    <main>
+        <process id="wmsSupplierProcess">
+            <formCommit id="save" title="save" process="wmsSupplierProcess.new" enableType="none" multiMapping="false" download="false" closeTransactional="false" visibleType="new">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                    <action managerName="wmsSupplierManager" methodName="storeSurpplier" parameter="obj"/>
+                </actions>            
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+            <formCommit id="edit" title="edit" process="wmsSupplierProcess.edit" enableType="none" download="false" visibleType="edit">
+                <enableExpression/>
+                <mappings/>
+                 <actions>
+                    <action managerName="wmsSupplierManager" methodName="storeSurpplier" parameter="obj"/>
+                </actions>    
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </formCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

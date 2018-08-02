@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainAddWmsTransportOrderDetailnewPage">
+    <main>
+        <process id="wmsTransportOrderDetailProcess">
+        
+        <tableCommit id="add" title="add" process="wmsTransportOrderDetailProcess.addDetail" enableType="multi" multiMapping="false" download="false" closeTransactional="false">
+                <enableExpression/>
+                <mappings>
+                   <mapping id="wmsTransportOrder.id" className="long"/>
+                </mappings>
+                <actions>
+                    <action managerName="wmsTransportOrderManager" methodName="addOrderDetail" parameter="wmsTransportOrder.id,obj,tableValues"/>
+                </actions>
+                <forwards>
+                    <forward name="resetWindow" newEnabled="true" editEnabled="true"/>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+       </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

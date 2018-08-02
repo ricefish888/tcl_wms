@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ASN明细收货输入页面模板 -->
+<RFFormPage id="tclAsnDetailQualityPage1" title="tclAsnDetailQualityPage1">
+	<RFForm>
+		<inputs> 
+			<RFText id="asnCodeInput" title="asnCodeInput" tip="asnCodeInput" onFoucs="false">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="asnCodeScanBt" title="asnCodeScanBt" action="tclRfAsnManager.asnCodeInput" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

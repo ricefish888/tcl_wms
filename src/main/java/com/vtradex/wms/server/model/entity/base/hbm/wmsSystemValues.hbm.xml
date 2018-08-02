@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.base.WmsSystemValues" table="WMS_SYSTEM_VALUES">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_WMS_SYSTEM_VALUES</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+ 
+        <property name="code" type="string" column="CODE" length="50" not-null="true" unique-key="UK_WMS_SYSTEM_VALUES" />
+        <property name="name" type="string" column="NAME" length="100"/>
+        <property name="remark" type="string" column="REMARK" length="255" />   
+        <property name="value" type="string" column="VALUE" length="25"/>
+ 		<property name="userField1" type="string" column="USER_FIELD1" length="100" />
+        <property name="userField2" type="string" column="USER_FIELD2" length="100" />
+        <property name="userField3" type="string" column="USER_FIELD3" length="100" />
+       
+        <component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+	 </class>
+</hibernate-mapping>

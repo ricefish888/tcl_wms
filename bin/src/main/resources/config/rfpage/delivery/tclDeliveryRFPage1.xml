@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Delivery交货输入页面模板 -->
+<RFListPage id="tclDeliveryRFPage1" title="tclDeliveryRFPage1">
+	<RFSearchUI id="deliveryInputCode" text="deliveryInputCode"  onFoucs="false"/>
+	<RFTable>
+		<RFTh id="cid" title="cid" width="100" enumType="" hidden="true" />
+		<RFTh id="ccode" title="ccode" width="350" enumType="" hidden="false" />
+		<RFTh id="cname" title="cname" width="350" enumType="" hidden="false" />
+		<RFTh id="ct" title="ct" width="350" enumType="" hidden="false" />
+			<DataSource type="HQL">
+				<statement>
+				<![CDATA[
+				 SELECT 
+customer.id as cid,
+customer.code as ccode,
+customer.name as cname,
+customer.contact.telephone as ct
+FROM WmsCustomer  customer
+LEFT JOIN customer.warehouse warehouse
+where 1=1 
+/~deliveryInputCode: and customer.code like '%{deliveryInputCode}%' ~/
+				]]>
+				</statement>
+			</DataSource>
+		</RFTable>
+</RFListPage>
+	

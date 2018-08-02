@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="addPurchaseOrderDetail4DeliveryOrderDetaliPage">
+    <main>
+        <process id="wmsDeliveryOrderProcess">
+            <tableCommit id="addDetail" title="addDetail" process="wmsDeliveryOrderProcess.addDetail" enableType="multi" multiMapping="true" download="false" closeTransactional="false">
+                <enableExpression/>
+                <mappings>
+                	<mapping id="deliveryOrder.id" className="long">
+                        <entries/>
+                    </mapping>
+                </mappings>
+                <actions>
+                    <action managerName="wmsDeliveryOrderManager" methodName="addPoDetail" parameter="objs, deliveryOrder.id"/>
+                </actions>
+                <forwards/>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWms2SapInterfaceLogPage">
+    <main>      
+          <process id="wms2SapInterfaceLogProcess">
+            <tablePopup id="view" title="view" process="wms2SapInterfaceLogProcess.view" enableType="single" containId="true" pageId="viewWms2SapInterfaceLogPage">
+                <enableExpression/>
+          </tablePopup>      
+          <tableCommit id="interface" title="interface" process="wms2SapInterfaceLogProcess.interface" enableType="none" multiMapping="false" download="false">
+                <enableExpression/>
+                <mappings/>
+                <actions>
+                     <action managerName="tclMessageManager" methodName="genSendToSapLog" />
+                </actions>
+                <forwards/>
+          </tableCommit>  
+        </process>
+    </main>
+</page>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsShippingLotTruckPage">
+    <main>
+        <process id="wmsShippingLotTruckProcess">
+            <tablePopup id="print" title="print" process="wmsShippingLotTruckProcess.print" enableType="multi" containId="true" pageId="printWmsShippingLotTruckPage">
+                  <enableExpression/>
+            </tablePopup>
+        </process>
+    </main>
+    <detail/>
+</page>

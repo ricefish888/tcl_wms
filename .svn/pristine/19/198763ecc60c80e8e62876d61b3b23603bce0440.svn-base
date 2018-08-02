@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="tclWmsInventoryCountProcess" control="status">
+	<task id="again" title="重新日结">
+	</task>
+	
+	<task id="import" title="导入">
+	</task>
+</process>

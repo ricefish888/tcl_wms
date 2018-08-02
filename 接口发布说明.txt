@@ -1,0 +1,24 @@
+
+发布接口时，将web.xml中的
+classpath*:cxf/cxf-beans.xml
+classpath*:spring/adapterContext.xml
+这两行放开，即可提供接口服务和定时任务服务。
+
+放开后将项目打war包，将war名称改成tcl_wms_edi.war发布到接口的tomcat下接口。
+发布项目将以上两行注释即可。
+
+
+
+
+
+
+
+wms调用erp接口
+
+WMS接收信息返回SAP：http://pidev01.tcl.com:50000/dir/wsdl?p=sa/759e3fa20e4c359290d5f07170734a57
+
+1.需要配置hosts  pidev01.tcl.com映射到10.116.6.20
+2.打开wsdl的网络链接是提示需要登录用户名密码  用户：WMSDATA 密码：wms2sap   注意：调用时也需要
+3.将wsdl复制到项目中，通过cxf的wsdl2java生成客户端。
+3.需要用另外的方式访问，里面需要设置address，这个address从wsdl复制出来粘贴进去，比如：http://pidev01.tcl.com:50000/XISOAPAdapter/MessageServlet?senderParty=&senderService=BC_WMS_SENDER&receiverParty=&receiverService=&interface=ZRFC_WMS_MSG_RETURN&interfaceNamespace=urn%3Asap-com%3Adocument%3Asap%3Arfc%3Afunctions
+

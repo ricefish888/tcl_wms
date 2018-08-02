@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process id="checkOrderProcess" control="status">
+
+    <state id="OPEN" title="打开"/>
+       
+    <state id="CONFIRMED" title="已确认"/>
+
+
+	<task id="received" title="接收">
+	</task>
+
+	<task id="confirmed" title="确认">
+	</task>
+
+</process>

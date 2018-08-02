@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.production.ProductionOrder" table="PRODUCTION_ORDER">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_PRODUCTION_ORDER</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        <version name="version" column="VERSION" type="long"/>
+        
+		<many-to-one name="factory" class="com.vtradex.wms.server.model.entity.base.WmsSapFactory">
+			<column name="FACTORY_ID" not-null="true"/>
+		</many-to-one>
+		
+		<property name="code" type="string" column="CODE" length="50" />
+		<property name="cpItemCode" type="string" column="CP_ITEM_CODE" length="50" />
+		<property name="productLine" type="string" column="PRODUCT_LINE" length="50" />
+		<property name="ptype" type="string" column="PTYPE" length="50" />
+		<property name="status" type="string" column="STATUS" length="50"/>
+		<property name="planQuantity" type="double" column="PLAN_QUANTITY" />
+		<property name="finishedQuantity" type="double" column="FINISHED_QUANTITY" />
+		
+		<property name="canAllocate" type="yes_no" column="CAN_ALLOCATE" />
+		<property name="beCreatPt" type="yes_no" column="BE_CREATPT" />
+		<property name="beginDate" type="timestamp" column="BEGIN_DATE"/>
+		<property name="endDate" type="timestamp" column="END_DATE"/>
+		<property name="beginTime" type="timestamp" column="BEGIN_TIME"/>
+		<property name="endTime" type="timestamp" column="END_TIME"/>
+		
+		
+		<property name="beginHour" type="string" column="BEGIN_HOUR" length="10"/>
+		<property name="endHour" type="string" column="END_HOUR" length="10"/>
+		<property name="remark" type="string" column="REMARK" length="50"/>
+ 		<property name="itemTag" type="string" column="ITEM_TAG" length="50" />
+ 		<property name="batchMark" type="string" column="BATCH_MARK" length="50" />
+ 		<property name="lineDesc" type="string" column="LINE_DESC" length="255" />
+ 		<property name="locCode" type="string" column="LOC_CODE" length="255" />
+ 		<property name="beDetailCreatePt" type="yes_no" column="BE_DETAIL_CREATEPT" />
+ 		<property name="saleCode" type="string" column="SALE_CODE" length="50" />
+		
+		<set name="details" inverse="true" lazy="true" cascade="all-delete-orphan">
+			<key column="PRODUCTION_ORDER_ID"/>
+			<one-to-many class="com.vtradex.wms.server.model.entity.production.ProductionOrderDetail"></one-to-many>
+		</set>		
+
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+	</class>
+</hibernate-mapping>

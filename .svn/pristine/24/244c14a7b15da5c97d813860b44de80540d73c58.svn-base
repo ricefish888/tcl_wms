@@ -1,0 +1,262 @@
+package com.vtradex.wms.server.model.entity.production;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.vtradex.thorn.server.model.VersionalEntity;
+import com.vtradex.wms.server.model.entity.base.WmsSapFactory;
+import com.vtradex.wms.server.model.entity.order.PurchaseOrderDetail;
+import com.vtradex.wms.server.utils.DoubleUtils;
+
+/***
+ * 生产订单  工单
+ *
+ */
+public class ProductionOrder extends VersionalEntity {
+	
+	
+//	/** 仓库 */
+//	@UniqueKey
+//	private WmsWarehouse warehouse;
+	
+	private static final long serialVersionUID = 5086295114585462170L;
+
+	/**生产订单号*/
+	private String code;
+	
+	/**工厂*/
+	private WmsSapFactory factory;
+	
+	/**
+	 * {@link ProductionOrderStatus}
+	 * */
+	private String status = ProductionOrderStatus.OPEN;
+	
+	/**计划成品数量*/
+	private Double planQuantity=0D;
+	
+	/**完成成品数量*/
+	private Double finishedQuantity=0d;
+	
+	/**开始拣配标记*/
+	private Boolean canAllocate=Boolean.FALSE;
+	
+	/**是否已生成拣货单*/
+	private Boolean beCreatPt=Boolean.FALSE;
+	
+	/**工单开始日期*/
+	private Date beginDate;
+	
+	/**工单结束日期*/
+	private Date endDate;
+	
+	/**工单开始时间  精确到小时*/
+	private Date beginTime;
+	
+	/**工单结束日时间  精确到小时*/
+	private Date endTime;
+	
+	/**工单开始小时*/
+	private String beginHour;
+	
+	/**工单结束小时*/
+	private String endHour;
+	
+	/**备注*/
+	private String remark;
+	
+	/**工单类型*/
+	private String ptype;
+	
+	
+	/**成品itemcode  成品wms无基础数据  只记录物料编码*/
+	private String cpItemCode;
+	
+	/**
+	 * 单头物料描述
+	 * 生产线  wms导入时序的时候一起导入*/
+	private String productLine;
+	
+	/**
+	 * 物料凭证号
+	 */
+	private String itemTag;
+	
+	private Set<ProductionOrderDetail> details = new HashSet<ProductionOrderDetail>();
+
+    public String getItemTag() {
+		return itemTag;
+	}
+
+	public void setItemTag(String itemTag) {
+		this.itemTag = itemTag;
+	}
+
+	public String getPtype() {
+		return ptype;
+	}
+
+	public void setPtype(String ptype) {
+		this.ptype = ptype;
+	}
+
+	public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public WmsSapFactory getFactory() {
+        return factory;
+    }
+
+    public void setFactory(WmsSapFactory factory) {
+        this.factory = factory;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Double getPlanQuantity() {
+        return planQuantity;
+    }
+
+    public void setPlanQuantity(Double planQuantity) {
+        this.planQuantity = planQuantity;
+    }
+
+    public Double getFinishedQuantity() {
+        return finishedQuantity;
+    }
+
+    public void setFinishedQuantity(Double finishedQuantity) {
+        this.finishedQuantity = finishedQuantity;
+    }
+
+    public Boolean getCanAllocate() {
+        return canAllocate;
+    }
+
+    public void setCanAllocate(Boolean canAllocate) {
+        this.canAllocate = canAllocate;
+    }
+
+    public Date getBeginDate() {
+        return beginDate;
+    }
+
+    public void setBeginDate(Date beginDate) {
+        this.beginDate = beginDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public Date getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(Date beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getBeginHour() {
+        return beginHour;
+    }
+
+    public void setBeginHour(String beginHour) {
+        this.beginHour = beginHour;
+    }
+
+    public String getEndHour() {
+        return endHour;
+    }
+
+    public void setEndHour(String endHour) {
+        this.endHour = endHour;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public String getCpItemCode() {
+		return cpItemCode;
+	}
+
+	public void setCpItemCode(String cpItemCode) {
+		this.cpItemCode = cpItemCode;
+	}
+
+	public String getProductLine() {
+		return productLine;
+	}
+
+	public void setProductLine(String productLine) {
+		this.productLine = productLine;
+	}
+
+	public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+	public Set<ProductionOrderDetail> getDetails() {
+		return details;
+	}
+
+
+	public Boolean getBeCreatPt() {
+		return beCreatPt;
+	}
+
+	public void setBeCreatPt(Boolean beCreatPt) {
+		this.beCreatPt = beCreatPt;
+	}
+
+	public void setDetails(Set<ProductionOrderDetail> details) {
+		this.details = details;
+	}
+	
+	public void addDetail(ProductionOrderDetail detail){
+		this.details.add(detail);
+	}
+	/**
+	 * 刷新单头数量
+	 */
+	public void refreshQtyBU() {
+		this.planQuantity = 0.0D;
+		for(ProductionOrderDetail detail : this.getDetails()){
+			this.planQuantity=DoubleUtils.add(this.planQuantity,detail.getPlanQuantityBu(),detail.getItem().getBuPrecision());
+		}
+	}
+	/**
+	 * 移除明细
+	 * @param details
+	 */
+	public void removeDetail(ProductionOrderDetail productionOrderDetail) {
+		this.details.remove(productionOrderDetail);
+		productionOrderDetail.setProductionOrder(null);
+		refreshQtyBU();
+}
+}

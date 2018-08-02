@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--输入页面模板 -->
+<RFFormPage id="tclJITShipPage8" title="tclJITShipPage8">
+	<RFDisplay id="deliveryDisplay" load="tclRfBolManager.showquickWorkDocInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			单号：{quickWorkDocCode}
+			备注：{remark}
+			{quickWorkDocItemInfos}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>
+			单号：{quickWorkDocCode}
+			备注：{remark}
+			{quickWorkDocItemInfos}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<buttons>
+			<RFButton id="shipConfirmBt" title="shipConfirmBt" action="tclRfBolManager.shipConfirm" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>

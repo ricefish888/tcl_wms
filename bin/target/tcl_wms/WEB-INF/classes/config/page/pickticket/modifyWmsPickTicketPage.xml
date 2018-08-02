@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <modifyDetailPage id="modifyWmsPickTicketPage" title="modifyWmsPickTicketPage" entityClass="com.vtradex.wms.server.model.entity.pickticket.WmsPickTicket" onClose="refreshParent" width="970" height="450">
+        <initListeners/>
+        <modify>
+            <inputUIs>
+                <hidden id="pickTicket.id" title="pickTicket.id" reserve="false"/>
+                <text id="pickTicket.code" title="pickTicket.code" row="1" col="1" readOnly="true" required="false" reserve="false" forceOverride="false" focusUI="false" inVisible="false" editModel="uneditable" length="20" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <remote id="pickTicket.company.id" title="pickTicket.company.id" row="1" col="2" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="uneditable" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,编码,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT 
+company.id,
+company.code,
+company.name
+FROM WmsCompany company
+WHERE company.status = 'ENABLED'
+AND company.id in (select wareCompany.company.id from WmsWarehouseCompany wareCompany where wareCompany.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN})
+AND (company.code LIKE :param OR company.name LIKE :param)
+ 		]]></hql>
+                    <eventListeners>
+                        <eventListener id="pickTicket.billType.id" index="1" refreshUI="true"/>
+                    </eventListeners>
+                </remote>
+                <list id="pickTicket.billType.id" title="pickTicket.billType.id" row="1" col="3" span="1" width="120" readOnly="false" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                    <visibleExpression/>
+                    <hql><![CDATA[ SELECT
+ billType.id,
+ billType.name
+ FROM WmsBillType billType
+ WHERE 1=1 
+ AND billType.type = 'PT'					
+ AND billType.masterGroup.id in (select company.masterGroup.id from WmsCompany company where company.id= ${pickTicket.company.id}) 
+ AND billType.status = 'ENABLED' order by billType.id desc]]></hql>
+                    <eventListeners/>
+                </list>
+                <text id="pickTicket.relatedBill1" title="pickTicket.relatedBill1" row="1" col="4" readOnly="false" required="false" reserve="false" forceOverride="false" focusUI="false" inVisible="false" length="20" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <date id="pickTicket.orderDate" title="pickTicket.orderDate" row="2" col="1" readOnly="false" required="true" reserve="false" forceOverride="false" inVisible="false" showTime="true" manualEditable="true" defaultCurrentDate="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </date>
+                <text id="pickTicket.priority" title="pickTicket.priority" row="2" col="2" defaultValue="0" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" validator="integer" language="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <remote id="pickTicket.carrier.id" title="pickTicket.carrier.id" row="2" col="3" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="editable" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,编码,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT 
+carrier.id,
+carrier.code,
+carrier.name
+FROM WmsCarrier carrier
+WHERE carrier.status = 'ENABLED'
+AND (carrier.code LIKE :param OR carrier.name LIKE :param)
+AND carrier.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}
+ 		]]></hql>
+                    <eventListeners/>
+                </remote>
+                <remote id="pickTicket.customer.id" title="pickTicket.customer.id" row="2" col="4" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="editable" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,编码,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT 
+customer.id,
+customer.code,
+customer.name,
+customer.contact.contactName,
+customer.contact.mobile,
+customer.contact.province,
+customer.contact.country,
+customer.contact.telephone,
+customer.contact.fax,
+customer.contact.email,
+customer.contact.address,
+customer.route,
+customer.contact.city
+FROM WmsCustomer customer
+WHERE customer.status = 'ENABLED'
+AND customer.masterGroup.id in (select company.masterGroup.id from WmsCompany company where company.id= ${pickTicket.company.id}) 
+AND (customer.code LIKE :param OR customer.name LIKE :param)
+ 		]]></hql>
+                    <eventListeners>
+                        <eventListener id="pickTicket.shipToName" index="3" refreshUI="false"/>
+                        <eventListener id="pickTicket.contact.contactName" index="4" refreshUI="false"/>
+                        <eventListener id="pickTicket.contact.mobile" index="5" refreshUI="false"/>
+                        <eventListener id="pickTicket.contact.province" index="6" refreshUI="false"/>
+                        <eventListener id="pickTicket.contact.country" index="7" refreshUI="false"/>
+                        <eventListener id="pickTicket.contact.telephone" index="8" refreshUI="false"/>
+                        <eventListener id="pickTicket.contact.fax" index="9" refreshUI="false"/>
+                        <eventListener id="pickTicket.contact.email" index="10" refreshUI="false"/>
+                        <eventListener id="pickTicket.contact.address" index="11" refreshUI="false"/>
+                        <eventListener id="pickTicket.route" index="12" refreshUI="false"/>
+                        <eventListener id="pickTicket.contact.city" index="13" refreshUI="false"/>
+                    </eventListeners>
+                </remote>
+                <text id="pickTicket.shipToName" title="pickTicket.shipToName" row="3" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" inVisible="false" length="100" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="pickTicket.contact.contactName" title="pickTicket.contact.contactName" row="3" col="2" readOnly="false" required="false" reserve="false" forceOverride="true" inVisible="false" length="20" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="pickTicket.contact.mobile" title="pickTicket.contact.mobile" row="3" col="3" readOnly="false" required="false" reserve="false" forceOverride="true" inVisible="false" length="50" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="pickTicket.contact.country" title="pickTicket.contact.country" row="3" col="4" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" length="20" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="pickTicket.contact.province" title="pickTicket.contact.province" row="4" col="1" readOnly="false" required="false" reserve="false" forceOverride="true" inVisible="false" length="20" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="pickTicket.contact.city" title="pickTicket.contact.city" row="4" col="2" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" length="20" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="pickTicket.contact.telephone" title="pickTicket.contact.telephone" row="4" col="3" readOnly="false" required="false" reserve="false" forceOverride="true" inVisible="false" length="50" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="pickTicket.contact.fax" title="pickTicket.contact.fax" row="4" col="4" readOnly="false" required="false" reserve="false" forceOverride="true" inVisible="false" length="50" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="pickTicket.contact.email" title="pickTicket.contact.email" row="5" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" inVisible="false" length="100" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <remote id="pickTicket.shipDock.id" title="pickTicket.shipDock.id" row="5" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="editable" multiple="false" manualEditable="true" displayColumn="2" percentSignPosition="both" displayedTableHead="序号,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT 
+shipDock.id,
+shipDock.name
+FROM WmsDock shipDock
+WHERE shipDock.status = 'ENABLED'
+and shipDock.isShip = true
+AND (shipDock.name LIKE :param)
+AND shipDock.zone.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}
+ 		]]></hql>
+                    <eventListeners/>
+                </remote>
+                <remote id="pickTicket.shipLocation.id" title="pickTicket.shipLocation.id" row="5" col="3" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="editable" multiple="false" manualEditable="true" displayColumn="3" enumColumnType="2=WmsLocationType" percentSignPosition="both" displayedTableHead="序号,库位类型,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT 
+shipLocation.id,
+shipLocation.type,
+shipLocation.code
+FROM WmsLocation shipLocation
+WHERE shipLocation.status = 'ENABLED'
+AND shipLocation.type in ('SHIP','STORAGE','HANDOVER')
+AND (shipLocation.code LIKE :param)
+AND shipLocation.warehouse.baseOrganization = #{SESSION_BASE_ORGAN}
+order by shipLocation.type asc
+ 		]]></hql>
+                    <eventListeners/>
+                </remote>
+                <text id="pickTicket.contact.address" title="pickTicket.contact.address" row="5" col="4" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" inVisible="false" length="200" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <checkbox id="pickTicket.allowCross" title="pickTicket.allowCross" row="6" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </checkbox>
+                <checkbox id="pickTicket.allowShortShip" title="pickTicket.allowShortShip" row="6" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </checkbox>
+                <checkbox id="pickTicket.allowLotSwap" title="pickTicket.allowLotSwap" row="6" col="3" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </checkbox>
+                <text id="pickTicket.route" title="pickTicket.route" row="6" col="4" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                
+                
+                
+                 <list id="pickTicket.userField2" title="pickTicket.userField2" row="7" col="1" span="1" width="120" readOnly="false" required="false" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                    <visibleExpression/>
+                    <hql><![CDATA[SELECT
+ factory.name,
+ factory.name,
+ factory.code
+ FROM WmsSapFactory factory
+ WHERE 1=1 
+ AND factory.status = 'ENABLED'					
+ order by factory.id desc]]></hql>
+                    <eventListeners>
+                        <eventListener id="pickTicket.userField1" index="3" refreshUI="false"/>
+                    </eventListeners>
+                </list>
+                
+              <text id="pickTicket.userField1" title="pickTicket.userField1" row="7" col="2" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" inVisible="false" length="100" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text> 
+                
+            </inputUIs>
+        </modify>
+        <detail entityClass="com.vtradex.wms.server.model.entity.pickticket.WmsPickTicketDetail">
+            <datasource><![CDATA[SELECT pickTicketDetail.id,pickTicketDetail.lineNo,pickTicketDetail.item.code,pickTicketDetail.item.name,packageUnit.unit,pickTicketDetail.expectedPackQty,pickTicketDetail.expectedQty,pickTicketDetail.allocatedQty,pickTicketDetail.pickedQty,pickTicketDetail.planedShipQty,pickTicketDetail.shippedQty,pickTicketDetail.inventoryStatus,pickTicketDetail.fullpackAllocation,pickTicketDetail.overpickRate  FROM WmsPickTicketDetail pickTicketDetail 
+			LEFT JOIN pickTicketDetail.pickTicket
+            LEFT JOIN pickTicketDetail.packageUnit packageUnit
+ WHERE 1=1
+ AND pickTicketDetail.pickTicket.id = {pickTicket.id}]]></datasource>
+            <columns>
+                <column id="pickTicketDetail.id" title="ID" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="pickTicketDetail.lineNo" title="pickTicketDetail.lineNo" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+                <column id="pickTicketDetail.item.code" title="pickTicketDetail.item.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="pickTicketDetail.item.name" title="pickTicketDetail.item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="packageUnit.unit" title="pickTicketDetail.packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="pickTicketDetail.expectedPackQty" title="pickTicketDetail.expectedPackQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="pickTicketDetail.expectedQty" title="pickTicketDetail.expectedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="pickTicketDetail.allocatedQty" title="pickTicketDetail.allocatedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="pickTicketDetail.pickedQty" title="pickTicketDetail.pickedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="pickTicketDetail.planedShipQty" title="pickTicketDetail.planedShipQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+                <column id="pickTicketDetail.shippedQty" title="pickTicketDetail.shippedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="pickTicketDetail.inventoryStatus" title="pickTicketDetail.inventoryStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle"/>
+                <column id="pickTicketDetail.fullpackAllocation" title="pickTicketDetail.fullpackAllocation" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="boolean" format="enumFormat" formatParam="booleanFormat"/>
+                <column id="pickTicketDetail.overpickRate" title="pickTicketDetail.overpickRate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" language="false"/>
+            </columns>
+        </detail>
+    </modifyDetailPage>
+</pages>

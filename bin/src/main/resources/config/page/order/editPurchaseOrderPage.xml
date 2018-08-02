@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <modifyDetailPage id="editPurchaseOrderPage" title="editPurchaseOrderPage" entityClass="com.vtradex.wms.server.model.entity.order.PurchaseOrder" onClose="refreshParent" width="970" height="425">
+        <initListeners/>
+        <modify>
+            <inputUIs>
+                <hidden id="purchaseOrder.id" title="purchaseOrder.id" reserve="false"/>
+                <text id="purchaseOrder.code" title="purchaseOrder.code" row="1" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <remote id="purchaseOrder.supplier.id" title="purchaseOrder.supplier.id" row="1" col="2" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="uneditable" multiple="false" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,代码,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[ SELECT 
+ supplier.id,
+ supplier.code,
+ supplier.name
+ FROM WmsSupplier supplier 
+ WHERE supplier.status = 'ENABLED'
+ AND (supplier.code  LIKE :param OR  supplier.name LIKE :param) ]]></hql>
+                    <eventListeners>
+                    </eventListeners>
+                </remote>
+                <remote id="purchaseOrder.company.id" title="purchaseOrder.company.id" row="1" col="3" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="uneditable" multiple="false" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,代码,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[ SELECT 
+ company.id,
+ company.code,
+ company.name
+ FROM WmsCompany company 
+ WHERE company.status = 'ENABLED' 
+ AND company.id in (select wareCompany.company.id from WmsWarehouseCompany wareCompany where wareCompany.warehouse.baseOrganization.id=#{SESSION_BASE_ORGAN})
+ AND (company.code  LIKE :param OR  company.name LIKE :param) ]]></hql>
+                    <eventListeners>
+                    </eventListeners>
+                </remote>
+                <date id="purchaseOrder.creatDate" title="purchaseOrder.creatDate" row="1" col="4" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" showTime="true" manualEditable="true" defaultCurrentDate="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </date>
+                <text id="purchaseOrder.ekorg" title="purchaseOrder.ekorg" row="2" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="purchaseOrder.ekgrp" title="purchaseOrder.ekgrp" row="2" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <remote id="purchaseOrder.sapFactory.id" title="purchaseOrder.sapFactory.id" row="2" col="3" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="uneditable" multiple="false" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,代码,名称">
+                    <visibleExpression/>
+                    <hql><![CDATA[ SELECT 
+ sapFactory.id,
+ sapFactory.code,
+ sapFactory.name
+ FROM WmsSapFactory sapFactory 
+ WHERE sapFactory.status = 'ENABLED'
+ AND (sapFactory.code  LIKE :param OR  sapFactory.name LIKE :param) ]]></hql>
+                    <eventListeners>
+                    </eventListeners>
+                </remote>
+                <date id="purchaseOrder.actualDate" title="purchaseOrder.actualDate" row="3" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" showTime="true" manualEditable="true" defaultCurrentDate="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </date>
+                <date id="purchaseOrder.startReceivedDate" title="purchaseOrder.startReceivedDate" row="3" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" showTime="true" manualEditable="true" defaultCurrentDate="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </date>
+                <date id="purchaseOrder.endReceivedDate" title="purchaseOrder.endReceivedDate" row="3" col="3" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" showTime="true" manualEditable="true" defaultCurrentDate="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </date>
+                <text id="purchaseOrder.fromCode" title="purchaseOrder.fromCode" row="4" col="1" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="purchaseOrder.fromName" title="purchaseOrder.fromName" row="4" col="2" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="purchaseOrder.fromContact.contactName" title="purchaseOrder.fromContact.contactName" row="4" col="3" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="purchaseOrder.fromContact.telephone" title="purchaseOrder.fromContact.telephone" row="4" col="4" span="1" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text>
+                <text id="purchaseOrder.fromContact.address" title="purchaseOrder.fromContact.address" row="5" col="1" span="4" width="800" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true">
+                    <visibleExpression/>
+                    <hql/>
+                    <eventListeners/>
+                </text> 
+            </inputUIs>
+        </modify>
+        <detail entityClass="com.vtradex.wms.server.model.entity.order.PurchaseOrderDetail">
+            <datasource><![CDATA[SELECT detail.id,
+            detail.lineNo,
+            detail.item.code,
+            detail.item.name,
+            detail.packageUnit.unit,
+            detail.expectedPackQty,
+            detail.expectedQty,
+            detail.allotQty,
+            detail.receivedQty,
+            detail.inventoryStatus,
+            detail.receivedDate,
+            detail.pstyp,
+            detail.receivedLoc FROM PurchaseOrderDetail detail 
+		 WHERE 1=1
+		 AND detail.purchaseOrder.id = {purchaseOrder.id}
+		 ORDER BY detail.lineNo ASC]]></datasource>
+            <columns>
+                <column id="detail.id" title="detail.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+                <column id="detail.lineNo" title="detail.lineNo" width="50" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="integer"/>
+                <column id="detail.item.code" title="detail.item.code" width="80" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="detail.item.name" title="detail.item.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="detail.packageUnit.unit" title="detail.packageUnit.unit" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="detail.expectedPackQty" title="detail.expectedPackQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="detail.expectedQty" title="detail.expectedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="detail.allotQty" title="detail.allotQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="detail.receivedQty" title="detail.receivedQty" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="double"/>
+                <column id="detail.inventoryStatus" title="detail.inventoryStatus" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+                <column id="detail.receivedDate" title="detail.receivedDate" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="date" format="dateFormat"/>
+                <column id="detail.pstyp" title="detail.pstyp" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="enum" format="enumFormat" formatParam="WmsFactoryXmlb"/>
+                <column id="detail.receivedLoc" title="detail.receivedLoc" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            </columns>
+        </detail>
+    </modifyDetailPage>
+</pages>

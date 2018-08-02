@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsWarningPage">
+    <main>
+        <process id="wmsWarningProcess">
+        
+        <tableCommit id="delete" title="delete" process="wmsWarningProcess.delete" enableType="multi" download="false" confirmMessage="confirm.wmsWarningProcess.delete">
+	         <mappings/>
+	          <actions>
+	             <action managerName="wmsWarningManager" methodName="delete" parameter="obj"/>
+	         </actions>  
+	         <forwards>
+	             <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+	         </forwards>
+        </tableCommit>	
+             
+        </process>
+    </main>
+    <detail/>
+</page>

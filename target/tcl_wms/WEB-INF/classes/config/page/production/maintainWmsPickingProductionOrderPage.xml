@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsPickingProductionOrderPage" title="maintainWmsPickingProductionOrderPage" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.production.ProductionOrder" mainEntrance="true">
+        <workflow/>
+        <datasource><![CDATA[SELECT ppo.id,
+warehouse.code,
+warehouse.name,
+ppo.prodOrderCode,
+ppo.updateInfo.creator,
+ppo.updateInfo.createdTime,
+ppo.updateInfo.lastOperator,
+ppo.updateInfo.updateTime
+FROM WmsPickingProductionOrder ppo
+LEFT JOIN ppo.warehouse warehouse
+WHERE 1=1 
+and warehouse.baseOrganization = #{SESSION_BASE_ORGAN}
+ORDER BY ppo.id DESC]]></datasource>
+        <columns>
+            <column id="ppo.id" title="ppo.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="warehouse.code" title="warehouse.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+            <column id="warehouse.name" title="warehouse.name" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+            <column id="ppo.prodOrderCode" title="ppo.prodOrderCode" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string" />
+            <column id="ppo.updateInfo.creator" title="ppo.updateInfo.creator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="ppo.updateInfo.createdTime" title="ppo.updateInfo.createdTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            <column id="ppo.updateInfo.lastOperator" title="ppo.updateInfo.lastOperator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="ppo.updateInfo.updateTime" title="ppo.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>            
+        </columns>
+    </maintainPage>
+</pages>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.vtradex.wms.server.model.entity.bol.WmsBol" table="WMS_BOL">
+        <id name="id" column="ID" type="long">
+            <generator class="native">
+                <param name="sequence">WSEQ_WMS_BOL</param>
+                <param name="parameters">START WITH 1000</param>
+            </generator>
+        </id>
+        <set name="details" inverse="true" lazy="true">
+			<key column="BOL_ID"/>
+			<one-to-many class="com.vtradex.wms.server.model.entity.bol.WmsBolDetail"></one-to-many>
+		</set>
+		<many-to-one name="warehouse" class="com.vtradex.wms.server.model.entity.warehouse.WmsWarehouse">
+			<column name="WAREHOUSE_ID" not-null="true" unique-key="UK_BOL"/>
+		</many-to-one>
+        <many-to-one name="masterBol" class="com.vtradex.wms.server.model.entity.bol.WmsMasterBOL">
+			<column name="MASTER_BOL_ID"/>
+		</many-to-one>
+		<property name="code" type="string">
+			<column name="CODE" not-null="true" length="50" unique-key="UK_BOL"/>
+		</property>
+		<property name="status" type="string" column="STATUS" length="50" not-null="true"/>
+		<property name="weight" type="double" column="WEIGHT"/>	
+		<property name="volume" type="double" column="VOLUME"/>	
+		<property name="qty" type="double" column="QTY"/>	
+		<many-to-one name="customer" class="com.vtradex.wms.server.model.entity.base.WmsCustomer">
+			<column name="CUSTOMER_ID"/>
+		</many-to-one>
+		<property name="shipToName" column="SHIP_TO_NAME" type="string" length="255"/>
+		<property name="expectedDeliveryTime" type="timestamp" column="EXPECTED_DELIVERY_TIME"/>
+		<property name="actualDeliveryTime"  type="timestamp" column="ACTUAL_DELIVERY_TIME"/>
+		<property name="expectedArriveTime"  type="timestamp" column="EXPECTED_ARRIVE_TIME"/>
+		<property name="actualArriveTime"  type="timestamp" column="ACTUAL_ARRIVE_TIME"/>	
+		
+		<property name="ptId" type="long" column="PT_ID"/>
+			
+		<component name="contact" class="com.vtradex.wms.server.model.component.Contact">
+            <property name="country" type="string" column="C_COUNTRY" length="100"/>
+             <property name="province" type="string" column="C_PROVINCE" length="100"/>
+            <property name="city" type="string" column="C_CITY" length="50"/>
+            <property name="address" type="string" column="C_ADDRESS" length="255"/>
+            <property name="postCode" type="string" column="C_POSTCODE" length="10"/>
+            <property name="contactName" type="string" column="C_CONTACT_NAME" length="50"/>
+            <property name="mobile" type="string" column="C_MOBILE" length="100"/>
+            <property name="telephone" type="string" column="C_TELEPHONE" length="50"/>
+            <property name="fax" type="string" column="C_FAX" length="50"/>
+            <property name="email" type="string" column="C_EMAIL" length="100" />
+        </component>
+		<component name="updateInfo" class="com.vtradex.thorn.server.model.UpdateInfo">
+			<property name="creatorId" type="long" column="CREATOR_ID"/>
+			<property name="creator" type="string" column="CREATOR" length="50" />
+			<property name="createdTime" type="timestamp" column="CREATED_TIME"/>
+			<property name="lastOperatorId" type="long" column="LAST_OPERATOR_ID"/>
+			<property name="lastOperator" type="string" column="LAST_OPERATOR" length="50" />
+			<property name="updateTime" type="timestamp" column="UPDATE_TIME"/>
+		</component>
+		
+		<!--V1.9.8-->
+		<property name="palletCode" type="string" column="PALLET_CODE" length="100"/>
+		<property name="containerCode" type="string" column="CONTAINER_CODE" length="100"/>
+		<!-- V2.1.7 -->
+		<property name="isLocked" column="IS_LOCKED" type="yes_no"/>
+		
+		<property name="customerWarehouseId" type="long" column="CUSTOMER_WAREHOUSER_ID"/>	
+		
+		<property name="type" type="string" column="TYPE" length="50"/>
+		<property name="pickStatus" type="string" column="PICK_STATUS" length="50"/>
+		<property name="purchaseOrderCode" type="string" column="PURCHASEORDER_CODE" length="50"/>
+		
+		<many-to-one name="keeper" class="com.vtradex.thorn.server.model.security.ThornUser">
+			<column name="KEEPER_ID" />
+		</many-to-one>
+		<property name="remark" type="string" column="REMARK" length="255"/>
+		<property name="pickQty" type="double" column="PICK_QTY"/>	
+		
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <maintainPage id="maintainWmsSystemValuesPage" title="maintainWmsSystemValuesPage" mainEntrance="true" autoQuery="true" entityClass="com.vtradex.wms.server.model.entity.base.WmsSystemValues">
+        <workflow/>
+        <datasource><![CDATA[SELECT 
+        s.id,
+        s.code,
+        s.name,
+        s.value,
+        s.remark,
+        s.updateInfo.lastOperator,
+		s.updateInfo.updateTime
+ FROM WmsSystemValues s
+ WHERE 1=1  
+ ORDER BY s.code]]></datasource>
+        <columns>
+            <column id="s.id" title="s.id" visible="false" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="long"/>
+            <column id="s.code" title="s.code" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="s.name" title="s.name" width="240" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="s.value" title="s.value" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>        
+            <column id="s.remark" title="s.remark" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="s.updateInfo.lastOperator" title="s.updateInfo.lastOperator" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="string"/>
+            <column id="s.updateInfo.updateTime" title="s.updateInfo.updateTime" visible="true" sortable="true" horizonAlign="center" verticalAlign="middle" dataType="datetime"/>
+            </columns>
+    </maintainPage>
+</pages>

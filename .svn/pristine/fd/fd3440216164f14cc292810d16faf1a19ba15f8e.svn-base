@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editWmsDeliveryOrderDetailPage" title="editWmsDeliveryOrderDetailPage" entityClass="com.vtradex.wms.server.model.entity.production.WmsDeliveryOrderDetail" width="450" height="300">
+        <workflow/>
+        <initListeners>
+            <initListener id="wdod.lineNo" managerName="wmsDeliveryOrderManager" methodName="getMaxLineNo" newEnabled="true"/>
+        </initListeners>
+        <inputUIs>
+       		<hidden id="wdod.id"  reserve="false"/>
+       		<numberText id="wdod.lineNo" title="wdod.lineNo" row="1" col="1" span="1" readOnly="true" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true"/>       
+            <remote id="wdod.purchaseOrderDetail.id" title="wdod.purchaseOrderDetail.id" row="1" col="2"  span="1"  readOnly="false" required="true" reserve="false" forceOverride="false" focusUI="true" inVisible="false" editModel="uneditable" multiple="false" manualEditable="true" displayColumn="5" percentSignPosition="both" 
+               displayedTableHead="序号,采购单编码,物料编码,物料描述,期待数量,分配数量,包装单位,项目,工厂,货品ID,包装ID" windowWidth="900">
+               <visibleExpression/>
+               <hql><![CDATA[SELECT
+orderDetail.id,
+po.code,
+item.code,
+item.name,
+orderDetail.expectedQty,
+orderDetail.allotQty,
+pku.unit,
+orderDetail.ebelp,
+factory.name,
+item.id,
+pku.id
+FROM PurchaseOrderDetail orderDetail
+LEFT JOIN orderDetail.item item
+LEFT JOIN orderDetail.packageUnit pku
+LEFT JOIN orderDetail.purchaseOrder po
+LEFT JOIN orderDetail.factory factory 
+WHERE 1=1
+AND po.status='ACTIVE'
+AND po.supplier.id = ${deliveryOrder.supplier.id}
+AND orderDetail.expectedQty-orderDetail.allotQty>0
+AND (item.name like :param or po.code like :param or item.code like :param)
+ORDER BY orderDetail.id]]></hql>
+               <eventListeners>
+                   <eventListener id="wdod.item.id" index="10" refreshUI="false"/> 
+               </eventListeners>   
+           </remote>
+            <remote id="wdod.item.id" title="wdod.item.id" row="2" col="1" span="1" readOnly="true" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" editModel="uneditable" multiple="false" manualEditable="true" displayColumn="3" percentSignPosition="both" displayedTableHead="序号,物料编码,物料描述" >
+                <visibleExpression/>
+                <hql><![CDATA[SELECT
+item.id,
+item.code,
+item.name
+FROM WmsItem item
+WHERE item.status = 'ENABLED' 
+AND (item.code LIKE :param OR item.name LIKE :param)
+ORDER BY item.id]]></hql>
+                <eventListeners>
+                    <eventListener id="wdod.packageUnit.id" index="3" refreshUI="false"/> 
+                </eventListeners>  
+            </remote>
+            <list id="wdod.packageUnit.id" title="wdod.packageUnit.id" row="2" col="2" span="1" width="120" readOnly="true" required="true" reserve="false" forceOverride="true" forceSpace="false" multiple="false" inVisible="false">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT
+packageUnit.id,
+packageUnit.unit
+FROM WmsPackageUnit packageUnit
+WHERE 1=1
+AND packageUnit.item.id = ${wdod.item.id}
+ORDER BY packageUnit.id desc]]></hql>
+            </list>
+            <numberText id="wdod.planQuantityBu" title="wdod.planQuantityBu" row="3" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true"/>
+            <numberText id="wdod.theDeliveryQuantityBu" title="wdod.theDeliveryQuantityBu" row="3" col="2" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true"/>
+            <textArea id="wdod.remark" title="wdod.remark" row="4" col="2" span="2"  width="340" readOnly="false" required="false" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true"/>
+        </inputUIs>
+    </editPage>
+</pages>

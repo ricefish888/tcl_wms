@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editDailyDeliverOrderDetailPage" title="editDailyDeliverOrderDetailPage" entityClass="com.vtradex.wms.server.model.entity.production.DailyDeliverOrderDetail" >
+        <workflow/>
+        <initListeners/>
+        <inputUIs>
+        		<hidden id="ddod.id"  reserve="false"/>
+        		<remote id="ddod.orderDetail.id" title="ddod.orderDetail.id" row="2" col="1"  span="1"  readOnly="false" required="true" reserve="false" forceOverride="false" focusUI="true" inVisible="false" editModel="editable" multiple="false" manualEditable="true" displayColumn="4" percentSignPosition="both" 
+                displayedTableHead="序号,交货单编码,SAP交货单号,计划交货数量,已交货数量,本次交货数量,可录入数量,物料编码,物料描述,供应商编码,供应商名称,工厂编码,工厂名称"  windowWidth="900">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT
+wdod.id,
+deliveryOrder.code,
+deliveryOrder.sapCode,
+wdod.planQuantityBu,
+wdod.delivedQuantityBu,
+wdod.theDeliveryQuantityBu,
+(wdod.planQuantityBu - wdod.delivedQuantityBu -wdod.theDeliveryQuantityBu) as qty ,
+item.code,
+item.name,
+supplier.code,
+supplier.name,
+factory.code,
+factory.name
+FROM WmsDeliveryOrderDetail wdod 
+LEFT JOIN wdod.deliveryOrder deliveryOrder
+LEFT JOIN wdod.item item
+LEFT JOIN wdod.deliveryOrder.supplier supplier
+LEFT JOIN wdod.factory factory
+WHERE 1=1
+AND (wdod.planQuantityBu - wdod.theDeliveryQuantityBu )>0
+AND deliveryOrder.status = 'ACTIVE'
+AND (deliveryOrder.code like :param OR item.code like :param
+OR item.name like :param OR  supplier.code like :param
+OR  supplier.name like :param OR  factory.code like :param
+OR  factory.name like :param)
+ORDER BY wdod.id ASC]]></hql>         
+                <eventListeners>
+                    <eventListener id="ddod.deliverQty" index="7" refreshUI="false"/>  
+                </eventListeners>
+            </remote>
+           
+            
+            <date id="ddod.deliverDate" title="ddod.deliverDate" row="3" col="1" span="1" width="140" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="true" inVisible="false" showTime="false" manualEditable="true" defaultCurrentDate="true"/>
+           
+            <numberText id="ddod.deliverQty" title="ddod.deliverQty" row="4" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" trimSpace="true"/>       
+                
+            
+            </inputUIs>
+    </editPage>
+</pages>

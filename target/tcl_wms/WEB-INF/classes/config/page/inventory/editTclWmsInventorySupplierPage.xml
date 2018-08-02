@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages>
+    <editPage id="editTclWmsInventorySupplierPage" title="editTclWmsInventorySupplierPage" entityClass="com.vtradex.wms.server.model.entity.inventory.WmsInventory" width="400" height="350">
+        <workflow/>
+        <initListeners>
+        </initListeners>
+        <inputUIs>
+            <hidden id="inventory.id" title="inventory.id" reserve="false"/>
+            <hidden id="inventory.itemKey.id" title="inventory.itemKey.id" reserve="false"/>
+			<remote id="supplierId" title="supplierId" row="1" col="1" span="1" readOnly="false" required="true" reserve="false" forceOverride="true" focusUI="false" inVisible="false" language="false" multiple="false" manualEditable="true" displayColumn="2" percentSignPosition="both" displayedTableHead="序号,名称,编码 ">
+                <visibleExpression/>
+                <hql><![CDATA[SELECT 
+sup.id, 
+sup.name, 
+sup.code 
+FROM WmsSupplier sup 
+where 1=1
+AND sup.code <> 'XN'
+AND (sup.name LIKE :param or sup.code like :param)
+]]></hql>
+                <eventListeners/>
+            </remote>
+        </inputUIs>
+    </editPage>
+</pages>

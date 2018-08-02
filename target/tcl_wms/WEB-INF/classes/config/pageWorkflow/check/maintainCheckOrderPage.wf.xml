@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainCheckOrderPage">
+    <main>
+        <process id="checkOrderProcess">
+            <tableCommit id="received" title="received" process="checkOrderProcess.received" enableType="multi" multiMapping="true" download="false" closeTransactional="false">
+                <enableExpression><![CDATA[${checkOrder.status} == 'OPEN']]></enableExpression>
+                <mappings/>
+                 <actions>
+                    <action managerName="wmsCheckOrderManager" methodName="received" parameter="objs"/>
+                </actions>  
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+            <tableCommit id="confirmed" title="confirmed" process="checkOrderProcess.confirmed" enableType="multi" multiMapping="true" download="false" closeTransactional="false">
+                <enableExpression><![CDATA[${checkOrder.status} == 'RECEIVED']]></enableExpression>
+                <mappings/>
+                 <actions>
+                    <action managerName="wmsCheckOrderManager" methodName="confirm" parameter="objs"/>
+                </actions>  
+                <forwards>
+                    <forward name="refreshParent" newEnabled="true" editEnabled="true"/>
+                </forwards>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

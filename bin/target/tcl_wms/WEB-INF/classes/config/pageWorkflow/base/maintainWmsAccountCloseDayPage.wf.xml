@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page id="maintainWmsAccountCloseDayPage">
+    <main>
+        <process id="wmsAccountCloseDayProcess">
+             <tablePopup id="new" title="new" process="wmsAccountCloseDayProcess.new" enableType="none" containId="false" pageId="editWmsAccountCloseDayPage">
+                <enableExpression/>
+            </tablePopup>
+            <tablePopup id="modify" title="modify" process="wmsAccountCloseDayProcess.modify" enableType="single" containId="true" pageId="editWmsAccountCloseDayPage">
+                <enableExpression/>
+            </tablePopup>
+            <tableCommit id="delete" title="delete" process="wmsAccountCloseDayProcess.delete" enableType="multi" multiMapping="false" download="false" closeTransactional="false" confirmMessage="是否确认删除此条记录？">
+                <enableExpression/>
+                <mappings/>
+                <actions/>
+                <forwards/>
+            </tableCommit>
+        </process>
+    </main>
+    <detail/>
+</page>

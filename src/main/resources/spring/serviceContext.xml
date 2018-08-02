@@ -1,0 +1,308 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC
+        "-//SPRING//DTD BEAN//EN"
+        "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- $Id: serviceContext.xml,v 1.5 2013/03/12 08:53:38 qiufeng.chen Exp $ -->
+<beans>
+	<bean id="globalParamUtils" class="com.vtradex.wms.server.utils.GlobalParamUtils" />
+	
+	<!-- 下面2个bean是edi需要用到的 -->
+	<bean id="tclSimpleTaskHelper" class="com.vtradex.edi.server.utils.SimpleTaskHelper">
+		<constructor-arg index="0">
+			<ref bean="ediTaskManager" />
+		</constructor-arg>
+		<constructor-arg index="1">
+			<ref bean="messageService"/>
+		</constructor-arg> 
+		
+		<constructor-arg index="2">
+			<ref bean="tclMessageManager"/>
+		</constructor-arg> 
+		
+		
+	</bean>
+	<bean id="ediTaskManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean
+				class="com.vtradex.edi.server.service.task.pojo.DefaultTaskManager"
+				parent="baseManager">
+			</bean>
+		</property>
+	</bean>
+	
+	
+	<bean id="jdbcTemplate"
+        class="org.springframework.jdbc.core.JdbcTemplate" abstract="false"
+        lazy-init="false" autowire="default" dependency-check="default">
+        <property name="dataSource">
+            <ref bean="dataSource" />
+        </property>
+    </bean>
+	<!-- 保存日志manager -->
+	<bean id="interfaceLogManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.interf.pojo.DefaultInterfaceLogManager" parent="baseManager" >
+				<constructor-arg index="0">
+				       <ref bean="sapDataDealManager"/>
+		        </constructor-arg>
+		        <constructor-arg index="1">
+				       <ref bean="emailRecordManager"/>
+		        </constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	 <!-- WmsDemoInventoryManager处理类 -->
+	<bean id="wmsDemoInventoryManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.inventory.pojo.DefaultWmsDemoInventoryManager" parent="baseManager" >
+			    <constructor-arg index="0">
+				       <ref bean="wmsInventoryManager"/>
+		        </constructor-arg>
+		        <constructor-arg index="1">
+				       <ref bean="wmsItemManager"/>
+		        </constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	<!-- SAP接口处理类 -->
+	<bean id="sapDataDealManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.sap.pojo.DefaultSapDataDealManager" parent="baseManager" >
+			    <constructor-arg index="0">
+				       <ref bean="sapRowDataDealManager"/>
+		        </constructor-arg>
+		       
+			</bean>
+		</property>
+	</bean>
+	<!-- SAP接口单条处理类 -->
+	<bean id="sapRowDataDealManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.sap.pojo.DefaultSapRowDataDealManager" parent="baseManager" >
+			<constructor-arg index="0">
+				       <ref bean="wmsSupplierManager"/>
+		    </constructor-arg>
+			<constructor-arg index="1">
+					<ref bean="workflowManager"/>
+			</constructor-arg>
+			<constructor-arg index="2">
+					<ref bean="productionOrderManager"/>
+			</constructor-arg>
+			<constructor-arg index="3">
+					<ref bean="wmsBussinessCodeManager"/>
+			</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	<!-- 最小包装处理类 -->
+	<bean id="wmsMinPackageManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.sap.pojo.DefaultWmsMinPackageManager" parent="baseManager" >
+			</bean>
+		</property>
+	</bean>
+	<!-- Surpplier供应商处理类 -->
+	<bean id="wmsSupplierManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.supplier.pojo.DefaultWmsSupplierManager" parent="baseManager" >
+			</bean>
+		</property>
+	</bean>
+	<!-- 生产订单处理类 -->
+	<bean id="productionOrderManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.production.pojo.DefaultProductionOrderManager" parent="baseManager" >
+				<constructor-arg index="0">
+					       <ref bean="wmsBussinessCodeManager"/>
+			    </constructor-arg>
+			    <constructor-arg index="1">
+					       <ref bean="workflowManager"/>
+			    </constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	<!-- 配货订单处理类 -->
+	<bean id="wmsTransportOrderManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.order.pojo.DefaultWmsTransportOrderManager" parent="baseManager" >
+				<constructor-arg index="0">
+					       <ref bean="wmsASNManager"/>
+			    </constructor-arg>
+			    <constructor-arg index="1">
+					       <ref bean="wmsBussinessCodeManager"/>
+			    </constructor-arg>
+			    <constructor-arg index="2">
+					       <ref bean="workflowManager"/>
+			    </constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- 交货单处理类 -->
+	 <bean id="wmsDeliveryOrderManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.production.pojo.DefaultWmsDeliveryOrderManager" parent="baseManager" >
+				<constructor-arg index="0" ref="wmsBussinessCodeManager"/>
+				<constructor-arg index="1" ref="workflowManager"/>
+				<constructor-arg index="2" ref="interfaceLogManager"/>
+				<constructor-arg index="3" ref="sapRowDataDealManager"/>
+				<constructor-arg index="4" ref="productionOrderManager"/>
+				<constructor-arg index="5" ref="jdbcTemplate"/>
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- 采购订单处理类 -->
+	<bean id="wmsPurchaseOrderManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.order.pojo.DefaultWmsPurchaseOrderManager" parent="baseManager" >
+			 	<constructor-arg index="0">
+				       <ref bean="workflowManager"/>
+		        </constructor-arg>
+			 	<constructor-arg index="1">
+				       <ref bean="interfaceLogManager"/>
+		        </constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- 采购对账单处理类 -->
+	<bean id="wmsCheckOrderManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.order.pojo.DefaultWmsCheckOrderManager" parent="baseManager" >
+			 	<constructor-arg index="0">
+				       <ref bean="interfaceLogManager"/>
+		        </constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	<!-- 工厂物料类 -->
+	<bean id="wmsItemFactoryManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.itemFactory.pojo.DefaultWmsItemFactoryManager" parent="baseManager" >
+			</bean>
+		</property>
+	</bean>
+	<!-- 工厂 项目类别 与wms仓库映射-->
+	<bean id="wmsFactoryWarehouseManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.itemFactory.pojo.DefaultWmsFactoryWarehouseManager" parent="baseManager" >
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- 预留单-->
+	<bean id="wmsReservedOrderManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.order.pojo.DefaultWmsReservedOrderManager" parent="baseManager" >
+				<constructor-arg index="0">
+				       <ref bean="productionOrderManager"/>
+		        </constructor-arg>
+		        <constructor-arg index="1">
+				       <ref bean="wmsBussinessCodeManager"/>
+		        </constructor-arg>
+		        <constructor-arg index="2">
+				       <ref bean="wmsASNManager"/>
+		        </constructor-arg>
+		        <constructor-arg index="3">
+				       <ref bean="workflowManager"/>
+		        </constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	<!-- message处理类 -->
+	<bean id="tclMessageManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.item.pojo.DefaultTclMessageManager" parent="baseManager" >
+				<constructor-arg index="0">
+				       <ref bean="interfaceLogManager"/>
+		        </constructor-arg>
+		        <constructor-arg index="1">
+					<ref bean="sequenceGenerater"></ref>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	<!-- 邮件管理-->
+	<bean id="emailRecordManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.emailrecord.pojo.DefaultEmailRecordManager" parent="baseManager" >
+			<constructor-arg index="0">
+				       <ref bean="mailService"/>
+		        </constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- 成本中心管理-->
+	<bean id="wmsCostCenterManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.base.po.DefaultWmsCostCenterManager" parent="baseManager" >
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- 预警管理-->
+	<bean id="wmsWarningManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.base.po.DefaultWmsWarningManager" parent="baseManager" >
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- 导入模板下载-->
+	<bean id="wmsDownloadFileManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.base.po.DefaultWmsDownloadFileManager" parent="baseManager" >
+			</bean>
+		</property>
+	</bean>
+	
+		<!-- 物料保管员-->
+	<bean id="wmsItemKeeperManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.base.po.DefaultWmsItemKeeperManager" parent="baseManager" >
+			</bean>
+		</property>
+	</bean>
+		<!-- 盘点计划-->
+	<bean id="wmsTclCountPlanManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.count.pojo.DefaultWmsTclCountPlanManager" parent="baseManager" >
+			</bean>
+		</property>
+	</bean>
+	<!-- 调用oracle存储过程 -->
+	<bean id="callOracleProcManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.task.pojo.DefaultCallOracleProcManager" parent="baseManager">
+			</bean>
+		</property>
+	</bean>
+		<!-- 定时任务日志-->
+	<bean id="crontabLogManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.task.pojo.DefaultCrontabLogManager" parent="baseManager">
+			</bean>
+		</property>
+	</bean>
+	<!-- 定时任务-->
+	<bean id="crontabManager" parent="abstractTransactionProxy">
+		<property name="target">
+			<bean class="com.vtradex.wms.server.service.task.pojo.DefaultCrontabManager" parent="baseManager">
+				<constructor-arg index="0">
+					<ref bean="crontabLogManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="1">
+					<ref bean="callOracleProcManager"></ref>
+				</constructor-arg>
+				<constructor-arg index="2">
+					<ref bean="tclMessageManager"></ref>
+				</constructor-arg>
+				
+			</bean>
+		</property>
+	</bean>
+</beans>
+

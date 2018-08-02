@@ -1,0 +1,14 @@
+maintainQCRegPage=\u8d28\u68c0\u767b\u8bb0
+item.code=\u8d27\u54c1\u7f16\u7801
+item.name=\u8d27\u54c1\u540d\u79f0
+record.id=record.id
+record.receivedQty=\u6536\u8d27\u6570\u91cf
+record.pallet=\u6258\u76d8\u53f7
+record.carton=\u7bb1\u53f7
+record.inventoryStatus=\u5e93\u5b58\u72b6\u6001
+itemKey.lotInfo.storageDate=\u5b58\u8d27\u65e5\u671f
+itemKey.lotInfo.productDate=\u751f\u4ea7\u65e5\u671f
+itemKey.lotInfo.expireDate=\u8fc7\u671f\u65e5\u671f
+itemKey.lotInfo.supplierCode=\u4f9b\u5e94\u5546
+qcRecord=\u767b\u8bb0
+qcConfirm=\u786e\u8ba4

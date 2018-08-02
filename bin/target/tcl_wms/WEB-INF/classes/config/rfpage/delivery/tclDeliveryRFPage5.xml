@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--交货输入页面模板 -->
+<RFFormPage id="tclDeliveryRFPage5" title="tclDeliveryRFPage5">
+	<RFDisplay id="deliveryDisplay" load="tclRfDeliveryManager.pickInfo">
+		<!-- format节点：控制页面展示域展示哪些字段及其展示格式 -->
+		<format>
+		<![CDATA[
+			拣货单: {pcode}
+			货品编码: {itemCode}
+			货品名称: {itemName}
+			已拣货数量: {qty}
+		]]>
+		</format>
+		<!-- help节点：罗列页面展示域可供展示的字段列表 -->
+		<help>
+			拣货单: {pcode}
+			货品编码: {itemCode}
+			货品名称: {itemName}
+			已拣货数量: {qty}
+		</help>
+	</RFDisplay>
+	<RFForm>
+		<inputs>
+			<RFText id="itemInput" title="itemInput" tip="itemInput" onFoucs="false">
+			</RFText>
+			<RFText id="qtyInput" title="qtyInput" tip="qtyInput" onFoucs="true" validator="numberValidator">
+			</RFText>
+		</inputs>
+		<buttons>
+			<RFButton id="addDetailBt" title="addDetailBt" action="tclRfDeliveryManager.addDetail" validate="" onFoucs="false"/>
+			<RFButton id="showDetailBt" title="showDetailBt" action="tclRfDeliveryManager.showDetails" validate="" onFoucs="false"/>
+		</buttons>
+	</RFForm>
+</RFFormPage>
